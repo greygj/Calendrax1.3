@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
+import BusinessPage from "./pages/BusinessPage";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -68,6 +69,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/business/:businessId" 
+        element={
+          <ProtectedRoute>
+            <BusinessPage />
           </ProtectedRoute>
         } 
       />

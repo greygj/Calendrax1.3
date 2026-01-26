@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { mockUsers } from '../data/mock';
+import { mockUsers, mockBusinesses, addBusiness } from '../data/mock';
 
 const AuthContext = createContext(null);
 
@@ -24,6 +24,15 @@ export const AuthProvider = ({ children }) => {
     
     if (foundUser) {
       const { password: _, ...userWithoutPassword } = foundUser;
+      
+      // If business owner, attach their business info
+      if (foundUser.role === 'business_owner') {
+        const business = mockBusinesses.find(b => b.ownerId === foundUser.id);
+        if (business) {
+          userWithoutPassword.business = business;
+        }
+      }
+      
       setUser(userWithoutPassword);
       localStorage.setItem('booka_user', JSON.stringify(userWithoutPassword));
       return { success: true, user: userWithoutPassword };
@@ -33,23 +42,46 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (userData) => {
-    // Mock signup - in real app would call API
-    const newUser = {
-      id: String(Date.now()),
-      ...userData,
-      createdAt: new Date().toISOString()
-    };
-    
     // Check if email already exists
     const exists = mockUsers.find(u => u.email === userData.email);
     if (exists) {
       return { success: false, error: 'Email already registered' };
     }
+
+    // Create new user
+    const newUser = {
+      id: String(Date.now()),
+      fullName: userData.fullName,
+      email: userData.email,
+      mobile: userData.mobile,
+      password: userData.password,
+      role: userData.role,
+      createdAt: new Date().toISOString()
+    };
     
     // Add to mock users (in memory only)
     mockUsers.push(newUser);
     
     const { password: _, ...userWithoutPassword } = newUser;
+    
+    // If business owner, create the business profile
+    if (userData.role === 'business_owner') {
+      const newBusiness = {
+        id: `b${Date.now()}`,
+        ownerId: newUser.id,
+        businessName: userData.businessName,
+        logo: userData.logo || null,
+        postcode: userData.postcode,
+        address: '', // Can be enhanced to get from postcode lookup
+        description: `Services provided by ${userData.businessName}`,
+        services: ['s1', 's2'], // Default services for new businesses
+        createdAt: new Date().toISOString()
+      };
+      
+      addBusiness(newBusiness);
+      userWithoutPassword.business = newBusiness;
+    }
+    
     setUser(userWithoutPassword);
     localStorage.setItem('booka_user', JSON.stringify(userWithoutPassword));
     
@@ -61,8 +93,14 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('booka_user');
   };
 
+  const updateUser = (updatedData) => {
+    const updatedUser = { ...user, ...updatedData };
+    setUser(updatedUser);
+    localStorage.setItem('booka_user', JSON.stringify(updatedUser));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, loading, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
