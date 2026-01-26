@@ -92,13 +92,13 @@ const Signup = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex bg-zinc-900 rounded-lg p-1 mb-6 max-w-md mx-auto w-full">
+      <div className="flex bg-transparent border border-zinc-800 rounded-lg mb-6 max-w-md mx-auto w-full overflow-hidden">
         <button
           onClick={() => setActiveTab('customer')}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition-all ${
+          className={`flex-1 flex items-center justify-center gap-2 py-3.5 font-medium transition-all ${
             activeTab === 'customer'
               ? 'bg-white text-black'
-              : 'text-gray-400 hover:text-white'
+              : 'bg-transparent text-gray-400 hover:text-white'
           }`}
         >
           <User className="w-5 h-5" />
@@ -106,10 +106,10 @@ const Signup = () => {
         </button>
         <button
           onClick={() => setActiveTab('business')}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition-all ${
+          className={`flex-1 flex items-center justify-center gap-2 py-3.5 font-medium transition-all ${
             activeTab === 'business'
               ? 'bg-white text-black'
-              : 'text-gray-400 hover:text-white'
+              : 'bg-transparent text-gray-400 hover:text-white'
           }`}
         >
           <Briefcase className="w-5 h-5" />
