@@ -1,0 +1,260 @@
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { ArrowLeft, User, Mail, Phone, Lock, Eye, EyeOff, Briefcase, KeyRound } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { validRegistrationCodes } from '../data/mock';
+
+const Signup = () => {
+  const navigate = useNavigate();
+  const { signup } = useAuth();
+  const [activeTab, setActiveTab] = useState('customer');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    mobile: '',
+    password: '',
+    confirmPassword: '',
+    registrationCode: ''
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError('');
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    // Validation
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+
+    // For business owner, validate registration code
+    if (activeTab === 'business' && !validRegistrationCodes.includes(formData.registrationCode)) {
+      setError('Invalid registration code');
+      return;
+    }
+
+    setLoading(true);
+
+    const userData = {
+      fullName: formData.fullName,
+      email: formData.email,
+      mobile: formData.mobile,
+      password: formData.password,
+      role: activeTab === 'customer' ? 'customer' : 'business_owner',
+      ...(activeTab === 'business' && { registrationCode: formData.registrationCode })
+    };
+
+    const result = await signup(userData);
+    
+    if (result.success) {
+      navigate('/dashboard');
+    } else {
+      setError(result.error);
+    }
+    
+    setLoading(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-black flex flex-col px-4 py-6">
+      {/* Back Button */}
+      <button
+        onClick={() => navigate('/')}
+        className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center text-white hover:bg-zinc-800 transition-colors mb-6"
+      >
+        <ArrowLeft className="w-5 h-5" />
+      </button>
+
+      {/* Logo */}
+      <div className="text-center mb-6">
+        <h1 className="text-white text-4xl font-bold tracking-tight">Booka</h1>
+        <p className="text-gray-500 text-xs tracking-[0.3em] mt-1">BOOKING APP</p>
+      </div>
+
+      {/* Header */}
+      <div className="text-center mb-6">
+        <h2 className="text-white text-3xl font-semibold mb-2">Create Account</h2>
+        <p className="text-gray-500">Join Booka</p>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex bg-zinc-900 rounded-lg p-1 mb-6 max-w-md mx-auto w-full">
+        <button
+          onClick={() => setActiveTab('customer')}
+          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition-all ${
+            activeTab === 'customer'
+              ? 'bg-white text-black'
+              : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          <User className="w-5 h-5" />
+          Customer
+        </button>
+        <button
+          onClick={() => setActiveTab('business')}
+          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition-all ${
+            activeTab === 'business'
+              ? 'bg-white text-black'
+              : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          <Briefcase className="w-5 h-5" />
+          Business Owner
+        </button>
+      </div>
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto space-y-4">
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/50 text-red-500 px-4 py-3 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
+
+        {/* Full Name */}
+        <div>
+          <label className="text-white text-sm mb-2 block">Full Name <span className="text-red-500">*</span></label>
+          <div className="relative">
+            <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+            <input
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              placeholder="Enter your full name"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-zinc-600 transition-colors"
+              required
+            />
+          </div>
+        </div>
+
+        {/* Email */}
+        <div>
+          <label className="text-white text-sm mb-2 block">Email Address <span className="text-red-500">*</span></label>
+          <div className="relative">
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter your email"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-zinc-600 transition-colors"
+              required
+            />
+          </div>
+        </div>
+
+        {/* Mobile */}
+        <div>
+          <label className="text-white text-sm mb-2 block">Mobile Number <span className="text-red-500">*</span></label>
+          <div className="relative">
+            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+            <input
+              type="tel"
+              name="mobile"
+              value={formData.mobile}
+              onChange={handleChange}
+              placeholder="Enter your mobile number"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-zinc-600 transition-colors"
+              required
+            />
+          </div>
+        </div>
+
+        {/* Password */}
+        <div>
+          <label className="text-white text-sm mb-2 block">Password <span className="text-red-500">*</span></label>
+          <div className="relative">
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+            <input
+              type={showPassword ? 'text' : 'password'}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Create a password"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-zinc-600 transition-colors"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-400 transition-colors"
+            >
+              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Confirm Password */}
+        <div>
+          <label className="text-white text-sm mb-2 block">Confirm Password <span className="text-red-500">*</span></label>
+          <div className="relative">
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+            <input
+              type={showPassword ? 'text' : 'password'}
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="Confirm your password"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-zinc-600 transition-colors"
+              required
+            />
+          </div>
+        </div>
+
+        {/* Registration Code - Business Owner Only */}
+        {activeTab === 'business' && (
+          <div>
+            <label className="text-white text-sm mb-2 block">Owner Registration Code <span className="text-red-500">*</span></label>
+            <div className="relative">
+              <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+              <input
+                type="text"
+                name="registrationCode"
+                value={formData.registrationCode}
+                onChange={handleChange}
+                placeholder="Enter registration code"
+                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-zinc-600 transition-colors"
+                required={activeTab === 'business'}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-white text-black font-semibold py-4 rounded-lg mt-6 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? 'Creating Account...' : 'Create Account'}
+        </button>
+      </form>
+
+      {/* Sign In Link */}
+      <p className="text-gray-500 mt-8 text-center">
+        Already have an account?{' '}
+        <Link to="/" className="text-white font-semibold hover:underline">
+          Sign In
+        </Link>
+      </p>
+    </div>
+  );
+};
+
+export default Signup;
