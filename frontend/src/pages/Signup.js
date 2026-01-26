@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, User, Mail, Phone, Lock, Eye, EyeOff, Briefcase, KeyRound } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, Lock, Eye, EyeOff, Briefcase, KeyRound, Upload, MapPin, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { validRegistrationCodes } from '../data/mock';
 
@@ -11,6 +11,7 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -18,12 +19,47 @@ const Signup = () => {
     mobile: '',
     password: '',
     confirmPassword: '',
-    registrationCode: ''
+    registrationCode: '',
+    businessName: '',
+    postcode: '',
+    logo: null,
+    logoPreview: null
   });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError('');
+  };
+
+  const handleLogoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Logo file must be less than 5MB');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({
+          ...formData,
+          logo: file,
+          logoPreview: reader.result
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeLogo = () => {
+    setFormData({
+      ...formData,
+      logo: null,
+      logoPreview: null
+    });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -41,10 +77,16 @@ const Signup = () => {
       return;
     }
 
-    // For business owner, validate registration code
-    if (activeTab === 'business' && !validRegistrationCodes.includes(formData.registrationCode)) {
-      setError('Invalid registration code');
-      return;
+    // For business owner, validate registration code and business name
+    if (activeTab === 'business') {
+      if (!validRegistrationCodes.includes(formData.registrationCode)) {
+        setError('Invalid registration code');
+        return;
+      }
+      if (!formData.businessName.trim()) {
+        setError('Business name is required');
+        return;
+      }
     }
 
     setLoading(true);
@@ -55,7 +97,12 @@ const Signup = () => {
       mobile: formData.mobile,
       password: formData.password,
       role: activeTab === 'customer' ? 'customer' : 'business_owner',
-      ...(activeTab === 'business' && { registrationCode: formData.registrationCode })
+      ...(activeTab === 'business' && {
+        registrationCode: formData.registrationCode,
+        businessName: formData.businessName,
+        postcode: formData.postcode,
+        logo: formData.logoPreview // Store base64 for mock, in real app would upload to server
+      })
     };
 
     const result = await signup(userData);
@@ -122,6 +169,94 @@ const Signup = () => {
         {error && (
           <div className="bg-red-500/10 border border-red-500/50 text-red-500 px-4 py-3 rounded-lg text-sm">
             {error}
+          </div>
+        )}
+
+        {/* Business Name - Business Owner Only */}
+        {activeTab === 'business' && (
+          <div>
+            <label className="text-white text-sm mb-2 block">Business Name <span className="text-red-500">*</span></label>
+            <div className="relative">
+              <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+              <input
+                type="text"
+                name="businessName"
+                value={formData.businessName}
+                onChange={handleChange}
+                placeholder="Enter your business name"
+                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-zinc-600 transition-colors"
+                required={activeTab === 'business'}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Logo Upload - Business Owner Only */}
+        {activeTab === 'business' && (
+          <div>
+            <label className="text-white text-sm mb-2 block">Business Logo</label>
+            <div className="flex items-center gap-4">
+              {formData.logoPreview ? (
+                <div className="relative">
+                  <img
+                    src={formData.logoPreview}
+                    alt="Logo preview"
+                    className="w-20 h-20 rounded-lg object-cover border border-zinc-700"
+                  />
+                  <button
+                    type="button"
+                    onClick={removeLogo}
+                    className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-20 h-20 rounded-lg border-2 border-dashed border-zinc-700 flex flex-col items-center justify-center cursor-pointer hover:border-zinc-500 transition-colors"
+                >
+                  <Upload className="w-6 h-6 text-gray-500" />
+                  <span className="text-gray-500 text-xs mt-1">Upload</span>
+                </div>
+              )}
+              <div className="flex-1">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLogoUpload}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="bg-zinc-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-zinc-700 transition-colors"
+                >
+                  {formData.logoPreview ? 'Change Logo' : 'Choose File'}
+                </button>
+                <p className="text-gray-500 text-xs mt-2">PNG, JPG up to 5MB</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Postcode - Business Owner Only */}
+        {activeTab === 'business' && (
+          <div>
+            <label className="text-white text-sm mb-2 block">Business Postcode <span className="text-red-500">*</span></label>
+            <div className="relative">
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+              <input
+                type="text"
+                name="postcode"
+                value={formData.postcode}
+                onChange={handleChange}
+                placeholder="Enter your business postcode"
+                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-zinc-600 transition-colors"
+                required={activeTab === 'business'}
+              />
+            </div>
           </div>
         )}
 
