@@ -124,7 +124,7 @@ const Signup = () => {
       {/* Logo */}
       <div className="text-center mb-6">
         <h1 className="text-white text-4xl font-bold tracking-tight">Booka</h1>
-        <p className="text-gray-500 text-xs tracking-[0.3em] mt-1">BOOKING APP</p>
+        <p className="text-lime-400 text-xs tracking-[0.3em] mt-1">BOOKING APP</p>
       </div>
 
       {/* Header */}
