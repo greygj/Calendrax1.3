@@ -345,25 +345,6 @@ const Signup = () => {
           </div>
         </div>
 
-        {/* Registration Code - Business Owner Only */}
-        {activeTab === 'business' && (
-          <div>
-            <label className="text-white text-sm mb-2 block">Owner Registration Code <span className="text-red-500">*</span></label>
-            <div className="relative">
-              <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
-              <input
-                type="text"
-                name="registrationCode"
-                value={formData.registrationCode}
-                onChange={handleChange}
-                placeholder="Enter registration code"
-                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-zinc-600 transition-colors"
-                required={activeTab === 'business'}
-              />
-            </div>
-          </div>
-        )}
-
         {/* Submit Button */}
         <button
           type="submit"
