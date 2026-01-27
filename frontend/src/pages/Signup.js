@@ -77,12 +77,8 @@ const Signup = () => {
       return;
     }
 
-    // For business owner, validate registration code and business name
+    // For business owner, validate business name
     if (activeTab === 'business') {
-      if (!validRegistrationCodes.includes(formData.registrationCode)) {
-        setError('Invalid registration code');
-        return;
-      }
       if (!formData.businessName.trim()) {
         setError('Business name is required');
         return;
