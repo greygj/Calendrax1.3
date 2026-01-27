@@ -25,7 +25,7 @@ const CustomerDashboard = () => {
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-white text-2xl font-bold">Booka</h1>
-            <p className="text-gray-500 text-xs tracking-[0.2em]">BOOKING APP</p>
+            <p className="text-lime-400 text-xs tracking-[0.2em]">BOOKING APP</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right">
@@ -53,7 +53,7 @@ const CustomerDashboard = () => {
         {/* Business List */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-4">
-            <Building2 className="w-5 h-5 text-gray-400" />
+            <Building2 className="w-5 h-5 text-lime-400" />
             <h3 className="text-white text-lg font-semibold">Available Businesses</h3>
           </div>
           
@@ -62,7 +62,7 @@ const CustomerDashboard = () => {
               <button
                 key={business.id}
                 onClick={() => handleBusinessClick(business.id)}
-                className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-4 hover:border-zinc-700 hover:bg-zinc-800/50 transition-all text-left group"
+                className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-4 hover:border-lime-500/50 hover:bg-zinc-800/50 transition-all text-left group"
               >
                 <div className="flex items-center gap-4">
                   {/* Logo */}
@@ -82,18 +82,18 @@ const CustomerDashboard = () => {
                   
                   {/* Business Info */}
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-white font-semibold text-lg truncate">{business.businessName}</h4>
-                    <p className="text-gray-500 text-sm truncate">{business.description}</p>
+                    <h4 className="text-white font-semibold text-lg">{business.businessName}</h4>
+                    <p className="text-gray-400 text-sm line-clamp-2">{business.description}</p>
                     {business.postcode && (
                       <div className="flex items-center gap-1 mt-1">
-                        <MapPin className="w-3 h-3 text-gray-500" />
+                        <MapPin className="w-3 h-3 text-lime-400 flex-shrink-0" />
                         <span className="text-gray-500 text-xs">{business.postcode}</span>
                       </div>
                     )}
                   </div>
                   
                   {/* Arrow */}
-                  <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-white transition-colors flex-shrink-0" />
+                  <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-lime-400 transition-colors flex-shrink-0" />
                 </div>
               </button>
             ))}

@@ -18,7 +18,6 @@ export const mockUsers = [
     mobile: '+0987654321',
     role: 'business_owner',
     businessName: 'Wellness Spa',
-    registrationCode: 'BOOKA2024',
     createdAt: '2024-01-10'
   }
 ];
@@ -152,12 +151,13 @@ export const mockServices = [
 export const mockAppointments = [
   {
     id: '1',
-    userId: '1',
+    oderId: '1',
     businessId: 'b1',
     serviceId: 's1',
     date: '2024-07-20',
     time: '10:00',
-    status: 'confirmed'
+    status: 'confirmed',
+    customerName: 'John Doe'
   },
   {
     id: '2',
@@ -166,9 +166,14 @@ export const mockAppointments = [
     serviceId: 's2',
     date: '2024-07-25',
     time: '14:30',
-    status: 'pending'
+    status: 'pending',
+    customerName: 'John Doe'
   }
 ];
+
+// Available time slots set by business owners
+// Key format: "businessId_YYYY-MM-DD"
+export const mockAvailability = {};
 
 export const validRegistrationCodes = ['BOOKA2024', 'OWNER123', 'BUSINESS2024'];
 
@@ -182,4 +187,39 @@ export const getBusinessesSorted = () => {
   return [...mockBusinesses].sort((a, b) => 
     a.businessName.localeCompare(b.businessName)
   );
+};
+
+// Helper function to set availability for a business on a specific date
+export const setAvailability = (businessId, date, slots) => {
+  const key = `${businessId}_${date}`;
+  mockAvailability[key] = slots;
+};
+
+// Helper function to get availability for a business on a specific date
+export const getAvailability = (businessId, date) => {
+  const key = `${businessId}_${date}`;
+  return mockAvailability[key] || [];
+};
+
+// Helper function to add an appointment
+export const addAppointment = (appointment) => {
+  mockAppointments.push(appointment);
+  // Remove the booked slot from availability
+  const key = `${appointment.businessId}_${appointment.date}`;
+  if (mockAvailability[key]) {
+    mockAvailability[key] = mockAvailability[key].filter(slot => slot !== appointment.time);
+  }
+};
+
+// Generate time slots at 15-minute intervals
+export const generateTimeSlots = () => {
+  const slots = [];
+  for (let hour = 8; hour < 20; hour++) {
+    for (let minute = 0; minute < 60; minute += 15) {
+      const h = hour.toString().padStart(2, '0');
+      const m = minute.toString().padStart(2, '0');
+      slots.push(`${h}:${m}`);
+    }
+  }
+  return slots;
 };
