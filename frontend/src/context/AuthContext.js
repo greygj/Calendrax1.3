@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { mockUsers, mockBusinesses, addBusiness } from '../data/mock';
+import { getUsers, addUser, findUserByEmail, addBusiness, getBusinessByOwnerId } from '../data/mock';
 
 const AuthContext = createContext(null);
 
@@ -11,23 +11,29 @@ export const AuthProvider = ({ children }) => {
     // Check for stored user on mount
     const storedUser = localStorage.getItem('booka_user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      // Refresh business data if business owner
+      if (parsedUser.role === 'business_owner') {
+        const business = getBusinessByOwnerId(parsedUser.id);
+        if (business) {
+          parsedUser.business = business;
+        }
+      }
+      setUser(parsedUser);
     }
     setLoading(false);
   }, []);
 
   const login = async (email, password) => {
-    // Mock login - find user in mock data
-    const foundUser = mockUsers.find(
-      u => u.email === email && u.password === password
-    );
+    const users = getUsers();
+    const foundUser = users.find(u => u.email === email && u.password === password);
     
     if (foundUser) {
       const { password: _, ...userWithoutPassword } = foundUser;
       
       // If business owner, attach their business info
       if (foundUser.role === 'business_owner') {
-        const business = mockBusinesses.find(b => b.ownerId === foundUser.id);
+        const business = getBusinessByOwnerId(foundUser.id);
         if (business) {
           userWithoutPassword.business = business;
         }
@@ -43,7 +49,7 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (userData) => {
     // Check if email already exists
-    const exists = mockUsers.find(u => u.email === userData.email);
+    const exists = findUserByEmail(userData.email);
     if (exists) {
       return { success: false, error: 'Email already registered' };
     }
@@ -59,8 +65,8 @@ export const AuthProvider = ({ children }) => {
       createdAt: new Date().toISOString()
     };
     
-    // Add to mock users (in memory only)
-    mockUsers.push(newUser);
+    // Add to users in localStorage
+    addUser(newUser);
     
     const { password: _, ...userWithoutPassword } = newUser;
     
@@ -72,9 +78,8 @@ export const AuthProvider = ({ children }) => {
         businessName: userData.businessName,
         logo: userData.logo || null,
         postcode: userData.postcode,
-        address: '', // Can be enhanced to get from postcode lookup
+        address: '',
         description: userData.businessDescription || `Services provided by ${userData.businessName}`,
-        services: ['s1', 's2'], // Default services for new businesses
         createdAt: new Date().toISOString()
       };
       
@@ -99,8 +104,19 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('booka_user', JSON.stringify(updatedUser));
   };
 
+  const refreshUser = () => {
+    if (user && user.role === 'business_owner') {
+      const business = getBusinessByOwnerId(user.id);
+      if (business) {
+        const updatedUser = { ...user, business };
+        setUser(updatedUser);
+        localStorage.setItem('booka_user', JSON.stringify(updatedUser));
+      }
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, loading, updateUser }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, loading, updateUser, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
