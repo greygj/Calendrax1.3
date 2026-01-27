@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import BusinessPage from "./pages/BusinessPage";
+import AdminDashboard from "./pages/AdminDashboard";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -26,7 +27,30 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-// Public Route Component (redirect to dashboard if logged in)
+// Admin Route Component - requires platform_admin role
+const AdminRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
+  
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
+  
+  if (user.role !== 'platform_admin') {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  return children;
+};
+
+// Public Route Component (redirect to appropriate dashboard if logged in)
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
   
@@ -39,6 +63,10 @@ const PublicRoute = ({ children }) => {
   }
   
   if (user) {
+    // Redirect admins to admin dashboard
+    if (user.role === 'platform_admin') {
+      return <Navigate to="/admin" replace />;
+    }
     return <Navigate to="/dashboard" replace />;
   }
   
@@ -78,6 +106,14 @@ function AppRoutes() {
           <ProtectedRoute>
             <BusinessPage />
           </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/admin" 
+        element={
+          <AdminRoute>
+            <AdminDashboard />
+          </AdminRoute>
         } 
       />
       <Route path="*" element={<Navigate to="/" replace />} />
