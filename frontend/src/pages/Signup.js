@@ -179,7 +179,7 @@ const Signup = () => {
                 value={formData.businessName}
                 onChange={handleChange}
                 placeholder="Enter your business name"
-                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-zinc-600 transition-colors"
+                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-lime-500 transition-colors"
                 required={activeTab === 'business'}
               />
             </div>
@@ -264,7 +264,7 @@ const Signup = () => {
                 value={formData.postcode}
                 onChange={handleChange}
                 placeholder="Enter your business postcode"
-                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-zinc-600 transition-colors"
+                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-lime-500 transition-colors"
                 required={activeTab === 'business'}
               />
             </div>
