@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Clock, MapPin, Calendar, Check, Building2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { mockBusinesses, mockServices, getAvailability, addAppointment } from '../data/mock';
+import { ArrowLeft, Clock, MapPin, Calendar, Check, Building2, ChevronLeft, ChevronRight, Info } from 'lucide-react';
+import { getBusinessById, getActiveServicesByBusinessId, getAvailability, addAppointment, addNotification, getBusinessByOwnerId } from '../data/mock';
 import { useAuth } from '../context/AuthContext';
 
 const BusinessPage = () => {
@@ -14,14 +14,10 @@ const BusinessPage = () => {
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  const business = useMemo(() => 
-    mockBusinesses.find(b => b.id === businessId),
-    [businessId]
-  );
-
+  const business = useMemo(() => getBusinessById(businessId), [businessId]);
   const businessServices = useMemo(() => {
     if (!business) return [];
-    return mockServices.filter(s => business.services.includes(s.id));
+    return getActiveServicesByBusinessId(business.id);
   }, [business]);
 
   // Calendar functions
@@ -102,14 +98,28 @@ const BusinessPage = () => {
         id: `apt_${Date.now()}`,
         userId: user?.id,
         businessId: business.id,
+        businessName: business.businessName,
         serviceId: selectedService.id,
+        serviceName: selectedService.name,
         date: selectedDate.date,
         time: selectedTime,
-        status: 'confirmed',
-        customerName: user?.fullName
+        status: 'pending', // Changed to pending - requires approval
+        customerName: user?.fullName,
+        customerEmail: user?.email,
+        createdAt: new Date().toISOString()
       };
       
       addAppointment(newAppointment);
+      
+      // Send notification to business owner
+      addNotification({
+        userId: business.ownerId,
+        type: 'new_booking',
+        title: 'New Booking Request!',
+        message: `${user?.fullName} has requested a booking for ${selectedService.name} on ${selectedDate.date} at ${selectedTime}.`,
+        appointmentId: newAppointment.id
+      });
+      
       setBookingSuccess(true);
       
       setTimeout(() => {
@@ -117,7 +127,7 @@ const BusinessPage = () => {
         setSelectedService(null);
         setSelectedDate(null);
         setSelectedTime('');
-      }, 3000);
+      }, 4000);
     }
   };
 
@@ -177,13 +187,18 @@ const BusinessPage = () => {
       <main className="max-w-4xl mx-auto px-4 py-8">
         {/* Success Message */}
         {bookingSuccess && (
-          <div className="bg-lime-500/10 border border-lime-500/50 text-lime-400 px-4 py-4 rounded-xl mb-6 flex items-center gap-3">
-            <div className="w-8 h-8 bg-lime-500 rounded-full flex items-center justify-center">
-              <Check className="w-5 h-5 text-black" />
-            </div>
-            <div>
-              <p className="font-medium">Booking Confirmed!</p>
-              <p className="text-sm text-lime-400/80">Your appointment has been scheduled successfully.</p>
+          <div className="bg-lime-500/10 border border-lime-500/50 text-lime-400 px-4 py-4 rounded-xl mb-6">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 bg-lime-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <Check className="w-5 h-5 text-black" />
+              </div>
+              <div>
+                <p className="font-medium">Booking Request Sent!</p>
+                <p className="text-sm text-lime-400/80 mt-1">
+                  Your booking request has been sent to {business.businessName}. 
+                  You will receive a notification once they confirm your appointment.
+                </p>
+              </div>
             </div>
           </div>
         )}
@@ -194,28 +209,35 @@ const BusinessPage = () => {
             {/* Services */}
             <div className="mb-8">
               <h2 className="text-white text-lg font-semibold mb-4">Select a Service</h2>
-              <div className="space-y-3">
-                {businessServices.map(service => (
-                  <button
-                    key={service.id}
-                    onClick={() => setSelectedService(service)}
-                    className={`w-full text-left p-4 rounded-xl border transition-all ${
-                      selectedService?.id === service.id
-                        ? 'bg-lime-500/10 border-lime-500'
-                        : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
-                    }`}
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="text-white font-medium">{service.name}</h4>
-                      <span className="text-lime-400 font-semibold">£{service.price}</span>
-                    </div>
-                    <p className="text-gray-500 text-sm mb-2">{service.description}</p>
-                    <span className="text-gray-400 text-sm flex items-center gap-1">
-                      <Clock className="w-4 h-4" /> {service.duration} min
-                    </span>
-                  </button>
-                ))}
-              </div>
+              {businessServices.length > 0 ? (
+                <div className="space-y-3">
+                  {businessServices.map(service => (
+                    <button
+                      key={service.id}
+                      onClick={() => setSelectedService(service)}
+                      className={`w-full text-left p-4 rounded-xl border transition-all ${
+                        selectedService?.id === service.id
+                          ? 'bg-lime-500/10 border-lime-500'
+                          : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
+                      }`}
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="text-white font-medium">{service.name}</h4>
+                        <span className="text-lime-400 font-semibold">£{service.price}</span>
+                      </div>
+                      <p className="text-gray-500 text-sm mb-2">{service.description}</p>
+                      <span className="text-gray-400 text-sm flex items-center gap-1">
+                        <Clock className="w-4 h-4" /> {service.duration} min
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                  <Info className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                  <p className="text-gray-500">No services available at the moment</p>
+                </div>
+              )}
             </div>
 
             {/* Calendar - Show after selecting service */}
@@ -327,7 +349,7 @@ const BusinessPage = () => {
                 onClick={handleBooking}
                 className="w-full bg-lime-500 text-black font-semibold py-4 rounded-lg hover:bg-lime-400 transition-colors"
               >
-                Book {selectedService.name} - £{selectedService.price}
+                Request Booking - {selectedService.name} (£{selectedService.price})
               </button>
             )}
           </div>
