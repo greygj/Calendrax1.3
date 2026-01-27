@@ -94,6 +94,7 @@ const Signup = () => {
       role: activeTab === 'customer' ? 'customer' : 'business_owner',
       ...(activeTab === 'business' && {
         businessName: formData.businessName,
+        businessDescription: formData.businessDescription,
         postcode: formData.postcode,
         logo: formData.logoPreview // Store base64 for mock, in real app would upload to server
       })
