@@ -246,7 +246,7 @@ const Signup = () => {
               onChange={handleChange}
               placeholder="Describe what your business offers..."
               rows={3}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:border-zinc-600 transition-colors resize-none"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:border-lime-500 transition-colors resize-none"
               required={activeTab === 'business'}
             />
           </div>
