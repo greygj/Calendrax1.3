@@ -92,7 +92,6 @@ const Signup = () => {
       password: formData.password,
       role: activeTab === 'customer' ? 'customer' : 'business_owner',
       ...(activeTab === 'business' && {
-        registrationCode: formData.registrationCode,
         businessName: formData.businessName,
         postcode: formData.postcode,
         logo: formData.logoPreview // Store base64 for mock, in real app would upload to server
