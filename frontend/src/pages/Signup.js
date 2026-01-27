@@ -236,6 +236,22 @@ const Signup = () => {
           </div>
         )}
 
+        {/* Business Description - Business Owner Only */}
+        {activeTab === 'business' && (
+          <div>
+            <label className="text-white text-sm mb-2 block">What does your Business do? <span className="text-red-500">*</span></label>
+            <textarea
+              name="businessDescription"
+              value={formData.businessDescription}
+              onChange={handleChange}
+              placeholder="Describe what your business offers..."
+              rows={3}
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:border-zinc-600 transition-colors resize-none"
+              required={activeTab === 'business'}
+            />
+          </div>
+        )}
+
         {/* Postcode - Business Owner Only */}
         {activeTab === 'business' && (
           <div>
