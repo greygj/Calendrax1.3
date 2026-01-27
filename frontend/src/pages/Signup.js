@@ -333,7 +333,7 @@ const Signup = () => {
               value={formData.password}
               onChange={handleChange}
               placeholder="Create a password"
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-zinc-600 transition-colors"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-lime-500 transition-colors"
               required
             />
             <button
