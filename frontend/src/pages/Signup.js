@@ -18,7 +18,6 @@ const Signup = () => {
     mobile: '',
     password: '',
     confirmPassword: '',
-    registrationCode: '',
     businessName: '',
     postcode: '',
     logo: null,
