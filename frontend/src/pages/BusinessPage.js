@@ -1,15 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Clock, MapPin, Calendar, Check, Building2 } from 'lucide-react';
-import { mockBusinesses, mockServices } from '../data/mock';
+import { ArrowLeft, Clock, MapPin, Calendar, Check, Building2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { mockBusinesses, mockServices, getAvailability, addAppointment } from '../data/mock';
+import { useAuth } from '../context/AuthContext';
 
 const BusinessPage = () => {
   const { businessId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [selectedService, setSelectedService] = useState(null);
-  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState('');
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const business = useMemo(() => 
     mockBusinesses.find(b => b.id === businessId),
@@ -21,11 +24,72 @@ const BusinessPage = () => {
     return mockServices.filter(s => business.services.includes(s.id));
   }, [business]);
 
-  const availableTimes = [
-    '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
-    '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
-    '15:00', '15:30', '16:00', '16:30', '17:00'
-  ];
+  // Calendar functions
+  const getDaysInMonth = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDay = firstDay.getDay();
+    return { daysInMonth, startingDay };
+  };
+
+  const generateCalendarDays = () => {
+    const { daysInMonth, startingDay } = getDaysInMonth(currentMonth);
+    const days = [];
+    const today = new Date();
+    const maxDate = new Date();
+    maxDate.setMonth(maxDate.getMonth() + 6);
+
+    for (let i = 0; i < startingDay; i++) {
+      days.push(null);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
+      const dateStr = date.toISOString().split('T')[0];
+      const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const isTooFar = date > maxDate;
+      const availableSlots = getAvailability(business?.id, dateStr);
+      const hasSlots = availableSlots.length > 0;
+      
+      days.push({
+        day,
+        date: dateStr,
+        isPast,
+        isTooFar,
+        hasSlots,
+        availableSlots,
+        isToday: date.toDateString() === today.toDateString()
+      });
+    }
+
+    return days;
+  };
+
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  const navigateMonth = (direction) => {
+    const newMonth = new Date(currentMonth);
+    newMonth.setMonth(newMonth.getMonth() + direction);
+    
+    const today = new Date();
+    const maxDate = new Date();
+    maxDate.setMonth(maxDate.getMonth() + 6);
+    
+    if (direction === -1 && newMonth < new Date(today.getFullYear(), today.getMonth(), 1)) return;
+    if (direction === 1 && newMonth > maxDate) return;
+    
+    setCurrentMonth(newMonth);
+  };
+
+  const handleDateClick = (dayInfo) => {
+    if (!dayInfo || dayInfo.isPast || dayInfo.isTooFar || !dayInfo.hasSlots) return;
+    setSelectedDate(dayInfo);
+    setSelectedTime('');
+  };
 
   const getGoogleMapsUrl = (postcode) => {
     const encodedPostcode = encodeURIComponent(postcode);
@@ -34,12 +98,24 @@ const BusinessPage = () => {
 
   const handleBooking = () => {
     if (selectedService && selectedDate && selectedTime) {
-      // In real app, would call API to create booking
+      const newAppointment = {
+        id: `apt_${Date.now()}`,
+        userId: user?.id,
+        businessId: business.id,
+        serviceId: selectedService.id,
+        date: selectedDate.date,
+        time: selectedTime,
+        status: 'confirmed',
+        customerName: user?.fullName
+      };
+      
+      addAppointment(newAppointment);
       setBookingSuccess(true);
+      
       setTimeout(() => {
         setBookingSuccess(false);
         setSelectedService(null);
-        setSelectedDate('');
+        setSelectedDate(null);
         setSelectedTime('');
       }, 3000);
     }
@@ -53,7 +129,7 @@ const BusinessPage = () => {
           <p className="text-gray-500 mb-4">Business not found</p>
           <button
             onClick={() => navigate('/dashboard')}
-            className="bg-white text-black px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+            className="bg-lime-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-lime-400 transition-colors"
           >
             Back to Dashboard
           </button>
@@ -101,13 +177,13 @@ const BusinessPage = () => {
       <main className="max-w-4xl mx-auto px-4 py-8">
         {/* Success Message */}
         {bookingSuccess && (
-          <div className="bg-green-500/10 border border-green-500/50 text-green-400 px-4 py-4 rounded-xl mb-6 flex items-center gap-3">
-            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-              <Check className="w-5 h-5 text-white" />
+          <div className="bg-lime-500/10 border border-lime-500/50 text-lime-400 px-4 py-4 rounded-xl mb-6 flex items-center gap-3">
+            <div className="w-8 h-8 bg-lime-500 rounded-full flex items-center justify-center">
+              <Check className="w-5 h-5 text-black" />
             </div>
             <div>
               <p className="font-medium">Booking Confirmed!</p>
-              <p className="text-sm text-green-400/80">Your appointment has been scheduled successfully.</p>
+              <p className="text-sm text-lime-400/80">Your appointment has been scheduled successfully.</p>
             </div>
           </div>
         )}
@@ -125,13 +201,13 @@ const BusinessPage = () => {
                     onClick={() => setSelectedService(service)}
                     className={`w-full text-left p-4 rounded-xl border transition-all ${
                       selectedService?.id === service.id
-                        ? 'bg-white/10 border-white'
+                        ? 'bg-lime-500/10 border-lime-500'
                         : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
                     }`}
                   >
                     <div className="flex justify-between items-start mb-2">
                       <h4 className="text-white font-medium">{service.name}</h4>
-                      <span className="text-white font-semibold">£{service.price}</span>
+                      <span className="text-lime-400 font-semibold">£{service.price}</span>
                     </div>
                     <p className="text-gray-500 text-sm mb-2">{service.description}</p>
                     <span className="text-gray-400 text-sm flex items-center gap-1">
@@ -142,57 +218,117 @@ const BusinessPage = () => {
               </div>
             </div>
 
-            {/* Date & Time Selection */}
+            {/* Calendar - Show after selecting service */}
             {selectedService && (
-              <div className="space-y-6">
-                {/* Date */}
-                <div>
-                  <h2 className="text-white text-lg font-semibold mb-4 flex items-center gap-2">
-                    <Calendar className="w-5 h-5" /> Select Date
-                  </h2>
-                  <input
-                    type="date"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    min={new Date().toISOString().split('T')[0]}
-                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-zinc-600 transition-colors"
-                  />
-                </div>
-
-                {/* Time */}
-                {selectedDate && (
-                  <div>
-                    <h2 className="text-white text-lg font-semibold mb-4 flex items-center gap-2">
-                      <Clock className="w-5 h-5" /> Select Time
-                    </h2>
-                    <div className="grid grid-cols-4 gap-2">
-                      {availableTimes.map(time => (
-                        <button
-                          key={time}
-                          onClick={() => setSelectedTime(time)}
-                          className={`py-2 px-3 rounded-lg text-sm font-medium transition-all ${
-                            selectedTime === time
-                              ? 'bg-white text-black'
-                              : 'bg-zinc-900 border border-zinc-800 text-white hover:border-zinc-700'
-                          }`}
-                        >
-                          {time}
-                        </button>
-                      ))}
-                    </div>
+              <div className="mb-8">
+                <h2 className="text-white text-lg font-semibold mb-4 flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-lime-400" /> Select Date
+                </h2>
+                
+                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+                  {/* Calendar Header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <button
+                      onClick={() => navigateMonth(-1)}
+                      className="p-2 rounded-lg bg-zinc-800 text-white hover:bg-zinc-700 transition-colors"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <h3 className="text-white font-semibold">
+                      {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+                    </h3>
+                    <button
+                      onClick={() => navigateMonth(1)}
+                      className="p-2 rounded-lg bg-zinc-800 text-white hover:bg-zinc-700 transition-colors"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
                   </div>
-                )}
 
-                {/* Book Button */}
-                {selectedTime && (
-                  <button
-                    onClick={handleBooking}
-                    className="w-full bg-white text-black font-semibold py-4 rounded-lg hover:bg-gray-100 transition-colors"
-                  >
-                    Book {selectedService.name} - £{selectedService.price}
-                  </button>
-                )}
+                  {/* Day Names */}
+                  <div className="grid grid-cols-7 gap-1 mb-2">
+                    {dayNames.map(day => (
+                      <div key={day} className="text-center text-gray-500 text-xs font-medium py-1">
+                        {day}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Calendar Days */}
+                  <div className="grid grid-cols-7 gap-1">
+                    {generateCalendarDays().map((dayInfo, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleDateClick(dayInfo)}
+                        disabled={!dayInfo || dayInfo.isPast || dayInfo.isTooFar || !dayInfo.hasSlots}
+                        className={`aspect-square rounded-lg flex flex-col items-center justify-center text-xs transition-all ${
+                          !dayInfo
+                            ? 'bg-transparent cursor-default'
+                            : dayInfo.isPast || dayInfo.isTooFar
+                            ? 'bg-zinc-800/50 text-gray-600 cursor-not-allowed'
+                            : !dayInfo.hasSlots
+                            ? 'bg-zinc-800/50 text-gray-600 cursor-not-allowed'
+                            : selectedDate?.date === dayInfo.date
+                            ? 'bg-lime-500 text-black font-bold'
+                            : dayInfo.isToday
+                            ? 'bg-lime-500/30 text-lime-400 font-bold hover:bg-lime-500/40'
+                            : 'bg-zinc-800 text-white hover:bg-zinc-700'
+                        }`}
+                      >
+                        {dayInfo?.day}
+                        {dayInfo?.hasSlots && selectedDate?.date !== dayInfo.date && (
+                          <span className="w-1 h-1 rounded-full bg-lime-400 mt-0.5"></span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                  
+                  <p className="text-gray-500 text-xs mt-3 text-center">
+                    Green dots indicate available slots
+                  </p>
+                </div>
               </div>
+            )}
+
+            {/* Time Selection */}
+            {selectedDate && selectedDate.availableSlots.length > 0 && (
+              <div className="mb-8">
+                <h2 className="text-white text-lg font-semibold mb-4 flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-lime-400" /> Select Time
+                </h2>
+                <div className="grid grid-cols-4 gap-2">
+                  {selectedDate.availableSlots.map(time => (
+                    <button
+                      key={time}
+                      onClick={() => setSelectedTime(time)}
+                      className={`py-2 px-3 rounded-lg text-sm font-medium transition-all ${
+                        selectedTime === time
+                          ? 'bg-lime-500 text-black'
+                          : 'bg-zinc-900 border border-zinc-800 text-white hover:border-zinc-700'
+                      }`}
+                    >
+                      {time}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* No Slots Message */}
+            {selectedService && !selectedDate && (
+              <p className="text-gray-500 text-sm text-center py-4">
+                Select a date with available slots (marked with green dots)
+              </p>
+            )}
+
+            {/* Book Button */}
+            {selectedTime && (
+              <button
+                onClick={handleBooking}
+                className="w-full bg-lime-500 text-black font-semibold py-4 rounded-lg hover:bg-lime-400 transition-colors"
+              >
+                Book {selectedService.name} - £{selectedService.price}
+              </button>
             )}
           </div>
 
@@ -200,7 +336,7 @@ const BusinessPage = () => {
           <div>
             <div className="mb-4">
               <h2 className="text-white text-lg font-semibold mb-2 flex items-center gap-2">
-                <MapPin className="w-5 h-5" /> Location
+                <MapPin className="w-5 h-5 text-lime-400" /> Location
               </h2>
               {business.address && (
                 <p className="text-gray-500 text-sm mb-2">{business.address}</p>
@@ -241,7 +377,7 @@ const BusinessPage = () => {
                 </div>
                 <div>
                   <h3 className="text-white font-semibold">{business.businessName}</h3>
-                  <p className="text-gray-500 text-sm">{businessServices.length} services available</p>
+                  <p className="text-lime-400 text-sm">{businessServices.length} services available</p>
                 </div>
               </div>
               <p className="text-gray-400 text-sm">{business.description}</p>
