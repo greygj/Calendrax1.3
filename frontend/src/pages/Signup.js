@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, User, Mail, Phone, Lock, Eye, EyeOff, Briefcase, KeyRound, Upload, MapPin, X } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, Lock, Eye, EyeOff, Briefcase, Upload, MapPin, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { validRegistrationCodes } from '../data/mock';
 
 const Signup = () => {
   const navigate = useNavigate();
