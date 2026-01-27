@@ -139,7 +139,7 @@ const Signup = () => {
           onClick={() => setActiveTab('customer')}
           className={`flex-1 flex items-center justify-center gap-2 py-3.5 font-medium transition-all ${
             activeTab === 'customer'
-              ? 'bg-white text-black'
+              ? 'bg-lime-500 text-black'
               : 'bg-transparent text-gray-400 hover:text-white'
           }`}
         >
@@ -150,7 +150,7 @@ const Signup = () => {
           onClick={() => setActiveTab('business')}
           className={`flex-1 flex items-center justify-center gap-2 py-3.5 font-medium transition-all ${
             activeTab === 'business'
-              ? 'bg-white text-black'
+              ? 'bg-lime-500 text-black'
               : 'bg-transparent text-gray-400 hover:text-white'
           }`}
         >
