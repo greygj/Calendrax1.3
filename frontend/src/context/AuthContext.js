@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }) => {
         logo: userData.logo || null,
         postcode: userData.postcode,
         address: '', // Can be enhanced to get from postcode lookup
-        description: `Services provided by ${userData.businessName}`,
+        description: userData.businessDescription || `Services provided by ${userData.businessName}`,
         services: ['s1', 's2'], // Default services for new businesses
         createdAt: new Date().toISOString()
       };
