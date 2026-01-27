@@ -34,21 +34,22 @@ const AdminDashboard = () => {
   const loadData = async () => {
     try {
       setLoading(true);
+      setError('');
       const [statsRes, usersRes, businessesRes, subsRes, appointmentsRes] = await Promise.all([
-        adminAPI.getStats(),
-        adminAPI.getUsers(),
-        adminAPI.getBusinesses(),
-        adminAPI.getSubscriptions(),
-        adminAPI.getAppointments()
+        adminAPI.getStats().catch(() => ({ data: {} })),
+        adminAPI.getUsers().catch(() => ({ data: [] })),
+        adminAPI.getBusinesses().catch(() => ({ data: [] })),
+        adminAPI.getSubscriptions().catch(() => ({ data: [] })),
+        adminAPI.getAppointments().catch(() => ({ data: [] }))
       ]);
-      setStats(statsRes.data);
-      setUsers(usersRes.data);
-      setBusinesses(businessesRes.data);
-      setSubscriptions(subsRes.data);
-      setAppointments(appointmentsRes.data);
+      setStats(statsRes.data || {});
+      setUsers(usersRes.data || []);
+      setBusinesses(businessesRes.data || []);
+      setSubscriptions(subsRes.data || []);
+      setAppointments(appointmentsRes.data || []);
     } catch (err) {
-      setError('Failed to load data');
-      console.error(err);
+      console.error('Load data error:', err);
+      setError('Failed to load some data');
     } finally {
       setLoading(false);
     }
