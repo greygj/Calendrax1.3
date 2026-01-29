@@ -638,6 +638,11 @@ async def mark_all_notifications_read(user: dict = Depends(get_current_user)):
     )
     return {"success": True}
 
+@api_router.get("/notifications/status")
+async def get_external_notification_status():
+    """Check if email and SMS notifications are configured"""
+    return get_notification_status()
+
 # ==================== ADMIN ROUTES ====================
 
 @api_router.get("/admin/stats")
