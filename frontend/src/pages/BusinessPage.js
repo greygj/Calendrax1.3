@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Clock, MapPin, Calendar, Check, Building2, ChevronLeft, ChevronRight, Info } from 'lucide-react';
+import { ArrowLeft, Clock, MapPin, Calendar, Check, Building2, ChevronLeft, ChevronRight, Info, User } from 'lucide-react';
 import { businessAPI, availabilityAPI, appointmentAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -10,8 +10,10 @@ const BusinessPage = () => {
   const { user } = useAuth();
   const [business, setBusiness] = useState(null);
   const [businessServices, setBusinessServices] = useState([]);
+  const [staffMembers, setStaffMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedService, setSelectedService] = useState(null);
+  const [selectedStaff, setSelectedStaff] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState('');
   const [bookingSuccess, setBookingSuccess] = useState(false);
@@ -26,12 +28,14 @@ const BusinessPage = () => {
   const loadBusinessData = async () => {
     try {
       setLoading(true);
-      const [businessRes, servicesRes] = await Promise.all([
+      const [businessRes, servicesRes, staffRes] = await Promise.all([
         businessAPI.getById(businessId),
-        businessAPI.getServices(businessId)
+        businessAPI.getServices(businessId),
+        businessAPI.getStaff(businessId).catch(() => ({ data: [] }))
       ]);
       setBusiness(businessRes.data);
       setBusinessServices(servicesRes.data || []);
+      setStaffMembers(staffRes.data || []);
     } catch (error) {
       console.error('Failed to load business:', error);
       setBusiness(null);
@@ -40,14 +44,27 @@ const BusinessPage = () => {
     }
   };
 
-  const getAvailabilityForDate = async (dateStr) => {
-    if (availabilityCache[dateStr] !== undefined) {
-      return availabilityCache[dateStr];
+  // Get staff members who can perform the selected service
+  const getAvailableStaffForService = () => {
+    if (!selectedService) return [];
+    return staffMembers.filter(staff => 
+      staff.serviceIds && staff.serviceIds.includes(selectedService.id)
+    );
+  };
+
+  const availableStaff = getAvailableStaffForService();
+
+  const getAvailabilityKey = (dateStr, staffId) => `${dateStr}_${staffId || 'default'}`;
+
+  const getAvailabilityForDate = async (dateStr, staffId = null) => {
+    const key = getAvailabilityKey(dateStr, staffId);
+    if (availabilityCache[key] !== undefined) {
+      return availabilityCache[key];
     }
     try {
-      const res = await availabilityAPI.get(businessId, dateStr);
+      const res = await availabilityAPI.get(businessId, dateStr, staffId);
       const slots = res.data?.slots || [];
-      setAvailabilityCache(prev => ({ ...prev, [dateStr]: slots }));
+      setAvailabilityCache(prev => ({ ...prev, [key]: slots }));
       return slots;
     } catch {
       return [];
@@ -81,7 +98,8 @@ const BusinessPage = () => {
       const dateStr = date.toISOString().split('T')[0];
       const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
       const isTooFar = date > maxDate;
-      const cachedSlots = availabilityCache[dateStr];
+      const key = getAvailabilityKey(dateStr, selectedStaff?.id);
+      const cachedSlots = availabilityCache[key];
       
       days.push({
         day,
@@ -97,24 +115,26 @@ const BusinessPage = () => {
     return days;
   };
 
-  // Load availability for visible month when service is selected
+  // Load availability for visible month when staff is selected
   useEffect(() => {
-    if (selectedService && business) {
+    if (selectedService && (availableStaff.length <= 1 || selectedStaff)) {
       loadMonthAvailability();
     }
-  }, [selectedService, currentMonth, business]);
+  }, [selectedService, currentMonth, selectedStaff]);
 
   const loadMonthAvailability = async () => {
     const { daysInMonth } = getDaysInMonth(currentMonth);
     const today = new Date();
+    const staffId = selectedStaff?.id || (availableStaff.length === 1 ? availableStaff[0]?.id : null);
     
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
       const dateStr = date.toISOString().split('T')[0];
       const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const key = getAvailabilityKey(dateStr, staffId);
       
-      if (!isPast && availabilityCache[dateStr] === undefined) {
-        await getAvailabilityForDate(dateStr);
+      if (!isPast && availabilityCache[key] === undefined) {
+        await getAvailabilityForDate(dateStr, staffId);
       }
     }
   };
@@ -136,13 +156,36 @@ const BusinessPage = () => {
     setCurrentMonth(newMonth);
   };
 
+  const handleServiceSelect = (service) => {
+    setSelectedService(service);
+    setSelectedStaff(null);
+    setSelectedDate(null);
+    setSelectedTime('');
+    setAvailabilityCache({});
+    
+    // Auto-select staff if only one available
+    const staffForService = staffMembers.filter(s => s.serviceIds?.includes(service.id));
+    if (staffForService.length === 1) {
+      setSelectedStaff(staffForService[0]);
+    }
+  };
+
+  const handleStaffSelect = (staff) => {
+    setSelectedStaff(staff);
+    setSelectedDate(null);
+    setSelectedTime('');
+    setAvailabilityCache({});
+  };
+
   const handleDateClick = async (dayInfo) => {
     if (!dayInfo || dayInfo.isPast || dayInfo.isTooFar) return;
+    
+    const staffId = selectedStaff?.id || (availableStaff.length === 1 ? availableStaff[0]?.id : null);
     
     // Fetch availability if not cached
     let slots = dayInfo.availableSlots;
     if (dayInfo.hasSlots === null) {
-      slots = await getAvailabilityForDate(dayInfo.date);
+      slots = await getAvailabilityForDate(dayInfo.date, staffId);
     }
     
     if (slots.length === 0) return;
@@ -161,10 +204,13 @@ const BusinessPage = () => {
     
     setBookingError('');
     
+    const staffId = selectedStaff?.id || (availableStaff.length === 1 ? availableStaff[0]?.id : null);
+    
     try {
       await appointmentAPI.create({
         businessId: business.id,
         serviceId: selectedService.id,
+        staffId: staffId,
         date: selectedDate.date,
         time: selectedTime
       });
@@ -172,15 +218,17 @@ const BusinessPage = () => {
       setBookingSuccess(true);
       
       // Clear cache for this date so it refreshes
+      const key = getAvailabilityKey(selectedDate.date, staffId);
       setAvailabilityCache(prev => {
         const newCache = { ...prev };
-        delete newCache[selectedDate.date];
+        delete newCache[key];
         return newCache;
       });
       
       setTimeout(() => {
         setBookingSuccess(false);
         setSelectedService(null);
+        setSelectedStaff(null);
         setSelectedDate(null);
         setSelectedTime('');
       }, 4000);
@@ -216,6 +264,8 @@ const BusinessPage = () => {
   }
 
   const calendarDays = generateCalendarDays();
+  const showStaffSelection = selectedService && availableStaff.length > 1;
+  const canShowCalendar = selectedService && (availableStaff.length <= 1 || selectedStaff);
 
   return (
     <div className="min-h-screen bg-black">
@@ -290,7 +340,7 @@ const BusinessPage = () => {
                   {businessServices.map(service => (
                     <button
                       key={service.id}
-                      onClick={() => setSelectedService(service)}
+                      onClick={() => handleServiceSelect(service)}
                       className={`w-full text-left p-4 rounded-xl border transition-all ${
                         selectedService?.id === service.id
                           ? 'bg-lime-500/10 border-lime-500'
@@ -316,8 +366,42 @@ const BusinessPage = () => {
               )}
             </div>
 
-            {/* Calendar - Show after selecting service */}
-            {selectedService && (
+            {/* Staff Selection - Show if multiple staff can perform the service */}
+            {showStaffSelection && (
+              <div className="mb-8">
+                <h2 className="text-white text-lg font-semibold mb-4 flex items-center gap-2">
+                  <User className="w-5 h-5 text-lime-400" /> Select Staff Member
+                </h2>
+                <div className="space-y-3">
+                  {availableStaff.map(staff => (
+                    <button
+                      key={staff.id}
+                      onClick={() => handleStaffSelect(staff)}
+                      className={`w-full text-left p-4 rounded-xl border transition-all ${
+                        selectedStaff?.id === staff.id
+                          ? 'bg-lime-500/10 border-lime-500'
+                          : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-lime-500/20 flex items-center justify-center">
+                          <User className="w-5 h-5 text-lime-400" />
+                        </div>
+                        <div>
+                          <h4 className="text-white font-medium">{staff.name}</h4>
+                          {staff.isOwner && (
+                            <span className="text-lime-400 text-xs">Business Owner</span>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Calendar - Show after selecting service (and staff if required) */}
+            {canShowCalendar && (
               <div className="mb-8">
                 <h2 className="text-white text-lg font-semibold mb-4 flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-lime-400" /> Select Date
@@ -414,8 +498,14 @@ const BusinessPage = () => {
               </div>
             )}
 
-            {/* No Slots Message */}
-            {selectedService && !selectedDate && (
+            {/* Guidance Messages */}
+            {selectedService && showStaffSelection && !selectedStaff && (
+              <p className="text-gray-500 text-sm text-center py-4">
+                Please select a staff member to see available times
+              </p>
+            )}
+
+            {canShowCalendar && !selectedDate && (
               <p className="text-gray-500 text-sm text-center py-4">
                 Select a date with available slots (marked with green dots)
               </p>
@@ -428,6 +518,7 @@ const BusinessPage = () => {
                 className="w-full bg-lime-500 text-black font-semibold py-4 rounded-lg hover:bg-lime-400 transition-colors"
               >
                 Request Booking - {selectedService.name} (£{selectedService.price})
+                {selectedStaff && ` with ${selectedStaff.name}`}
               </button>
             )}
           </div>
@@ -481,6 +572,20 @@ const BusinessPage = () => {
                 </div>
               </div>
               <p className="text-gray-400 text-sm">{business.description}</p>
+              
+              {/* Staff Members */}
+              {staffMembers.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-zinc-800">
+                  <p className="text-gray-500 text-sm mb-2">Team ({staffMembers.length})</p>
+                  <div className="flex flex-wrap gap-2">
+                    {staffMembers.map(staff => (
+                      <span key={staff.id} className="px-2 py-1 bg-zinc-800 text-gray-300 text-xs rounded">
+                        {staff.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
