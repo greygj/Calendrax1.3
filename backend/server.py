@@ -43,6 +43,16 @@ JWT_SECRET = os.environ.get('JWT_SECRET', 'booka-secret-key-change-in-production
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 24
 
+# Stripe Configuration
+STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY', 'sk_test_emergent')
+
+# Offer codes for testing (bypass payment)
+VALID_OFFER_CODES = {
+    "TESTFREE": {"type": "bypass", "description": "Testing - bypass payment"},
+    "BOOKLE100": {"type": "bypass", "description": "100% discount for testing"},
+    "STAFF2025": {"type": "bypass", "description": "Staff testing code"}
+}
+
 # Create the main app
 app = FastAPI(title="Booka API")
 api_router = APIRouter(prefix="/api")
