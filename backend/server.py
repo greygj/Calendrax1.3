@@ -279,7 +279,8 @@ async def register(user_data: UserCreate):
             "createdAt": datetime.now(timezone.utc).isoformat()
         }
         await db.subscriptions.insert_one(subscription_doc)
-        business = business_doc
+        # Remove MongoDB _id before returning
+        business = remove_mongo_id(business_doc)
     
     token = create_token(user_id, user_data.role)
     
