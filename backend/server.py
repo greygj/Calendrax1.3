@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, status
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, BackgroundTasks
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -12,6 +12,15 @@ import uuid
 from datetime import datetime, timezone, timedelta
 import jwt
 import hashlib
+
+# Import notification service
+from notifications import (
+    notify_booking_created, 
+    notify_booking_approved, 
+    notify_booking_declined, 
+    notify_booking_cancelled,
+    get_notification_status
+)
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
