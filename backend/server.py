@@ -433,25 +433,134 @@ async def delete_service(service_id: str, user: dict = Depends(require_business_
         raise HTTPException(status_code=404, detail="Service not found")
     return {"success": True}
 
+# ==================== STAFF ROUTES ====================
+
+@api_router.get("/staff")
+async def get_my_staff(user: dict = Depends(require_business_owner)):
+    """Get all staff members for the business owner's business"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        return []
+    staff = await db.staff.find({"businessId": business["id"]}).to_list(100)
+    return remove_mongo_id(staff)
+
+@api_router.post("/staff")
+async def create_staff(staff_data: StaffCreate, user: dict = Depends(require_business_owner)):
+    """Create a new staff member (max 5 per business)"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    # Check staff count (max 5)
+    existing_count = await db.staff.count_documents({"businessId": business["id"]})
+    if existing_count >= 5:
+        raise HTTPException(status_code=400, detail="Maximum 5 staff members allowed")
+    
+    staff_doc = {
+        "id": str(uuid.uuid4()),
+        "businessId": business["id"],
+        "name": staff_data.name,
+        "serviceIds": staff_data.serviceIds,
+        "active": True,
+        "isOwner": False,
+        "createdAt": datetime.now(timezone.utc).isoformat()
+    }
+    await db.staff.insert_one(staff_doc)
+    return remove_mongo_id(staff_doc)
+
+@api_router.put("/staff/{staff_id}")
+async def update_staff(staff_id: str, updates: StaffUpdate, user: dict = Depends(require_business_owner)):
+    """Update a staff member"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    staff = await db.staff.find_one({"id": staff_id, "businessId": business["id"]})
+    if not staff:
+        raise HTTPException(status_code=404, detail="Staff not found")
+    
+    update_data = {k: v for k, v in updates.model_dump().items() if v is not None}
+    if update_data:
+        await db.staff.update_one({"id": staff_id}, {"$set": update_data})
+    return {"success": True}
+
+@api_router.delete("/staff/{staff_id}")
+async def delete_staff(staff_id: str, user: dict = Depends(require_business_owner)):
+    """Delete a staff member (cannot delete owner)"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    staff = await db.staff.find_one({"id": staff_id, "businessId": business["id"]})
+    if not staff:
+        raise HTTPException(status_code=404, detail="Staff not found")
+    if staff.get("isOwner"):
+        raise HTTPException(status_code=400, detail="Cannot delete the business owner from staff")
+    
+    await db.staff.delete_one({"id": staff_id})
+    return {"success": True}
+
+@api_router.get("/businesses/{business_id}/staff")
+async def get_business_staff(business_id: str):
+    """Get active staff members for a business (public endpoint for booking)"""
+    staff = await db.staff.find({"businessId": business_id, "active": True}).to_list(100)
+    return remove_mongo_id(staff)
+
 # ==================== AVAILABILITY ROUTES ====================
 
 @api_router.get("/availability/{business_id}/{date}")
-async def get_availability(business_id: str, date: str):
-    avail = await db.availability.find_one({"businessId": business_id, "date": date})
-    return {"slots": avail["slots"] if avail else []}
+async def get_availability(business_id: str, date: str, staff_id: Optional[str] = None):
+    """Get availability slots for a specific date and optionally a specific staff member"""
+    query = {"businessId": business_id, "date": date}
+    if staff_id:
+        query["staffId"] = staff_id
+    avail = await db.availability.find_one(query)
+    return {"slots": avail["slots"] if avail else [], "staffId": staff_id}
+
+@api_router.get("/availability/{business_id}/{staff_id}/{date}")
+async def get_staff_availability(business_id: str, staff_id: str, date: str):
+    """Get availability for a specific staff member on a date"""
+    avail = await db.availability.find_one({"businessId": business_id, "staffId": staff_id, "date": date})
+    return {"slots": avail["slots"] if avail else [], "staffId": staff_id}
 
 @api_router.post("/availability")
-async def set_availability(business_id: str, date: str, slots: List[str], user: dict = Depends(require_business_owner)):
+async def set_availability(business_id: str, date: str, slots: List[str], staff_id: Optional[str] = None, user: dict = Depends(require_business_owner)):
+    """Set availability for a specific date and staff member"""
     business = await db.businesses.find_one({"ownerId": user["id"]})
     if not business or business["id"] != business_id:
         raise HTTPException(status_code=403, detail="Not authorized")
     
+    query = {"businessId": business_id, "date": date}
+    if staff_id:
+        query["staffId"] = staff_id
+    
     await db.availability.update_one(
-        {"businessId": business_id, "date": date},
-        {"$set": {"slots": slots}},
+        query,
+        {"$set": {"slots": slots, "staffId": staff_id}},
         upsert=True
     )
     return {"success": True}
+
+# ==================== BUSINESS PROFILE ROUTES ====================
+
+@api_router.get("/my-business")
+async def get_my_business(user: dict = Depends(require_business_owner)):
+    """Get the current business owner's business details"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    return remove_mongo_id(business)
+
+@api_router.put("/my-business")
+async def update_my_business(updates: dict, user: dict = Depends(require_business_owner)):
+    """Update the current business owner's business details"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    # Only allow updating certain fields
+    allowed_fields = ["businessName", "description", "postcode", "address", "logo", "phone", "email", "website"]
+    update_data = {k: v for k, v in updates.items() if k in allowed_fields and v is not None}
+    
+    if update_data:
+        await db.businesses.update_one({"id": business["id"]}, {"$set": update_data})
+    
+    updated_business = await db.businesses.find_one({"id": business["id"]})
+    return remove_mongo_id(updated_business)
 
 # ==================== APPOINTMENT ROUTES ====================
 
