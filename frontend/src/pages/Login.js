@@ -32,8 +32,11 @@ const Login = () => {
     <div className="min-h-screen bg-black flex flex-col items-center justify-center px-4">
       {/* Logo */}
       <div className="mb-10">
-        <h1 className="text-white text-5xl font-bold tracking-tight">Booka</h1>
-        <p className="text-lime-400 text-xs text-center tracking-[0.3em] mt-1">BOOKING APP</p>
+        <img 
+          src="https://customer-assets.emergentagent.com/job_timeslot-app-4/artifacts/mumm4bgy_Bookle%20Logo.jpeg" 
+          alt="Bookle" 
+          className="h-24 mx-auto"
+        />
       </div>
 
       {/* Welcome Text */}

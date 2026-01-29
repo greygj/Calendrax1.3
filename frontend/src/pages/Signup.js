@@ -123,14 +123,17 @@ const Signup = () => {
 
       {/* Logo */}
       <div className="text-center mb-6">
-        <h1 className="text-white text-4xl font-bold tracking-tight">Booka</h1>
-        <p className="text-lime-400 text-xs tracking-[0.3em] mt-1">BOOKING APP</p>
+        <img 
+          src="https://customer-assets.emergentagent.com/job_timeslot-app-4/artifacts/mumm4bgy_Bookle%20Logo.jpeg" 
+          alt="Bookle" 
+          className="h-20 mx-auto"
+        />
       </div>
 
       {/* Header */}
       <div className="text-center mb-6">
         <h2 className="text-white text-3xl font-semibold mb-2">Create Account</h2>
-        <p className="text-gray-500">Join Booka</p>
+        <p className="text-gray-500">Join Bookle</p>
       </div>
 
       {/* Tabs */}
