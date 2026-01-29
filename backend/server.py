@@ -395,7 +395,7 @@ async def create_service(service: ServiceCreate, user: dict = Depends(require_bu
         "createdAt": datetime.now(timezone.utc).isoformat()
     }
     await db.services.insert_one(service_doc)
-    return service_doc
+    return remove_mongo_id(service_doc)
 
 @api_router.get("/my-services")
 async def get_my_services(user: dict = Depends(require_business_owner)):
