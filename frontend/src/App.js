@@ -117,6 +117,14 @@ function AppRoutes() {
           </AdminRoute>
         } 
       />
+      <Route 
+        path="/booking-success" 
+        element={
+          <ProtectedRoute>
+            <BookingSuccess />
+          </ProtectedRoute>
+        } 
+      />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
