@@ -574,6 +574,14 @@ async def create_appointment(appointment_data: dict, background_tasks: Backgroun
     if not service:
         raise HTTPException(status_code=404, detail="Service not found")
     
+    # Get staff member if specified
+    staff_id = appointment_data.get("staffId")
+    staff_name = None
+    if staff_id:
+        staff = await db.staff.find_one({"id": staff_id, "businessId": business["id"]})
+        if staff:
+            staff_name = staff.get("name")
+    
     # Get business owner details for notification
     business_owner = await db.users.find_one({"id": business["ownerId"]})
     
@@ -587,6 +595,8 @@ async def create_appointment(appointment_data: dict, background_tasks: Backgroun
         "businessName": business["businessName"],
         "serviceId": service["id"],
         "serviceName": service["name"],
+        "staffId": staff_id,
+        "staffName": staff_name,
         "date": appointment_data["date"],
         "time": appointment_data["time"],
         "status": "pending",
@@ -603,7 +613,7 @@ async def create_appointment(appointment_data: dict, background_tasks: Backgroun
         "userId": business["ownerId"],
         "type": "new_booking",
         "title": "New Booking Request",
-        "message": f"{user['fullName']} requested {service['name']} on {appointment_data['date']} at {appointment_data['time']}",
+        "message": f"{user['fullName']} requested {service['name']} on {appointment_data['date']} at {appointment_data['time']}" + (f" with {staff_name}" if staff_name else ""),
         "read": False,
         "createdAt": datetime.now(timezone.utc).isoformat()
     }
@@ -622,13 +632,154 @@ async def create_appointment(appointment_data: dict, background_tasks: Backgroun
             time=appointment_data["time"]
         )
     
-    # Remove slot from availability
+    # Remove slot from availability (for specific staff if applicable)
+    avail_query = {"businessId": business["id"], "date": appointment_data["date"]}
+    if staff_id:
+        avail_query["staffId"] = staff_id
     await db.availability.update_one(
-        {"businessId": business["id"], "date": appointment_data["date"]},
+        avail_query,
         {"$pull": {"slots": appointment_data["time"]}}
     )
     
     return remove_mongo_id(appointment_doc)
+
+@api_router.post("/appointments/book-for-customer")
+async def book_for_customer(appointment_data: dict, background_tasks: BackgroundTasks, user: dict = Depends(require_business_owner)):
+    """Business owner books an appointment for a customer (auto-confirmed)"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    service = await db.services.find_one({"id": appointment_data["serviceId"], "businessId": business["id"]})
+    if not service:
+        raise HTTPException(status_code=404, detail="Service not found")
+    
+    # Get or create customer
+    customer_id = appointment_data.get("customerId")
+    customer_name = appointment_data.get("customerName")
+    customer_email = appointment_data.get("customerEmail")
+    customer_phone = appointment_data.get("customerPhone")
+    
+    if customer_id:
+        # Existing customer
+        customer = await db.users.find_one({"id": customer_id})
+        if customer:
+            customer_name = customer["fullName"]
+            customer_email = customer["email"]
+            customer_phone = customer.get("mobile")
+    elif customer_email:
+        # Check if customer exists by email
+        existing = await db.users.find_one({"email": customer_email})
+        if existing:
+            customer_id = existing["id"]
+            customer_name = existing["fullName"]
+        else:
+            # Create a new customer account (with a random password they can reset)
+            import secrets
+            customer_id = str(uuid.uuid4())
+            new_customer = {
+                "id": customer_id,
+                "email": customer_email,
+                "fullName": customer_name or "Guest Customer",
+                "mobile": customer_phone or "",
+                "password": hashlib.sha256(secrets.token_hex(16).encode()).hexdigest(),
+                "role": "customer",
+                "suspended": False,
+                "createdAt": datetime.now(timezone.utc).isoformat()
+            }
+            await db.users.insert_one(new_customer)
+    
+    # Get staff member if specified
+    staff_id = appointment_data.get("staffId")
+    staff_name = None
+    if staff_id:
+        staff = await db.staff.find_one({"id": staff_id, "businessId": business["id"]})
+        if staff:
+            staff_name = staff.get("name")
+    
+    # Create the appointment (auto-confirmed since business owner is booking)
+    appointment_doc = {
+        "id": str(uuid.uuid4()),
+        "userId": customer_id,
+        "customerName": customer_name,
+        "customerEmail": customer_email,
+        "customerPhone": customer_phone,
+        "businessId": business["id"],
+        "businessName": business["businessName"],
+        "serviceId": service["id"],
+        "serviceName": service["name"],
+        "staffId": staff_id,
+        "staffName": staff_name,
+        "date": appointment_data["date"],
+        "time": appointment_data["time"],
+        "status": "confirmed",  # Auto-confirmed
+        "paymentStatus": "pending",
+        "paymentAmount": service["price"],
+        "depositAmount": 0,
+        "bookedByOwner": True,
+        "createdAt": datetime.now(timezone.utc).isoformat()
+    }
+    await db.appointments.insert_one(appointment_doc)
+    
+    # Send confirmation notification to customer if they exist in system
+    if customer_id and customer_email:
+        notification_doc = {
+            "id": str(uuid.uuid4()),
+            "userId": customer_id,
+            "type": "booking_confirmed",
+            "title": "Booking Confirmed",
+            "message": f"Your appointment for {service['name']} at {business['businessName']} on {appointment_data['date']} at {appointment_data['time']} has been confirmed.",
+            "read": False,
+            "createdAt": datetime.now(timezone.utc).isoformat()
+        }
+        await db.notifications.insert_one(notification_doc)
+        
+        # Send email notification
+        background_tasks.add_task(
+            notify_booking_approved,
+            customer_email=customer_email,
+            customer_phone=customer_phone,
+            customer_name=customer_name,
+            business_name=business["businessName"],
+            service_name=service["name"],
+            date=appointment_data["date"],
+            time=appointment_data["time"]
+        )
+    
+    # Remove slot from availability
+    avail_query = {"businessId": business["id"], "date": appointment_data["date"]}
+    if staff_id:
+        avail_query["staffId"] = staff_id
+    await db.availability.update_one(
+        avail_query,
+        {"$pull": {"slots": appointment_data["time"]}}
+    )
+    
+    return remove_mongo_id(appointment_doc)
+
+@api_router.get("/business-customers")
+async def get_business_customers(user: dict = Depends(require_business_owner)):
+    """Get all customers who have booked with this business"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        return []
+    
+    # Get unique customers from appointments
+    appointments = await db.appointments.find({"businessId": business["id"]}).to_list(1000)
+    customer_ids = list(set([apt.get("userId") for apt in appointments if apt.get("userId")]))
+    
+    customers = []
+    for cid in customer_ids:
+        customer = await db.users.find_one({"id": cid})
+        if customer:
+            customers.append({
+                "id": customer["id"],
+                "fullName": customer["fullName"],
+                "email": customer["email"],
+                "mobile": customer.get("mobile", "")
+            })
+    
+    return customers
 
 @api_router.get("/my-appointments")
 async def get_my_appointments(user: dict = Depends(get_current_user)):
