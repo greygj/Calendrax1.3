@@ -355,19 +355,19 @@ async def get_me(user: dict = Depends(get_current_user)):
 async def get_businesses():
     # Only return approved businesses for public listing
     businesses = await db.businesses.find({"approved": True, "rejected": {"$ne": True}}).to_list(1000)
-    return businesses
+    return remove_mongo_id(businesses)
 
 @api_router.get("/businesses/{business_id}")
 async def get_business(business_id: str):
     business = await db.businesses.find_one({"id": business_id})
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
-    return business
+    return remove_mongo_id(business)
 
 @api_router.get("/businesses/{business_id}/services")
 async def get_business_services(business_id: str):
     services = await db.services.find({"businessId": business_id, "active": True}).to_list(1000)
-    return services
+    return remove_mongo_id(services)
 
 # ==================== SERVICE ROUTES ====================
 
