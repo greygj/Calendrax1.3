@@ -335,7 +335,8 @@ async def login(credentials: UserLogin):
 async def get_me(user: dict = Depends(get_current_user)):
     business = None
     if user["role"] == UserRole.BUSINESS_OWNER:
-        business = await db.businesses.find_one({"ownerId": user["id"]})
+        business_doc = await db.businesses.find_one({"ownerId": user["id"]})
+        business = remove_mongo_id(business_doc)
     
     return {
         "user": {
