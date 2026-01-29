@@ -576,15 +576,110 @@ const BusinessPage = () => {
               </p>
             )}
 
-            {/* Book Button */}
+            {/* Payment & Booking Section */}
             {selectedTime && (
-              <button
-                onClick={handleBooking}
-                className="w-full bg-lime-500 text-black font-semibold py-4 rounded-lg hover:bg-lime-400 transition-colors"
-              >
-                Request Booking - {selectedService.name} (£{selectedService.price})
-                {selectedStaff && ` with ${selectedStaff.name}`}
-              </button>
+              <div className="space-y-4">
+                {/* Offer Code Input */}
+                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+                  <h3 className="text-white text-sm font-medium mb-3 flex items-center gap-2">
+                    <Tag className="w-4 h-4 text-lime-400" /> Have an offer code?
+                  </h3>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={offerCode}
+                      onChange={(e) => {
+                        setOfferCode(e.target.value.toUpperCase());
+                        setOfferCodeValid(null);
+                        setOfferCodeMessage('');
+                      }}
+                      placeholder="Enter code"
+                      className="flex-1 bg-zinc-800 border border-zinc-700 text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-lime-500"
+                    />
+                    <button
+                      onClick={handleValidateOfferCode}
+                      className="bg-zinc-800 border border-zinc-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-zinc-700 transition-colors"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                  {offerCodeMessage && (
+                    <p className={`text-sm mt-2 ${offerCodeValid ? 'text-lime-400' : 'text-red-400'}`}>
+                      {offerCodeMessage}
+                    </p>
+                  )}
+                </div>
+
+                {/* Booking Summary */}
+                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+                  <h3 className="text-white text-sm font-medium mb-3 flex items-center gap-2">
+                    <CreditCard className="w-4 h-4 text-lime-400" /> Booking Summary
+                  </h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between text-gray-400">
+                      <span>Service</span>
+                      <span className="text-white">{selectedService.name}</span>
+                    </div>
+                    {selectedStaff && (
+                      <div className="flex justify-between text-gray-400">
+                        <span>Staff</span>
+                        <span className="text-white">{selectedStaff.name}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between text-gray-400">
+                      <span>Date & Time</span>
+                      <span className="text-white">{selectedDate.date} at {selectedTime}</span>
+                    </div>
+                    <div className="border-t border-zinc-800 my-2"></div>
+                    <div className="flex justify-between text-gray-400">
+                      <span>Full Price</span>
+                      <span className="text-white">£{selectedService.price}</span>
+                    </div>
+                    {!offerCodeValid && (
+                      <div className="flex justify-between text-lime-400 font-medium">
+                        <span>Deposit (20%)</span>
+                        <span>£{depositAmount}</span>
+                      </div>
+                    )}
+                    {offerCodeValid && (
+                      <div className="flex justify-between text-lime-400 font-medium">
+                        <span>Deposit</span>
+                        <span>£0.00 (Code Applied)</span>
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-gray-500 text-xs mt-3">
+                    {offerCodeValid 
+                      ? "Your offer code will bypass the deposit requirement."
+                      : "A 20% non-refundable deposit is required to secure your booking."
+                    }
+                  </p>
+                </div>
+
+                {/* Book Button */}
+                <button
+                  onClick={handleBooking}
+                  disabled={isProcessingPayment}
+                  className="w-full bg-lime-500 text-black font-semibold py-4 rounded-lg hover:bg-lime-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {isProcessingPayment ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Processing...
+                    </>
+                  ) : offerCodeValid ? (
+                    <>
+                      <Check className="w-5 h-5" />
+                      Complete Booking (Free)
+                    </>
+                  ) : (
+                    <>
+                      <CreditCard className="w-5 h-5" />
+                      Pay Deposit £{depositAmount} & Book
+                    </>
+                  )}
+                </button>
+              </div>
             )}
           </div>
 
