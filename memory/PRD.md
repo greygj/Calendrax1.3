@@ -130,6 +130,17 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 - [x] SMS notification templates (Twilio) - **PENDING API KEY**
 - [x] Notification triggers: booking created, approved, declined, cancelled
 
+### Phase 6: Payment Integration ✅ (January 29, 2026)
+- [x] Stripe payment integration for booking deposits (20% of service price)
+- [x] Offer code system for testing (TESTFREE, BOOKLE100, STAFF2025 bypass payment)
+- [x] Payment checkout session creation with Stripe
+- [x] Payment status verification and polling
+- [x] Booking completion after payment/bypass
+- [x] Frontend booking flow with payment summary
+- [x] Deposit calculation displayed to customer (20% non-refundable)
+- [x] "Complete Booking (Free)" option when valid offer code applied
+- [x] BookingSuccess page for post-payment confirmation
+
 ### Bug Fixes ✅
 - [x] Fixed MongoDB ObjectId serialization in all endpoints
 - [x] Fixed service delete button not working
@@ -139,8 +150,7 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 ---
 
 ## MOCKED Features (Not Yet Implemented)
-- **Payment/Subscription System**: UI placeholders only, no Stripe integration
-- **Refund Processing**: UI only, no actual refund logic
+- **Refund Processing**: Backend logic exists but not fully integrated with Stripe refunds
 - **Google Maps API**: Basic embed without API key
 - **Email Notifications**: Code ready, awaiting SendGrid API key
 - **SMS Notifications**: Code ready, awaiting Twilio credentials
@@ -157,14 +167,25 @@ SENDGRID_FROM_EMAIL=your_verified_email@domain.com
 TWILIO_ACCOUNT_SID=your_account_sid
 TWILIO_AUTH_TOKEN=your_auth_token
 TWILIO_FROM_NUMBER=+1234567890
+
+# Stripe (for payment processing) - Already configured
+STRIPE_API_KEY=sk_test_emergent
 ```
 
 ---
 
+## Offer Codes for Testing
+| Code | Description |
+|------|-------------|
+| TESTFREE | Bypasses payment for testing |
+| BOOKLE100 | 100% discount for testing |
+| STAFF2025 | Staff testing code |
+
+---
+
 ## Upcoming Tasks (P1)
-1. Implement Stripe integration for business subscriptions
-2. Implement customer payment flow for bookings
-3. Add Google Maps API for accurate business location display
+1. Add Google Maps API for accurate business location display
+2. Implement refund workflow (auto-refund when business declines booking)
 
 ## Future/Backlog (P2)
 1. Customer reviews and ratings
