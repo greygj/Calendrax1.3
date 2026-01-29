@@ -7,6 +7,7 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import BusinessPage from "./pages/BusinessPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import BookingSuccess from "./pages/BookingSuccess";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
