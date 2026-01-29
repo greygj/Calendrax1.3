@@ -446,7 +446,7 @@ async def set_availability(business_id: str, date: str, slots: List[str], user: 
 # ==================== APPOINTMENT ROUTES ====================
 
 @api_router.post("/appointments")
-async def create_appointment(appointment_data: dict, user: dict = Depends(get_current_user)):
+async def create_appointment(appointment_data: dict, background_tasks: BackgroundTasks, user: dict = Depends(get_current_user)):
     business = await db.businesses.find_one({"id": appointment_data["businessId"]})
     if not business or not business.get("approved"):
         raise HTTPException(status_code=400, detail="Business not available")
@@ -455,11 +455,15 @@ async def create_appointment(appointment_data: dict, user: dict = Depends(get_cu
     if not service:
         raise HTTPException(status_code=404, detail="Service not found")
     
+    # Get business owner details for notification
+    business_owner = await db.users.find_one({"id": business["ownerId"]})
+    
     appointment_doc = {
         "id": str(uuid.uuid4()),
         "userId": user["id"],
         "customerName": user["fullName"],
         "customerEmail": user["email"],
+        "customerPhone": user.get("mobile"),
         "businessId": business["id"],
         "businessName": business["businessName"],
         "serviceId": service["id"],
@@ -474,7 +478,7 @@ async def create_appointment(appointment_data: dict, user: dict = Depends(get_cu
     }
     await db.appointments.insert_one(appointment_doc)
     
-    # Create notification for business owner
+    # Create in-app notification for business owner
     notification_doc = {
         "id": str(uuid.uuid4()),
         "userId": business["ownerId"],
@@ -486,13 +490,26 @@ async def create_appointment(appointment_data: dict, user: dict = Depends(get_cu
     }
     await db.notifications.insert_one(notification_doc)
     
+    # Send email/SMS notification to business owner (in background)
+    if business_owner:
+        background_tasks.add_task(
+            notify_booking_created,
+            business_owner_email=business_owner["email"],
+            business_owner_phone=business_owner.get("mobile"),
+            business_name=business["businessName"],
+            customer_name=user["fullName"],
+            service_name=service["name"],
+            date=appointment_data["date"],
+            time=appointment_data["time"]
+        )
+    
     # Remove slot from availability
     await db.availability.update_one(
         {"businessId": business["id"], "date": appointment_data["date"]},
         {"$pull": {"slots": appointment_data["time"]}}
     )
     
-    return appointment_doc
+    return remove_mongo_id(appointment_doc)
 
 @api_router.get("/my-appointments")
 async def get_my_appointments(user: dict = Depends(get_current_user)):
