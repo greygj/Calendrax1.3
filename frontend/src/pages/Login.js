@@ -35,7 +35,7 @@ const Login = () => {
         <img 
           src="https://customer-assets.emergentagent.com/job_timeslot-app-4/artifacts/mumm4bgy_Bookle%20Logo.jpeg" 
           alt="Bookle" 
-          className="h-64 mx-auto"
+          className="h-80 mx-auto"
         />
       </div>
 
