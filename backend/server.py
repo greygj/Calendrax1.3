@@ -625,11 +625,13 @@ async def admin_delete_user(user_id: str, admin: dict = Depends(require_admin)):
 @api_router.get("/admin/businesses")
 async def admin_get_businesses(admin: dict = Depends(require_admin)):
     businesses = await db.businesses.find().to_list(1000)
-    # Attach owner info
+    result = []
     for business in businesses:
+        b = remove_mongo_id(business)
         owner = await db.users.find_one({"id": business["ownerId"]}, {"password": 0})
-        business["owner"] = owner
-    return businesses
+        b["owner"] = remove_mongo_id(owner)
+        result.append(b)
+    return result
 
 @api_router.put("/admin/businesses/{business_id}")
 async def admin_update_business(business_id: str, updates: BusinessUpdate, admin: dict = Depends(require_admin)):
