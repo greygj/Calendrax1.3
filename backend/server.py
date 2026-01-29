@@ -581,7 +581,7 @@ async def admin_get_stats(admin: dict = Depends(require_admin)):
 @api_router.get("/admin/users")
 async def admin_get_users(admin: dict = Depends(require_admin)):
     users = await db.users.find({"role": {"$ne": UserRole.PLATFORM_ADMIN}}, {"password": 0}).to_list(1000)
-    return users
+    return remove_mongo_id(users)
 
 @api_router.get("/admin/users/{user_id}")
 async def admin_get_user(user_id: str, admin: dict = Depends(require_admin)):
