@@ -363,10 +363,37 @@ async def get_me(user: dict = Depends(get_current_user)):
             "id": user["id"],
             "email": user["email"],
             "fullName": user["fullName"],
-            "mobile": user["mobile"],
+            "mobile": user.get("mobile", ""),
             "role": user["role"]
         },
         "business": business
+    }
+
+@api_router.put("/auth/profile")
+async def update_profile(updates: dict, user: dict = Depends(get_current_user)):
+    """Update user profile (name, email, mobile)"""
+    allowed_fields = ["fullName", "mobile", "email"]
+    update_data = {k: v for k, v in updates.items() if k in allowed_fields and v is not None}
+    
+    if "email" in update_data:
+        # Check if email is already taken by another user
+        existing = await db.users.find_one({"email": update_data["email"], "id": {"$ne": user["id"]}})
+        if existing:
+            raise HTTPException(status_code=400, detail="Email already in use")
+    
+    if update_data:
+        await db.users.update_one({"id": user["id"]}, {"$set": update_data})
+    
+    updated_user = await db.users.find_one({"id": user["id"]})
+    return {
+        "success": True,
+        "user": {
+            "id": updated_user["id"],
+            "email": updated_user["email"],
+            "fullName": updated_user["fullName"],
+            "mobile": updated_user.get("mobile", ""),
+            "role": updated_user["role"]
+        }
     }
 
 # ==================== BUSINESS ROUTES ====================
