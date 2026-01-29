@@ -534,7 +534,7 @@ async def cancel_appointment(appointment_id: str, user: dict = Depends(get_curre
 @api_router.get("/notifications")
 async def get_notifications(user: dict = Depends(get_current_user)):
     notifications = await db.notifications.find({"userId": user["id"]}).sort("createdAt", -1).to_list(100)
-    return notifications
+    return remove_mongo_id(notifications)
 
 @api_router.put("/notifications/{notification_id}/read")
 async def mark_notification_read(notification_id: str, user: dict = Depends(get_current_user)):
