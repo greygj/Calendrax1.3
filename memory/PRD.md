@@ -11,17 +11,22 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 - Manage services: Add, Edit, Delete, and set Active/Inactive status
 - View booking history per customer on a "Customers" page
 - Receive notifications for new booking requests and Approve/Decline them
-- **NEW: Multi-staff booking system** - up to 5 staff members per business
-- **NEW: Staff-based availability** - each staff member has their own availability calendar
-- **NEW: Book for Customer** - business owner can create bookings for customers directly
-- **NEW: Profile page** - edit business details (name, description, postcode, address, phone, email, website)
+- **Multi-staff booking system** - up to 5 staff members per business
+- **Staff-based availability** - each staff member has their own availability calendar
+- **Book for Customer** - business owner can create bookings for customers directly
+- **Profile page** - edit business details (name, description, postcode, address, phone, email, website)
 
 ### Customer Features
-- Dashboard listing all registered and approved businesses alphabetically
-- Business page with services and embedded Google Map
-- **NEW: Staff selection** - when multiple staff offer a service, customer selects which staff member
+- **Dashboard homepage** with welcome message, quick stats, upcoming bookings preview
+- **Browse Businesses** page listing all registered and approved businesses alphabetically
+- Business page with services, staff selection, and booking flow
+- **Booking confirmation** message on screen after successful booking request
+- **"My Bookings"** page for upcoming/pending bookings with cancel option
+- **"Booking History"** page for past/cancelled/completed bookings
+- **Profile page** with editable mandatory fields (Name, Email, Phone)
+- **Dashboard button** on all pages for easy navigation
 - Receive notifications when booking is requested and confirmed
-- "My Bookings" page to view and cancel bookings
+- **Staff selection** - when multiple staff offer a service, customer selects which staff member
 
 ### Platform Admin System
 - Secure admin dashboard at `/admin` (platform_admin role only)
@@ -33,7 +38,8 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 - Dark theme with lime green accents
 - Responsive design for mobile devices
 - User accounts must persist after logout
-- **Bookle branding** with custom logo
+- **Bookle branding** with large custom logo
+- Consistent navigation across all user pages
 
 ## Tech Stack
 - **Frontend**: React, React Router, Tailwind CSS, shadcn/ui, Axios
@@ -54,15 +60,15 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 │       ├── pages/
 │       │   ├── AdminDashboard.js
 │       │   ├── BusinessOwnerDashboard.js (multi-staff, profile, book for customer)
-│       │   ├── BusinessPage.js (staff selection)
-│       │   ├── CustomerDashboard.js
+│       │   ├── BusinessPage.js (staff selection, dashboard button)
+│       │   ├── CustomerDashboard.js (dashboard, profile, history)
 │       │   ├── Login.js
 │       │   └── Signup.js
 │       └── services/api.js
 ```
 
 ## Database Schema
-- **users**: `{id, fullName, email, password, role, suspended, createdAt}`
+- **users**: `{id, fullName, email, mobile, password, role, suspended, createdAt}`
 - **businesses**: `{id, ownerId, businessName, description, logo, postcode, address, phone, email, website, approved, rejected}`
 - **services**: `{id, businessId, name, description, duration, price, active}`
 - **staff**: `{id, businessId, name, serviceIds[], isOwner, active}`
@@ -74,6 +80,7 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 ## Credentials
 - **Admin**: admin@booka.com / admin123
 - **Business Owner**: greygj@gmail.com / password123
+- **Customer**: testcustomer@test.com / test123
 
 ---
 
@@ -87,10 +94,15 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 - [x] Data persistence after logout
 
 ### Phase 2: Customer Portal ✅
+- [x] **Dashboard homepage** with welcome message and quick stats
 - [x] Customer dashboard with approved businesses list (alphabetical)
-- [x] Business browsing with logo, description, and postcode
 - [x] Business page with services, staff selection, and booking flow
-- [x] "My Bookings" page structure
+- [x] **Booking confirmation** message after successful booking
+- [x] **"My Bookings"** page for upcoming/pending bookings
+- [x] **"Booking History"** page for past bookings (separated from active bookings)
+- [x] **Profile page** with editable Name, Email, Phone (all mandatory)
+- [x] **Dashboard button** on business pages for easy navigation
+- [x] **Larger Bookle logo** on Browse Businesses screen
 
 ### Phase 3: Business Owner Portal ✅
 - [x] Business owner dashboard with stats
@@ -98,10 +110,10 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 - [x] Availability calendar (per staff member)
 - [x] Appointments management with approve/decline
 - [x] Customers page
-- [x] **NEW: Staff Management** - add, edit, delete staff (up to 5)
-- [x] **NEW: Staff-based availability** - each staff has own calendar
-- [x] **NEW: Profile Page** - edit business details
-- [x] **NEW: Book for Customer** - create bookings directly for customers
+- [x] **Staff Management** - add, edit, delete staff (up to 5)
+- [x] **Staff-based availability** - each staff has own calendar
+- [x] **Profile Page** - edit business details
+- [x] **Book for Customer** - create bookings directly for customers
 
 ### Phase 4: Admin Platform ✅
 - [x] Secure /admin route with role-based access
