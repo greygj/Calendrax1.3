@@ -95,6 +95,14 @@ export const appointmentAPI = {
   cancel: (id) => apiClient.put(`/appointments/${id}/cancel`)
 };
 
+// Payments
+export const paymentAPI = {
+  validateOfferCode: (code) => apiClient.post('/payments/validate-offer-code', { code }),
+  createCheckout: (data) => apiClient.post('/payments/create-checkout', data),
+  getStatus: (sessionId) => apiClient.get(`/payments/status/${sessionId}`),
+  completeBooking: (data) => apiClient.post('/payments/complete-booking', data)
+};
+
 // Notifications
 export const notificationAPI = {
   getAll: () => apiClient.get('/notifications'),
