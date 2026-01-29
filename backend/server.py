@@ -487,7 +487,7 @@ async def create_appointment(appointment_data: dict, user: dict = Depends(get_cu
 @api_router.get("/my-appointments")
 async def get_my_appointments(user: dict = Depends(get_current_user)):
     appointments = await db.appointments.find({"userId": user["id"]}).to_list(1000)
-    return appointments
+    return remove_mongo_id(appointments)
 
 @api_router.get("/business-appointments")
 async def get_business_appointments(user: dict = Depends(require_business_owner)):
@@ -495,7 +495,7 @@ async def get_business_appointments(user: dict = Depends(require_business_owner)
     if not business:
         return []
     appointments = await db.appointments.find({"businessId": business["id"]}).to_list(1000)
-    return appointments
+    return remove_mongo_id(appointments)
 
 @api_router.put("/appointments/{appointment_id}/status")
 async def update_appointment_status(appointment_id: str, status: str, user: dict = Depends(require_business_owner)):
