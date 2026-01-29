@@ -166,6 +166,14 @@ class Notification(BaseModel):
 
 # ==================== UTILITIES ====================
 
+def remove_mongo_id(doc):
+    """Remove MongoDB _id from document"""
+    if doc is None:
+        return None
+    if isinstance(doc, list):
+        return [{k: v for k, v in d.items() if k != "_id"} for d in doc]
+    return {k: v for k, v in doc.items() if k != "_id"}
+
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
 
