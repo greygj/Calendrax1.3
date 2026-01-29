@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Clock, MapPin, Calendar, Check, Building2, ChevronLeft, ChevronRight, Info, User } from 'lucide-react';
+import { ArrowLeft, Clock, MapPin, Calendar, Check, Building2, ChevronLeft, ChevronRight, Info, User, Home } from 'lucide-react';
 import { businessAPI, availabilityAPI, appointmentAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
