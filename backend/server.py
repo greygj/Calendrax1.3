@@ -698,11 +698,13 @@ async def admin_delete_business(business_id: str, admin: dict = Depends(require_
 @api_router.get("/admin/subscriptions")
 async def admin_get_subscriptions(admin: dict = Depends(require_admin)):
     subscriptions = await db.subscriptions.find().to_list(1000)
-    # Attach business info
+    result = []
     for sub in subscriptions:
+        s = remove_mongo_id(sub)
         business = await db.businesses.find_one({"id": sub["businessId"]})
-        sub["business"] = business
-    return subscriptions
+        s["business"] = remove_mongo_id(business)
+        result.append(s)
+    return result
 
 @api_router.put("/admin/subscriptions/{subscription_id}")
 async def admin_update_subscription(subscription_id: str, updates: dict, admin: dict = Depends(require_admin)):
