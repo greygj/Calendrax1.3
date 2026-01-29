@@ -305,7 +305,10 @@ async def login(credentials: UserLogin):
     # Get business if owner
     business = None
     if user["role"] == UserRole.BUSINESS_OWNER:
-        business = await db.businesses.find_one({"ownerId": user["id"]})
+        business_doc = await db.businesses.find_one({"ownerId": user["id"]})
+        if business_doc:
+            # Convert to dict and remove MongoDB _id
+            business = {k: v for k, v in business_doc.items() if k != "_id"}
     
     return {
         "success": True,
