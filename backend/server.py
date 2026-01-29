@@ -124,6 +124,16 @@ class ServiceCreate(BaseModel):
     price: float = 0
     category: str = ""
 
+# Staff member model for multi-staff booking
+class StaffCreate(BaseModel):
+    name: str
+    serviceIds: List[str] = []  # Services this staff member can perform
+
+class StaffUpdate(BaseModel):
+    name: Optional[str] = None
+    serviceIds: Optional[List[str]] = None
+    active: Optional[bool] = None
+
 class Subscription(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     businessId: str
