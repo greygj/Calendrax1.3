@@ -1,24 +1,58 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, MapPin, Calendar, Check, Building2, ChevronLeft, ChevronRight, Info } from 'lucide-react';
-import { getBusinessById, getActiveServicesByBusinessId, getAvailability, addAppointment, addNotification, getBusinessByOwnerId } from '../data/mock';
+import { businessAPI, availabilityAPI, appointmentAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 const BusinessPage = () => {
   const { businessId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [business, setBusiness] = useState(null);
+  const [businessServices, setBusinessServices] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedService, setSelectedService] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState('');
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [bookingError, setBookingError] = useState('');
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [availabilityCache, setAvailabilityCache] = useState({});
 
-  const business = useMemo(() => getBusinessById(businessId), [businessId]);
-  const businessServices = useMemo(() => {
-    if (!business) return [];
-    return getActiveServicesByBusinessId(business.id);
-  }, [business]);
+  useEffect(() => {
+    loadBusinessData();
+  }, [businessId]);
+
+  const loadBusinessData = async () => {
+    try {
+      setLoading(true);
+      const [businessRes, servicesRes] = await Promise.all([
+        businessAPI.getById(businessId),
+        businessAPI.getServices(businessId)
+      ]);
+      setBusiness(businessRes.data);
+      setBusinessServices(servicesRes.data || []);
+    } catch (error) {
+      console.error('Failed to load business:', error);
+      setBusiness(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getAvailabilityForDate = async (dateStr) => {
+    if (availabilityCache[dateStr] !== undefined) {
+      return availabilityCache[dateStr];
+    }
+    try {
+      const res = await availabilityAPI.get(businessId, dateStr);
+      const slots = res.data?.slots || [];
+      setAvailabilityCache(prev => ({ ...prev, [dateStr]: slots }));
+      return slots;
+    } catch {
+      return [];
+    }
+  };
 
   // Calendar functions
   const getDaysInMonth = (date) => {
@@ -47,21 +81,42 @@ const BusinessPage = () => {
       const dateStr = date.toISOString().split('T')[0];
       const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
       const isTooFar = date > maxDate;
-      const availableSlots = getAvailability(business?.id, dateStr);
-      const hasSlots = availableSlots.length > 0;
+      const cachedSlots = availabilityCache[dateStr];
       
       days.push({
         day,
         date: dateStr,
         isPast,
         isTooFar,
-        hasSlots,
-        availableSlots,
+        hasSlots: cachedSlots ? cachedSlots.length > 0 : null,
+        availableSlots: cachedSlots || [],
         isToday: date.toDateString() === today.toDateString()
       });
     }
 
     return days;
+  };
+
+  // Load availability for visible month when service is selected
+  useEffect(() => {
+    if (selectedService && business) {
+      loadMonthAvailability();
+    }
+  }, [selectedService, currentMonth, business]);
+
+  const loadMonthAvailability = async () => {
+    const { daysInMonth } = getDaysInMonth(currentMonth);
+    const today = new Date();
+    
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
+      const dateStr = date.toISOString().split('T')[0];
+      const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      
+      if (!isPast && availabilityCache[dateStr] === undefined) {
+        await getAvailabilityForDate(dateStr);
+      }
+    }
   };
 
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -81,46 +136,47 @@ const BusinessPage = () => {
     setCurrentMonth(newMonth);
   };
 
-  const handleDateClick = (dayInfo) => {
-    if (!dayInfo || dayInfo.isPast || dayInfo.isTooFar || !dayInfo.hasSlots) return;
-    setSelectedDate(dayInfo);
+  const handleDateClick = async (dayInfo) => {
+    if (!dayInfo || dayInfo.isPast || dayInfo.isTooFar) return;
+    
+    // Fetch availability if not cached
+    let slots = dayInfo.availableSlots;
+    if (dayInfo.hasSlots === null) {
+      slots = await getAvailabilityForDate(dayInfo.date);
+    }
+    
+    if (slots.length === 0) return;
+    
+    setSelectedDate({ ...dayInfo, availableSlots: slots, hasSlots: true });
     setSelectedTime('');
   };
 
   const getGoogleMapsUrl = (postcode) => {
-    const encodedPostcode = encodeURIComponent(postcode);
+    const encodedPostcode = encodeURIComponent(postcode || '');
     return `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodedPostcode}&zoom=15`;
   };
 
-  const handleBooking = () => {
-    if (selectedService && selectedDate && selectedTime) {
-      const newAppointment = {
-        id: `apt_${Date.now()}`,
-        userId: user?.id,
+  const handleBooking = async () => {
+    if (!selectedService || !selectedDate || !selectedTime) return;
+    
+    setBookingError('');
+    
+    try {
+      await appointmentAPI.create({
         businessId: business.id,
-        businessName: business.businessName,
         serviceId: selectedService.id,
-        serviceName: selectedService.name,
         date: selectedDate.date,
-        time: selectedTime,
-        status: 'pending', // Changed to pending - requires approval
-        customerName: user?.fullName,
-        customerEmail: user?.email,
-        createdAt: new Date().toISOString()
-      };
-      
-      addAppointment(newAppointment);
-      
-      // Send notification to business owner
-      addNotification({
-        userId: business.ownerId,
-        type: 'new_booking',
-        title: 'New Booking Request!',
-        message: `${user?.fullName} has requested a booking for ${selectedService.name} on ${selectedDate.date} at ${selectedTime}.`,
-        appointmentId: newAppointment.id
+        time: selectedTime
       });
       
       setBookingSuccess(true);
+      
+      // Clear cache for this date so it refreshes
+      setAvailabilityCache(prev => {
+        const newCache = { ...prev };
+        delete newCache[selectedDate.date];
+        return newCache;
+      });
       
       setTimeout(() => {
         setBookingSuccess(false);
@@ -128,8 +184,19 @@ const BusinessPage = () => {
         setSelectedDate(null);
         setSelectedTime('');
       }, 4000);
+    } catch (error) {
+      console.error('Booking failed:', error);
+      setBookingError(error.response?.data?.detail || 'Failed to create booking. Please try again.');
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-lime-500"></div>
+      </div>
+    );
+  }
 
   if (!business) {
     return (
@@ -147,6 +214,8 @@ const BusinessPage = () => {
       </div>
     );
   }
+
+  const calendarDays = generateCalendarDays();
 
   return (
     <div className="min-h-screen bg-black">
@@ -200,6 +269,13 @@ const BusinessPage = () => {
                 </p>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Error Message */}
+        {bookingError && (
+          <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-4 rounded-xl mb-6">
+            <p>{bookingError}</p>
           </div>
         )}
 
@@ -278,27 +354,29 @@ const BusinessPage = () => {
 
                   {/* Calendar Days */}
                   <div className="grid grid-cols-7 gap-1">
-                    {generateCalendarDays().map((dayInfo, index) => (
+                    {calendarDays.map((dayInfo, index) => (
                       <button
                         key={index}
                         onClick={() => handleDateClick(dayInfo)}
-                        disabled={!dayInfo || dayInfo.isPast || dayInfo.isTooFar || !dayInfo.hasSlots}
+                        disabled={!dayInfo || dayInfo.isPast || dayInfo.isTooFar || dayInfo.hasSlots === false}
                         className={`aspect-square rounded-lg flex flex-col items-center justify-center text-xs transition-all ${
                           !dayInfo
                             ? 'bg-transparent cursor-default'
                             : dayInfo.isPast || dayInfo.isTooFar
                             ? 'bg-zinc-800/50 text-gray-600 cursor-not-allowed'
-                            : !dayInfo.hasSlots
+                            : dayInfo.hasSlots === false
                             ? 'bg-zinc-800/50 text-gray-600 cursor-not-allowed'
                             : selectedDate?.date === dayInfo.date
                             ? 'bg-lime-500 text-black font-bold'
                             : dayInfo.isToday
                             ? 'bg-lime-500/30 text-lime-400 font-bold hover:bg-lime-500/40'
+                            : dayInfo.hasSlots === true
+                            ? 'bg-zinc-800 text-white hover:bg-zinc-700'
                             : 'bg-zinc-800 text-white hover:bg-zinc-700'
                         }`}
                       >
                         {dayInfo?.day}
-                        {dayInfo?.hasSlots && selectedDate?.date !== dayInfo.date && (
+                        {dayInfo?.hasSlots === true && selectedDate?.date !== dayInfo.date && (
                           <span className="w-1 h-1 rounded-full bg-lime-400 mt-0.5"></span>
                         )}
                       </button>
