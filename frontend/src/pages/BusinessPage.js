@@ -213,44 +213,83 @@ const BusinessPage = () => {
     return `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodedPostcode}&zoom=15`;
   };
 
+  // Validate offer code
+  const handleValidateOfferCode = async () => {
+    if (!offerCode.trim()) {
+      setOfferCodeValid(null);
+      setOfferCodeMessage('');
+      return;
+    }
+    
+    try {
+      const res = await paymentAPI.validateOfferCode(offerCode);
+      setOfferCodeValid(res.data.valid);
+      setOfferCodeMessage(res.data.message);
+    } catch (error) {
+      setOfferCodeValid(false);
+      setOfferCodeMessage('Failed to validate code');
+    }
+  };
+
   const handleBooking = async () => {
     if (!selectedService || !selectedDate || !selectedTime) return;
     
     setBookingError('');
+    setIsProcessingPayment(true);
     
     const staffId = selectedStaff?.id || (availableStaff.length === 1 ? availableStaff[0]?.id : null);
     
     try {
-      await appointmentAPI.create({
-        businessId: business.id,
+      // Create checkout session (or bypass with offer code)
+      const checkoutRes = await paymentAPI.createCheckout({
         serviceId: selectedService.id,
+        businessId: business.id,
         staffId: staffId,
         date: selectedDate.date,
-        time: selectedTime
+        time: selectedTime,
+        originUrl: window.location.origin,
+        offerCode: offerCodeValid ? offerCode : null
       });
       
-      setBookingSuccess(true);
-      
-      // Clear cache for this date so it refreshes
-      const key = getAvailabilityKey(selectedDate.date, staffId);
-      setAvailabilityCache(prev => {
-        const newCache = { ...prev };
-        delete newCache[key];
-        return newCache;
-      });
-      
-      setTimeout(() => {
-        setBookingSuccess(false);
-        setSelectedService(null);
-        setSelectedStaff(null);
-        setSelectedDate(null);
-        setSelectedTime('');
-      }, 4000);
+      if (checkoutRes.data.bypassed) {
+        // Offer code bypass - complete booking directly
+        await paymentAPI.completeBooking({
+          transactionId: checkoutRes.data.transactionId
+        });
+        
+        setBookingSuccess(true);
+        
+        // Clear cache for this date
+        const key = getAvailabilityKey(selectedDate.date, staffId);
+        setAvailabilityCache(prev => {
+          const newCache = { ...prev };
+          delete newCache[key];
+          return newCache;
+        });
+        
+        setTimeout(() => {
+          setBookingSuccess(false);
+          setSelectedService(null);
+          setSelectedStaff(null);
+          setSelectedDate(null);
+          setSelectedTime('');
+          setOfferCode('');
+          setOfferCodeValid(null);
+        }, 4000);
+      } else {
+        // Redirect to Stripe checkout
+        window.location.href = checkoutRes.data.url;
+      }
     } catch (error) {
-      console.error('Booking failed:', error);
-      setBookingError(error.response?.data?.detail || 'Failed to create booking. Please try again.');
+      console.error('Booking/Payment failed:', error);
+      setBookingError(error.response?.data?.detail || 'Failed to process booking. Please try again.');
+    } finally {
+      setIsProcessingPayment(false);
     }
   };
+
+  // Calculate deposit amount
+  const depositAmount = selectedService ? (selectedService.price * 0.20).toFixed(2) : 0;
 
   if (loading) {
     return (
