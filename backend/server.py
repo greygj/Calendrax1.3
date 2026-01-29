@@ -576,12 +576,43 @@ async def update_appointment_status(appointment_id: str, status: str, background
     return {"success": True}
 
 @api_router.put("/appointments/{appointment_id}/cancel")
-async def cancel_appointment(appointment_id: str, user: dict = Depends(get_current_user)):
+async def cancel_appointment(appointment_id: str, background_tasks: BackgroundTasks, user: dict = Depends(get_current_user)):
     appointment = await db.appointments.find_one({"id": appointment_id, "userId": user["id"]})
     if not appointment:
         raise HTTPException(status_code=404, detail="Appointment not found")
     
     await db.appointments.update_one({"id": appointment_id}, {"$set": {"status": "cancelled"}})
+    
+    # Get business and business owner for notification
+    business = await db.businesses.find_one({"id": appointment["businessId"]})
+    if business:
+        business_owner = await db.users.find_one({"id": business["ownerId"]})
+        
+        # Create in-app notification for business owner
+        notification_doc = {
+            "id": str(uuid.uuid4()),
+            "userId": business["ownerId"],
+            "type": "booking_cancelled",
+            "title": "Booking Cancelled",
+            "message": f"{user['fullName']} cancelled their booking for {appointment['serviceName']} on {appointment['date']} at {appointment['time']}",
+            "read": False,
+            "createdAt": datetime.now(timezone.utc).isoformat()
+        }
+        await db.notifications.insert_one(notification_doc)
+        
+        # Send email/SMS notification to business owner (in background)
+        if business_owner:
+            background_tasks.add_task(
+                notify_booking_cancelled,
+                business_owner_email=business_owner["email"],
+                business_owner_phone=business_owner.get("mobile"),
+                business_name=business["businessName"],
+                customer_name=user["fullName"],
+                service_name=appointment["serviceName"],
+                date=appointment["date"],
+                time=appointment["time"]
+            )
+    
     return {"success": True}
 
 # ==================== NOTIFICATION ROUTES ====================
