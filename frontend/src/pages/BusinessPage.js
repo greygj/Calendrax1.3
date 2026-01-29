@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Clock, MapPin, Calendar, Check, Building2, ChevronLeft, ChevronRight, Info, User, Home } from 'lucide-react';
-import { businessAPI, availabilityAPI, appointmentAPI } from '../services/api';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { ArrowLeft, Clock, MapPin, Calendar, Check, Building2, ChevronLeft, ChevronRight, Info, User, Home, Tag, CreditCard, Loader2 } from 'lucide-react';
+import { businessAPI, availabilityAPI, paymentAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 const BusinessPage = () => {
   const { businessId } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const [business, setBusiness] = useState(null);
   const [businessServices, setBusinessServices] = useState([]);
@@ -20,6 +21,19 @@ const BusinessPage = () => {
   const [bookingError, setBookingError] = useState('');
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [availabilityCache, setAvailabilityCache] = useState({});
+  
+  // Payment states
+  const [offerCode, setOfferCode] = useState('');
+  const [offerCodeValid, setOfferCodeValid] = useState(null);
+  const [offerCodeMessage, setOfferCodeMessage] = useState('');
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
+  // Check for cancelled payment
+  useEffect(() => {
+    if (searchParams.get('cancelled') === 'true') {
+      setBookingError('Payment was cancelled. Please try again.');
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     loadBusinessData();
