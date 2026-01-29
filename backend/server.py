@@ -393,7 +393,7 @@ async def get_my_services(user: dict = Depends(require_business_owner)):
     if not business:
         return []
     services = await db.services.find({"businessId": business["id"]}).to_list(1000)
-    return services
+    return remove_mongo_id(services)
 
 @api_router.put("/services/{service_id}")
 async def update_service(service_id: str, updates: dict, user: dict = Depends(require_business_owner)):
