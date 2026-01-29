@@ -736,7 +736,7 @@ const BusinessOwnerDashboard = () => {
               )}
             </div>
             <div>
-              <h1 className="text-white text-xl font-bold">{business?.businessName || 'Booka'}</h1>
+              <h1 className="text-white text-xl font-bold">{business?.businessName || 'Bookle'}</h1>
               <p className="text-lime-400 text-xs tracking-[0.2em]">BUSINESS DASHBOARD</p>
             </div>
           </div>

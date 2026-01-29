@@ -71,10 +71,11 @@ const CustomerDashboard = () => {
       {/* Header */}
       <header className="bg-zinc-900 border-b border-zinc-800 px-4 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-white text-2xl font-bold">Booka</h1>
-            <p className="text-lime-400 text-xs tracking-[0.2em]">BOOKING APP</p>
-          </div>
+          <img 
+            src="https://customer-assets.emergentagent.com/job_timeslot-app-4/artifacts/mumm4bgy_Bookle%20Logo.jpeg" 
+            alt="Bookle" 
+            className="h-12"
+          />
           <div className="flex items-center gap-4">
             {/* Notifications Bell */}
             <button

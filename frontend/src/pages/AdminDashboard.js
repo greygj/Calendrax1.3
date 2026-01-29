@@ -587,11 +587,13 @@ const AdminDashboard = () => {
       <header className="bg-zinc-900 border-b border-zinc-800 px-4 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-lime-500 rounded-lg flex items-center justify-center">
-              <Shield className="w-5 h-5 text-black" />
-            </div>
+            <img 
+              src="https://customer-assets.emergentagent.com/job_timeslot-app-4/artifacts/mumm4bgy_Bookle%20Logo.jpeg" 
+              alt="Bookle" 
+              className="h-10"
+            />
             <div>
-              <h1 className="text-white text-xl font-bold">Booka Admin</h1>
+              <h1 className="text-white text-xl font-bold">Bookle Admin</h1>
               <p className="text-lime-400 text-xs tracking-[0.2em]">PLATFORM ADMIN</p>
             </div>
           </div>
