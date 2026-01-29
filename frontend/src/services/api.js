@@ -44,7 +44,10 @@ export const authAPI = {
 export const businessAPI = {
   getAll: () => apiClient.get('/businesses'),
   getById: (id) => apiClient.get(`/businesses/${id}`),
-  getServices: (id) => apiClient.get(`/businesses/${id}/services`)
+  getServices: (id) => apiClient.get(`/businesses/${id}/services`),
+  getStaff: (id) => apiClient.get(`/businesses/${id}/staff`),
+  getMine: () => apiClient.get('/my-business'),
+  updateMine: (data) => apiClient.put('/my-business', data)
 };
 
 // Services
@@ -55,17 +58,38 @@ export const serviceAPI = {
   delete: (id) => apiClient.delete(`/services/${id}`)
 };
 
+// Staff
+export const staffAPI = {
+  getAll: () => apiClient.get('/staff'),
+  create: (data) => apiClient.post('/staff', data),
+  update: (id, data) => apiClient.put(`/staff/${id}`, data),
+  delete: (id) => apiClient.delete(`/staff/${id}`)
+};
+
 // Availability
 export const availabilityAPI = {
-  get: (businessId, date) => apiClient.get(`/availability/${businessId}/${date}`),
-  set: (businessId, date, slots) => apiClient.post(`/availability?business_id=${businessId}&date=${date}`, slots)
+  get: (businessId, date, staffId = null) => {
+    if (staffId) {
+      return apiClient.get(`/availability/${businessId}/${staffId}/${date}`);
+    }
+    return apiClient.get(`/availability/${businessId}/${date}`);
+  },
+  set: (businessId, date, slots, staffId = null) => {
+    let url = `/availability?business_id=${businessId}&date=${date}`;
+    if (staffId) {
+      url += `&staff_id=${staffId}`;
+    }
+    return apiClient.post(url, slots);
+  }
 };
 
 // Appointments
 export const appointmentAPI = {
   create: (data) => apiClient.post('/appointments', data),
+  bookForCustomer: (data) => apiClient.post('/appointments/book-for-customer', data),
   getMine: () => apiClient.get('/my-appointments'),
   getBusinessAppointments: () => apiClient.get('/business-appointments'),
+  getBusinessCustomers: () => apiClient.get('/business-customers'),
   updateStatus: (id, status) => apiClient.put(`/appointments/${id}/status?status=${status}`),
   cancel: (id) => apiClient.put(`/appointments/${id}/cancel`)
 };
