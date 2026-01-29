@@ -733,7 +733,7 @@ async def admin_update_subscription(subscription_id: str, updates: dict, admin: 
 @api_router.get("/admin/appointments")
 async def admin_get_appointments(admin: dict = Depends(require_admin)):
     appointments = await db.appointments.find().sort("createdAt", -1).to_list(1000)
-    return appointments
+    return remove_mongo_id(appointments)
 
 @api_router.put("/admin/appointments/{appointment_id}/refund")
 async def admin_refund_appointment(appointment_id: str, amount: float, admin: dict = Depends(require_admin)):
