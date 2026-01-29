@@ -68,8 +68,9 @@ class TestCustomerSignupAndLogin:
     
     def test_customer_signup(self):
         """Test customer registration"""
+        unique_email = f"test_customer_{uuid.uuid4().hex[:8]}@test.com"
         response = requests.post(f"{BASE_URL}/api/auth/register", json={
-            "email": TEST_CUSTOMER_EMAIL,
+            "email": unique_email,
             "password": TEST_CUSTOMER_PASSWORD,
             "fullName": "Test Customer",
             "mobile": "+44123456789",
@@ -81,23 +82,28 @@ class TestCustomerSignupAndLogin:
         assert data["user"]["role"] == "customer", f"Wrong role: {data['user']['role']}"
         assert "token" in data, "No token in response"
         print(f"SUCCESS: Customer signup successful, email: {data['user']['email']}")
-        return data
     
     def test_customer_login(self):
         """Test customer login after signup"""
-        # First signup
-        self.test_customer_signup()
+        # Create unique user for this test
+        unique_email = f"test_customer_{uuid.uuid4().hex[:8]}@test.com"
+        requests.post(f"{BASE_URL}/api/auth/register", json={
+            "email": unique_email,
+            "password": TEST_CUSTOMER_PASSWORD,
+            "fullName": "Test Customer",
+            "mobile": "+44123456789",
+            "role": "customer"
+        })
         
         # Then login
         response = requests.post(f"{BASE_URL}/api/auth/login", json={
-            "email": TEST_CUSTOMER_EMAIL,
+            "email": unique_email,
             "password": TEST_CUSTOMER_PASSWORD
         })
         assert response.status_code == 200, f"Customer login failed: {response.text}"
         data = response.json()
         assert data["user"]["role"] == "customer"
         print(f"SUCCESS: Customer login successful")
-        return data["token"]
     
     def test_duplicate_email_rejected(self):
         """Test that duplicate email registration is rejected"""
@@ -127,8 +133,9 @@ class TestBusinessOwnerSignupAndLogin:
     
     def test_business_owner_signup(self):
         """Test business owner registration"""
+        unique_email = f"test_business_{uuid.uuid4().hex[:8]}@test.com"
         response = requests.post(f"{BASE_URL}/api/auth/register", json={
-            "email": TEST_BUSINESS_EMAIL,
+            "email": unique_email,
             "password": TEST_BUSINESS_PASSWORD,
             "fullName": "Test Business Owner",
             "mobile": "+44111222333",
@@ -144,16 +151,25 @@ class TestBusinessOwnerSignupAndLogin:
         assert "business" in data, "No business in response"
         assert data["business"]["approved"] == False, "Business should not be auto-approved"
         print(f"SUCCESS: Business owner signup successful, business: {data['business']['businessName']}")
-        return data
     
     def test_business_owner_login(self):
         """Test business owner login"""
-        # First signup
-        self.test_business_owner_signup()
+        # Create unique user for this test
+        unique_email = f"test_business_{uuid.uuid4().hex[:8]}@test.com"
+        requests.post(f"{BASE_URL}/api/auth/register", json={
+            "email": unique_email,
+            "password": TEST_BUSINESS_PASSWORD,
+            "fullName": "Test Business Owner",
+            "mobile": "+44111222333",
+            "role": "business_owner",
+            "businessName": "Test Business",
+            "businessDescription": "A test business for testing",
+            "postcode": "SW1A 1AA"
+        })
         
         # Then login
         response = requests.post(f"{BASE_URL}/api/auth/login", json={
-            "email": TEST_BUSINESS_EMAIL,
+            "email": unique_email,
             "password": TEST_BUSINESS_PASSWORD
         })
         assert response.status_code == 200, f"Business owner login failed: {response.text}"
@@ -161,7 +177,6 @@ class TestBusinessOwnerSignupAndLogin:
         assert data["user"]["role"] == "business_owner"
         assert "business" in data, "No business in login response"
         print(f"SUCCESS: Business owner login successful")
-        return data["token"]
 
 
 class TestAdminFunctions:
