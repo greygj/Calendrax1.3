@@ -525,7 +525,7 @@ async def get_business_appointments(user: dict = Depends(require_business_owner)
     return remove_mongo_id(appointments)
 
 @api_router.put("/appointments/{appointment_id}/status")
-async def update_appointment_status(appointment_id: str, status: str, user: dict = Depends(require_business_owner)):
+async def update_appointment_status(appointment_id: str, status: str, background_tasks: BackgroundTasks, user: dict = Depends(require_business_owner)):
     business = await db.businesses.find_one({"ownerId": user["id"]})
     appointment = await db.appointments.find_one({"id": appointment_id, "businessId": business["id"]})
     if not appointment:
@@ -533,7 +533,10 @@ async def update_appointment_status(appointment_id: str, status: str, user: dict
     
     await db.appointments.update_one({"id": appointment_id}, {"$set": {"status": status}})
     
-    # Notify customer
+    # Get customer details for notification
+    customer = await db.users.find_one({"id": appointment["userId"]})
+    
+    # Create in-app notification for customer
     notification_doc = {
         "id": str(uuid.uuid4()),
         "userId": appointment["userId"],
@@ -544,6 +547,31 @@ async def update_appointment_status(appointment_id: str, status: str, user: dict
         "createdAt": datetime.now(timezone.utc).isoformat()
     }
     await db.notifications.insert_one(notification_doc)
+    
+    # Send email/SMS notification to customer (in background)
+    if customer:
+        if status == "confirmed":
+            background_tasks.add_task(
+                notify_booking_approved,
+                customer_email=customer["email"],
+                customer_phone=customer.get("mobile"),
+                customer_name=customer["fullName"],
+                business_name=appointment["businessName"],
+                service_name=appointment["serviceName"],
+                date=appointment["date"],
+                time=appointment["time"]
+            )
+        elif status == "declined":
+            background_tasks.add_task(
+                notify_booking_declined,
+                customer_email=customer["email"],
+                customer_phone=customer.get("mobile"),
+                customer_name=customer["fullName"],
+                business_name=appointment["businessName"],
+                service_name=appointment["serviceName"],
+                date=appointment["date"],
+                time=appointment["time"]
+            )
     
     return {"success": True}
 
