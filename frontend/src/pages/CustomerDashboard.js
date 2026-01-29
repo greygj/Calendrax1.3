@@ -301,7 +301,7 @@ const CustomerDashboard = () => {
                     <div key={booking.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h4 className="text-white font-medium">{booking.serviceName || getServiceName(booking.serviceId)}</h4>
+                          <h4 className="text-white font-medium">{booking.serviceName}</h4>
                           <p className="text-gray-400 text-sm mt-1">{booking.businessName}</p>
                           <div className="flex items-center gap-4 mt-2">
                             <span className="text-gray-500 text-sm flex items-center gap-1">
@@ -359,7 +359,7 @@ const CustomerDashboard = () => {
                     <div key={booking.id} className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 opacity-60">
                       <div className="flex items-start justify-between">
                         <div>
-                          <h4 className="text-white font-medium">{booking.serviceName || getServiceName(booking.serviceId)}</h4>
+                          <h4 className="text-white font-medium">{booking.serviceName}</h4>
                           <p className="text-gray-400 text-sm mt-1">{booking.businessName}</p>
                           <p className="text-gray-500 text-sm mt-1">{booking.date} at {booking.time}</p>
                         </div>
