@@ -1,32 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { LogOut, Building2, MapPin, ChevronRight, Calendar, Bell, X, Clock } from 'lucide-react';
-import { 
-  getBusinessesSorted, 
-  getAppointmentsByUserId, 
-  cancelAppointment,
-  getUnreadNotificationsByUserId,
-  getNotificationsByUserId,
-  markNotificationAsRead,
-  markAllNotificationsAsRead,
-  getServices
-} from '../data/mock';
+import { businessAPI, appointmentAPI, notificationAPI } from '../services/api';
 
 const CustomerDashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [activeView, setActiveView] = useState('businesses');
   const [showNotifications, setShowNotifications] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [businesses, setBusinesses] = useState([]);
+  const [myBookings, setMyBookings] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const businesses = getBusinessesSorted();
-  const myBookings = user ? getAppointmentsByUserId(user.id) : [];
-  const notifications = user ? getNotificationsByUserId(user.id) : [];
-  const unreadNotifications = user ? getUnreadNotificationsByUserId(user.id) : [];
-  const allServices = getServices();
+  useEffect(() => {
+    loadData();
+  }, []);
 
-  const refresh = () => setRefreshKey(k => k + 1);
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const [businessesRes, bookingsRes, notificationsRes] = await Promise.all([
+        businessAPI.getAll().catch(() => ({ data: [] })),
+        appointmentAPI.getMine().catch(() => ({ data: [] })),
+        notificationAPI.getAll().catch(() => ({ data: [] }))
+      ]);
+      
+      // Sort businesses alphabetically
+      const sortedBusinesses = (businessesRes.data || []).sort((a, b) => 
+        a.businessName.localeCompare(b.businessName)
+      );
+      
+      setBusinesses(sortedBusinesses);
+      setMyBookings(bookingsRes.data || []);
+      setNotifications(notificationsRes.data || []);
+    } catch (error) {
+      console.error('Failed to load data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const unreadNotifications = notifications.filter(n => !n.read);
 
   const handleLogout = () => {
     logout();
@@ -37,30 +53,37 @@ const CustomerDashboard = () => {
     navigate(`/business/${businessId}`);
   };
 
-  const handleCancelBooking = (appointmentId) => {
+  const handleCancelBooking = async (appointmentId) => {
     if (window.confirm('Are you sure you want to cancel this booking?')) {
-      cancelAppointment(appointmentId);
-      refresh();
+      try {
+        await appointmentAPI.cancel(appointmentId);
+        loadData();
+      } catch (error) {
+        console.error('Failed to cancel booking:', error);
+      }
     }
   };
 
-  const handleNotificationClick = (notification) => {
-    markNotificationAsRead(notification.id);
-    setShowNotifications(false);
-    if (notification.type === 'booking_confirmed' || notification.type === 'booking_declined') {
-      setActiveView('bookings');
+  const handleNotificationClick = async (notification) => {
+    try {
+      await notificationAPI.markRead(notification.id);
+      setShowNotifications(false);
+      if (notification.type === 'booking_confirmed' || notification.type === 'booking_declined') {
+        setActiveView('bookings');
+      }
+      loadData();
+    } catch (error) {
+      console.error('Failed to mark notification as read:', error);
     }
-    refresh();
   };
 
-  const handleMarkAllRead = () => {
-    markAllNotificationsAsRead(user.id);
-    refresh();
-  };
-
-  const getServiceName = (serviceId) => {
-    const service = allServices.find(s => s.id === serviceId);
-    return service?.name || 'Service';
+  const handleMarkAllRead = async () => {
+    try {
+      await notificationAPI.markAllRead();
+      loadData();
+    } catch (error) {
+      console.error('Failed to mark all notifications as read:', error);
+    }
   };
 
   const activeBookings = myBookings.filter(b => b.status === 'pending' || b.status === 'confirmed');
