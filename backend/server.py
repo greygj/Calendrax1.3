@@ -588,7 +588,7 @@ async def admin_get_user(user_id: str, admin: dict = Depends(require_admin)):
     user = await db.users.find_one({"id": user_id}, {"password": 0})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    return user
+    return remove_mongo_id(user)
 
 @api_router.put("/admin/users/{user_id}")
 async def admin_update_user(user_id: str, updates: UserUpdate, admin: dict = Depends(require_admin)):
