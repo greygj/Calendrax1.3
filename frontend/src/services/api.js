@@ -75,6 +75,16 @@ export const revenueAPI = {
   getByStaff: () => apiClient.get('/revenue/by-staff')
 };
 
+// Payouts
+export const payoutAPI = {
+  getHistory: () => apiClient.get('/payouts')
+};
+
+// Analytics
+export const analyticsAPI = {
+  getAdvanced: () => apiClient.get('/analytics')
+};
+
 // Availability
 export const availabilityAPI = {
   get: (businessId, date, staffId = null) => {
