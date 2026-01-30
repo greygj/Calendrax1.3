@@ -33,8 +33,8 @@ const Login = () => {
       {/* Logo */}
       <div className="mb-10">
         <img 
-          src="https://customer-assets.emergentagent.com/job_timeslot-app-4/artifacts/mumm4bgy_Bookle%20Logo.jpeg" 
-          alt="Bookle" 
+          src="https://customer-assets.emergentagent.com/job_service-booker-16/artifacts/bp7dbn42_Calendrax%20Logo.png" 
+          alt="Calendrax" 
           className="h-80 mx-auto"
         />
       </div>

@@ -124,8 +124,8 @@ const Signup = () => {
       {/* Logo */}
       <div className="text-center mb-6">
         <img 
-          src="https://customer-assets.emergentagent.com/job_timeslot-app-4/artifacts/mumm4bgy_Bookle%20Logo.jpeg" 
-          alt="Bookle" 
+          src="https://customer-assets.emergentagent.com/job_service-booker-16/artifacts/bp7dbn42_Calendrax%20Logo.png" 
+          alt="Calendrax" 
           className="h-20 mx-auto"
         />
       </div>
@@ -133,7 +133,7 @@ const Signup = () => {
       {/* Header */}
       <div className="text-center mb-6">
         <h2 className="text-white text-3xl font-semibold mb-2">Create Account</h2>
-        <p className="text-gray-500">Join Bookle</p>
+        <p className="text-gray-500">Join Calendrax</p>
       </div>
 
       {/* Tabs */}

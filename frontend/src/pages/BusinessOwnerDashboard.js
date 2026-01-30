@@ -607,7 +607,7 @@ const BusinessOwnerDashboard = () => {
               )}
             </div>
             <div>
-              <h1 className="text-white text-xl font-bold">{business?.businessName || 'Bookle'}</h1>
+              <h1 className="text-white text-xl font-bold">{business?.businessName || 'Calendrax'}</h1>
               <p className="text-gray-500 text-sm">Business Dashboard</p>
             </div>
           </div>

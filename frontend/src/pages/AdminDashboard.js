@@ -617,12 +617,12 @@ const AdminDashboard = () => {
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img 
-              src="https://customer-assets.emergentagent.com/job_timeslot-app-4/artifacts/mumm4bgy_Bookle%20Logo.jpeg" 
-              alt="Bookle" 
+              src="https://customer-assets.emergentagent.com/job_service-booker-16/artifacts/bp7dbn42_Calendrax%20Logo.png" 
+              alt="Calendrax" 
               className="h-10"
             />
             <div>
-              <h1 className="text-white text-xl font-bold">Bookle Admin</h1>
+              <h1 className="text-white text-xl font-bold">Calendrax Admin</h1>
               <p className="text-lime-400 text-xs tracking-[0.2em]">PLATFORM ADMIN</p>
             </div>
           </div>

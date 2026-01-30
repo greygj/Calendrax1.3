@@ -155,8 +155,8 @@ const CustomerDashboard = () => {
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           {/* Logo - Larger */}
           <img 
-            src="https://customer-assets.emergentagent.com/job_timeslot-app-4/artifacts/mumm4bgy_Bookle%20Logo.jpeg" 
-            alt="Bookle" 
+            src="https://customer-assets.emergentagent.com/job_service-booker-16/artifacts/bp7dbn42_Calendrax%20Logo.png" 
+            alt="Calendrax" 
             className="h-20 cursor-pointer"
             onClick={() => setActiveView('dashboard')}
           />
