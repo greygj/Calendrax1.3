@@ -669,7 +669,11 @@ const BusinessPage = () => {
                   <p className="text-gray-500 text-xs mt-3">
                     {offerCodeValid 
                       ? "Your offer code will bypass the deposit requirement."
-                      : "A 20% non-refundable deposit is required to secure your booking."
+                      : isNoDeposit
+                        ? "No deposit is required for this business."
+                        : isFullPayment
+                          ? "Full payment is required to secure your booking."
+                          : `A ${depositPercentage}% non-refundable deposit is required to secure your booking.`
                     }
                   </p>
                 </div>
@@ -685,15 +689,15 @@ const BusinessPage = () => {
                       <Loader2 className="w-5 h-5 animate-spin" />
                       Processing...
                     </>
-                  ) : offerCodeValid ? (
+                  ) : offerCodeValid || isNoDeposit ? (
                     <>
                       <Check className="w-5 h-5" />
-                      Complete Booking (Free)
+                      {isNoDeposit ? 'Confirm Booking' : 'Complete Booking (Free)'}
                     </>
                   ) : (
                     <>
                       <CreditCard className="w-5 h-5" />
-                      Pay Deposit £{depositAmount} & Book
+                      {isFullPayment ? `Pay £${selectedService.price} & Book` : `Pay Deposit £${depositAmount} & Book`}
                     </>
                   )}
                 </button>
