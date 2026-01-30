@@ -1956,6 +1956,22 @@ const BusinessOwnerDashboard = () => {
                   : `Are you sure you want to remove "${staffConfirmData.staffName}"?`
                 }
               </p>
+
+              {/* Warning about future bookings being deleted */}
+              {staffConfirmData.type === 'delete' && staffConfirmData.futureBookingsCount > 0 && (
+                <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-4">
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-red-400 font-medium">Warning: Bookings Will Be Deleted</p>
+                      <p className="text-red-300/80 text-sm mt-1">
+                        {staffConfirmData.staffName} has <strong>{staffConfirmData.futureBookingsCount}</strong> future booking{staffConfirmData.futureBookingsCount !== 1 ? 's' : ''} that will be cancelled. 
+                        Customers will be notified and any deposits will be refunded.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
               
               <div className="bg-zinc-800 rounded-lg p-4 mb-6">
                 <p className="text-gray-400 text-sm mb-3">Subscription Change:</p>
@@ -1994,10 +2010,15 @@ const BusinessOwnerDashboard = () => {
                   className={`flex-1 font-semibold py-3 rounded-lg transition-colors ${
                     staffConfirmData.type === 'add' 
                       ? 'bg-lime-500 text-black hover:bg-lime-400'
-                      : 'bg-yellow-500 text-black hover:bg-yellow-400'
+                      : staffConfirmData.futureBookingsCount > 0
+                        ? 'bg-red-500 text-white hover:bg-red-400'
+                        : 'bg-yellow-500 text-black hover:bg-yellow-400'
                   }`}
                 >
-                  Confirm
+                  {staffConfirmData.type === 'delete' && staffConfirmData.futureBookingsCount > 0 
+                    ? 'Delete & Cancel Bookings'
+                    : 'Confirm'
+                  }
                 </button>
               </div>
             </div>
