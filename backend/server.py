@@ -554,6 +554,48 @@ async def get_my_staff(user: dict = Depends(require_business_owner)):
     staff = await db.staff.find({"businessId": business["id"]}).to_list(100)
     return remove_mongo_id(staff)
 
+@api_router.get("/staff/subscription-preview")
+async def preview_staff_subscription_change(action: str = "add", user: dict = Depends(require_business_owner)):
+    """Preview subscription price change before adding or removing staff"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    current_count = await db.staff.count_documents({"businessId": business["id"]})
+    if current_count == 0:
+        current_count = 1
+    
+    current_price = calculate_subscription_price(current_count)
+    
+    if action == "add":
+        if current_count >= 5:
+            raise HTTPException(status_code=400, detail="Maximum 5 staff members allowed")
+        new_count = current_count + 1
+        new_price = calculate_subscription_price(new_count)
+        return {
+            "action": "add",
+            "currentStaffCount": current_count,
+            "newStaffCount": new_count,
+            "currentPrice": current_price,
+            "newPrice": new_price,
+            "priceIncrease": new_price - current_price,
+            "message": f"Adding a staff member will increase your subscription from £{current_price:.2f}/month to £{new_price:.2f}/month (+£{new_price - current_price:.2f})"
+        }
+    else:  # remove
+        if current_count <= 1:
+            raise HTTPException(status_code=400, detail="Cannot have less than 1 staff member")
+        new_count = current_count - 1
+        new_price = calculate_subscription_price(new_count)
+        return {
+            "action": "remove",
+            "currentStaffCount": current_count,
+            "newStaffCount": new_count,
+            "currentPrice": current_price,
+            "newPrice": new_price,
+            "priceDecrease": current_price - new_price,
+            "message": f"Removing a staff member will decrease your subscription from £{current_price:.2f}/month to £{new_price:.2f}/month (-£{current_price - new_price:.2f})"
+        }
+
 @api_router.post("/staff")
 async def create_staff(staff_data: StaffCreate, user: dict = Depends(require_business_owner)):
     """Create a new staff member (max 5 per business)"""
