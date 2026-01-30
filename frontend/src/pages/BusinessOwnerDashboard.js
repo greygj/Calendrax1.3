@@ -747,6 +747,7 @@ const BusinessOwnerDashboard = () => {
               { id: 'appointments', label: 'Appointments', icon: Clock, badge: pendingAppointments.length },
               { id: 'services', label: 'Services', icon: Settings },
               { id: 'staff', label: 'Staff', icon: Users },
+              { id: 'revenue', label: 'Revenue', icon: BarChart3 },
               { id: 'customers', label: 'Customers', icon: User },
               { id: 'profile', label: 'Profile', icon: Building2 }
             ].map(tab => (
