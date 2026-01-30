@@ -395,7 +395,7 @@ async def login(credentials: UserLogin):
                             trial_end_dt = datetime.fromisoformat(trial_end.replace('Z', '+00:00')) if isinstance(trial_end, str) else trial_end
                             if datetime.now(timezone.utc) > trial_end_dt:
                                 subscription_blocked = True
-                                subscription_message = "Your subscription payment has failed. Please update your payment method to continue using Bookle."
+                                subscription_message = "Your subscription payment has failed. Please update your payment method to continue using Calendrax."
     
     if subscription_blocked:
         raise HTTPException(status_code=403, detail=subscription_message)
@@ -915,7 +915,7 @@ async def setup_subscription_payment(request: Request, user: dict = Depends(requ
                 "price_data": {
                     "currency": "gbp",
                     "product_data": {
-                        "name": f"Bookle Subscription ({staff_count} staff)",
+                        "name": f"Calendrax Subscription ({staff_count} staff)",
                         "description": f"Monthly subscription for {business['businessName']}"
                     },
                     "unit_amount": int(price * 100),  # Convert to pence
@@ -1897,7 +1897,7 @@ async def admin_grant_free_access(subscription_id: str, grant: bool, admin: dict
             "userId": business["ownerId"],
             "type": "free_access_granted" if grant else "free_access_revoked",
             "title": "Free Access " + ("Granted" if grant else "Revoked"),
-            "message": "Your business has been granted free access to Bookle." if grant else "Your free access has been revoked. Please set up payment to continue using Bookle.",
+            "message": "Your business has been granted free access to Calendrax." if grant else "Your free access has been revoked. Please set up payment to continue using Calendrax.",
             "read": False,
             "createdAt": datetime.now(timezone.utc).isoformat()
         }

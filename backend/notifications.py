@@ -1,4 +1,4 @@
-# Notification Service for Bookle
+# Notification Service for Calendrax
 # Supports Email (SendGrid) and SMS (Twilio) notifications
 
 import os
@@ -125,8 +125,8 @@ def get_booking_created_email(
                 <p><strong style="color: #a3e635;">Date:</strong> {date}</p>
                 <p><strong style="color: #a3e635;">Time:</strong> {time}</p>
             </div>
-            <p>Please log in to your Bookle dashboard to approve or decline this request.</p>
-            <p style="color: #888; margin-top: 30px; font-size: 12px;">This is an automated message from Bookle.</p>
+            <p>Please log in to your Calendrax dashboard to approve or decline this request.</p>
+            <p style="color: #888; margin-top: 30px; font-size: 12px;">This is an automated message from Calendrax.</p>
         </div>
     </body>
     </html>
@@ -231,22 +231,22 @@ def get_booking_cancelled_email(
 
 def get_booking_created_sms(customer_name: str, service_name: str, date: str, time: str) -> str:
     """Returns SMS message for booking created notification"""
-    return f"Bookle: New booking request from {customer_name} for {service_name} on {date} at {time}. Log in to approve/decline."
+    return f"Calendrax: New booking request from {customer_name} for {service_name} on {date} at {time}. Log in to approve/decline."
 
 
 def get_booking_approved_sms(business_name: str, service_name: str, date: str, time: str) -> str:
     """Returns SMS message for booking approved notification"""
-    return f"Bookle: Your booking at {business_name} for {service_name} on {date} at {time} is confirmed!"
+    return f"Calendrax: Your booking at {business_name} for {service_name} on {date} at {time} is confirmed!"
 
 
 def get_booking_declined_sms(business_name: str, service_name: str, date: str, time: str) -> str:
     """Returns SMS message for booking declined notification"""
-    return f"Bookle: Unfortunately your booking at {business_name} for {service_name} on {date} at {time} could not be accommodated."
+    return f"Calendrax: Unfortunately your booking at {business_name} for {service_name} on {date} at {time} could not be accommodated."
 
 
 def get_booking_cancelled_sms(customer_name: str, service_name: str, date: str, time: str) -> str:
     """Returns SMS message for booking cancelled notification"""
-    return f"Bookle: {customer_name} cancelled their booking for {service_name} on {date} at {time}."
+    return f"Calendrax: {customer_name} cancelled their booking for {service_name} on {date} at {time}."
 
 
 # ==================== NOTIFICATION DISPATCHER ====================
