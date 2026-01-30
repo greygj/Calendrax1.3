@@ -7,6 +7,7 @@ import { serviceAPI, availabilityAPI, appointmentAPI, notificationAPI, staffAPI,
 const BusinessOwnerDashboard = () => {
   const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [activeView, setActiveView] = useState('dashboard');
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -21,6 +22,13 @@ const BusinessOwnerDashboard = () => {
   const [businessCustomers, setBusinessCustomers] = useState([]);
   const [businessData, setBusinessData] = useState(null);
   const [availabilityCache, setAvailabilityCache] = useState({});
+  
+  // Stripe Connect state
+  const [stripeStatus, setStripeStatus] = useState(null);
+  const [stripeLoading, setStripeLoading] = useState(false);
+  
+  // Subscription state
+  const [subscription, setSubscription] = useState(null);
   
   // Staff management state
   const [selectedStaff, setSelectedStaff] = useState(null);
