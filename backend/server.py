@@ -1434,23 +1434,20 @@ async def get_payment_status(session_id: str, request: Request, user: dict = Dep
             "transactionId": transaction["id"]
         }
     
-    # Initialize Stripe and check status
-    host_url = str(request.base_url)
-    webhook_url = f"{host_url}api/webhook/stripe"
-    stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
-    
+    # Check status using native Stripe SDK
     try:
-        checkout_status = await stripe_checkout.get_checkout_status(session_id)
+        checkout_session = stripe.checkout.Session.retrieve(session_id)
         
         # Update transaction status
-        new_status = "completed" if checkout_status.payment_status == "paid" else checkout_status.status
-        new_payment_status = checkout_status.payment_status
+        new_status = "completed" if checkout_session.payment_status == "paid" else checkout_session.status
+        new_payment_status = checkout_session.payment_status
         
         await db.payment_transactions.update_one(
             {"sessionId": session_id},
             {"$set": {
                 "status": new_status,
                 "paymentStatus": new_payment_status,
+                "paymentIntentId": checkout_session.payment_intent,
                 "updatedAt": datetime.now(timezone.utc).isoformat()
             }}
         )
@@ -1459,8 +1456,8 @@ async def get_payment_status(session_id: str, request: Request, user: dict = Dep
             "status": new_status,
             "paymentStatus": new_payment_status,
             "transactionId": transaction["id"],
-            "amount": checkout_status.amount_total / 100,  # Convert from pence
-            "currency": checkout_status.currency
+            "amount": checkout_session.amount_total / 100 if checkout_session.amount_total else 0,
+            "currency": checkout_session.currency
         }
     except Exception as e:
         logger.error(f"Error checking payment status: {str(e)}")
