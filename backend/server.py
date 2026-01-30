@@ -65,8 +65,8 @@ DEPOSIT_LEVELS = {
 }
 
 # Subscription pricing (GBP)
-SUBSCRIPTION_BASE_PRICE = 14.00  # 1 staff member
-SUBSCRIPTION_ADDITIONAL_STAFF = 9.00  # Per additional staff
+SUBSCRIPTION_BASE_PRICE = 12.00  # 1 staff member
+SUBSCRIPTION_ADDITIONAL_STAFF = 8.00  # Per additional staff
 TRIAL_PERIOD_DAYS = 30
 
 # Create the main app
