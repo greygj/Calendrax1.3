@@ -629,8 +629,27 @@ const BusinessOwnerDashboard = () => {
     setCurrentMonth(newMonth);
   };
 
-  const pendingAppointments = allAppointments.filter(a => a.status === 'pending');
-  const confirmedAppointments = allAppointments.filter(a => a.status === 'confirmed');
+  // Helper to check if date has passed
+  const isDatePassed = (dateStr) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const appointmentDate = new Date(dateStr);
+    return appointmentDate < today;
+  };
+
+  // State for appointment view tab
+  const [appointmentTab, setAppointmentTab] = useState('current');
+
+  // Filter appointments - separate upcoming from past
+  const pendingAppointments = allAppointments.filter(a => a.status === 'pending' && !isDatePassed(a.date));
+  const confirmedAppointments = allAppointments.filter(a => a.status === 'confirmed' && !isDatePassed(a.date));
+  const historyAppointments = allAppointments.filter(a => 
+    a.status === 'cancelled' || 
+    a.status === 'declined' || 
+    a.status === 'completed' ||
+    isDatePassed(a.date)
+  ).sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date descending
+
   const unreadNotifications = notifications.filter(n => !n.read);
 
   const customers = allAppointments.reduce((acc, apt) => {
