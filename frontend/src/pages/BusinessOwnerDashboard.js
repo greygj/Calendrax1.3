@@ -196,6 +196,22 @@ const BusinessOwnerDashboard = () => {
     navigate('/');
   };
 
+  // ========== SUBSCRIPTION PAYMENT ==========
+  const handleSetupSubscriptionPayment = async () => {
+    setSubscriptionLoading(true);
+    try {
+      const res = await subscriptionAPI.setupPayment();
+      if (res.data.url) {
+        window.location.href = res.data.url;
+      }
+    } catch (error) {
+      console.error('Subscription payment setup error:', error);
+      alert('Failed to setup subscription payment. Please try again.');
+    } finally {
+      setSubscriptionLoading(false);
+    }
+  };
+
   // ========== SERVICE MANAGEMENT ==========
   const openAddService = () => {
     setEditingService(null);
