@@ -103,7 +103,8 @@ const BusinessOwnerDashboard = () => {
           address: businessRes.data.address || '',
           phone: businessRes.data.phone || '',
           email: businessRes.data.email || '',
-          website: businessRes.data.website || ''
+          website: businessRes.data.website || '',
+          depositLevel: businessRes.data.depositLevel || '20'
         });
       }
       
@@ -115,6 +116,50 @@ const BusinessOwnerDashboard = () => {
       console.error('Failed to load data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadStripeStatus = async () => {
+    try {
+      const res = await stripeConnectAPI.getStatus();
+      setStripeStatus(res.data);
+    } catch (error) {
+      console.error('Failed to load Stripe status:', error);
+    }
+  };
+
+  const loadSubscription = async () => {
+    try {
+      const res = await subscriptionAPI.getMine();
+      setSubscription(res.data);
+    } catch (error) {
+      console.error('Failed to load subscription:', error);
+    }
+  };
+
+  const handleConnectStripe = async () => {
+    setStripeLoading(true);
+    try {
+      const res = await stripeConnectAPI.createAccount();
+      if (res.data.url) {
+        window.location.href = res.data.url;
+      }
+    } catch (error) {
+      console.error('Stripe connect error:', error);
+      alert('Failed to start Stripe onboarding. Please try again.');
+    } finally {
+      setStripeLoading(false);
+    }
+  };
+
+  const handleOpenStripeDashboard = async () => {
+    try {
+      const res = await stripeConnectAPI.getDashboardLink();
+      if (res.data.url) {
+        window.open(res.data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error getting dashboard link:', error);
     }
   };
 
