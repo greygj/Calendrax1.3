@@ -39,6 +39,11 @@ const BusinessOwnerDashboard = () => {
   const [staffConfirmData, setStaffConfirmData] = useState(null);
   const [pendingStaffAction, setPendingStaffAction] = useState(null);
   
+  // Revenue state
+  const [revenueSummary, setRevenueSummary] = useState(null);
+  const [staffRevenue, setStaffRevenue] = useState(null);
+  const [revenueLoading, setRevenueLoading] = useState(false);
+  
   // Service management state
   const [showServiceModal, setShowServiceModal] = useState(false);
   const [editingService, setEditingService] = useState(null);
