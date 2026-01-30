@@ -103,6 +103,21 @@ export const paymentAPI = {
   completeBooking: (data) => apiClient.post('/payments/complete-booking', data)
 };
 
+// Stripe Connect
+export const stripeConnectAPI = {
+  createAccount: () => apiClient.post('/stripe-connect/create-account'),
+  getStatus: () => apiClient.get('/stripe-connect/status'),
+  getDashboardLink: () => apiClient.post('/stripe-connect/dashboard-link')
+};
+
+// Subscriptions
+export const subscriptionAPI = {
+  getMine: () => apiClient.get('/my-subscription'),
+  getPricing: () => apiClient.get('/subscription/pricing'),
+  setupPayment: () => apiClient.post('/subscription/setup-payment'),
+  cancel: () => apiClient.post('/subscription/cancel')
+};
+
 // Notifications
 export const notificationAPI = {
   getAll: () => apiClient.get('/notifications'),
@@ -128,6 +143,7 @@ export const adminAPI = {
   // Subscriptions
   getSubscriptions: () => apiClient.get('/admin/subscriptions'),
   updateSubscription: (id, data) => apiClient.put(`/admin/subscriptions/${id}`, data),
+  grantFreeAccess: (id, grant) => apiClient.put(`/admin/subscriptions/${id}/free-access?grant=${grant}`),
   
   // Appointments
   getAppointments: () => apiClient.get('/admin/appointments'),
