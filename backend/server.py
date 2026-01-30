@@ -130,6 +130,11 @@ class Business(BaseModel):
     rejected: bool = False
     rejectedReason: Optional[str] = None
     createdAt: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    # Stripe Connect fields
+    stripeConnectAccountId: Optional[str] = None
+    stripeConnectOnboarded: bool = False
+    # Deposit level setting
+    depositLevel: str = "20"  # Options: "none", "10", "20", "50", "full"
 
 class BusinessUpdate(BaseModel):
     businessName: Optional[str] = None
@@ -138,6 +143,7 @@ class BusinessUpdate(BaseModel):
     address: Optional[str] = None
     approved: Optional[bool] = None
     rejected: Optional[bool] = None
+    depositLevel: Optional[str] = None
     rejectedReason: Optional[str] = None
 
 class Service(BaseModel):
