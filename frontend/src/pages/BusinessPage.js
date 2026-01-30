@@ -252,7 +252,7 @@ const BusinessPage = () => {
       });
       
       if (checkoutRes.data.bypassed) {
-        // Offer code bypass - complete booking directly
+        // Offer code bypass or no deposit required - complete booking directly
         await paymentAPI.completeBooking({
           transactionId: checkoutRes.data.transactionId
         });
@@ -288,8 +288,18 @@ const BusinessPage = () => {
     }
   };
 
-  // Calculate deposit amount
-  const depositAmount = selectedService ? (selectedService.price * 0.20).toFixed(2) : 0;
+  // Calculate deposit amount based on business settings
+  const depositPercentage = business?.depositPercentage ?? 20;
+  const depositAmount = selectedService ? (selectedService.price * (depositPercentage / 100)).toFixed(2) : 0;
+  const isNoDeposit = depositPercentage === 0;
+  const isFullPayment = depositPercentage === 100;
+  
+  // Get deposit label
+  const getDepositLabel = () => {
+    if (isNoDeposit) return 'No deposit required';
+    if (isFullPayment) return 'Full payment required';
+    return `${depositPercentage}% deposit`;
+  };
 
   if (loading) {
     return (
