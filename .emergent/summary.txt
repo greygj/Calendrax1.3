@@ -1,99 +1,101 @@
 <analysis>**original_problem_statement:**
-The user wants to create a pixel-perfect clone of the JG clinic app and initially named it Booka, which was later rebranded to Bookle.
+The user's goal is to create Calendrax, a comprehensive booking application. The app was initially a clone of another service and has been rebranded twice.
 
 **PRODUCT REQUIREMENTS:**
-1.  **Business Owner Features:**
-    *   Sign up with business name, logo, postcode, and description.
-    *   Dashboard with a calendar (up to 6 months) to set availability for multiple staff members in 15-minute slots.
-    *   Manage services (CRUD, Active/Inactive).
-    *   Manage staff members (up to five), including assigning specific services to them.
-    *   View booking history and manage customers.
-    *   A profile page to edit business information.
-    *   Ability to book appointments on behalf of a customer (existing or new).
-    *   Receive notifications for booking requests.
-2.  **Customer Features:**
-    *   A dashboard to browse all approved businesses.
-    *   A dedicated booking page for each business, showing services, staff, and location on a map.
-    *   Ability to select a staff member when booking a service.
-    *   A My Bookings page to view and cancel bookings.
-    *   A profile page to edit personal information (Name, Phone, Email).
-    *   Receive on-screen confirmation after booking and notifications for status changes.
-3.  **Platform Admin System:**
-    *   A secure admin dashboard () for  roles.
-    *   Admin can manage all users and businesses (view, edit, suspend, delete).
-    *   Admin must approve new businesses before they are publicly visible.
-4.  **Payments:**
-    *   Integrate Stripe to take a 20% non-refundable deposit when a customer books a service.
-    *   The deposit is refunded if the business rejects the booking but forfeited if the customer cancels.
-5.  **UI/UX:**
-    *   A dark theme with lime green accents.
-    *   The app must be responsive and mobile-friendly.
-    *   The Bookle logo should be prominently displayed.
+1.  **Business Owner Features:** Sign up, manage a dashboard with calendar availability for multiple staff, perform CRUD operations on services, manage up to five staff members, view booking history, manage customers, edit a business profile, book on behalf of customers, and receive notifications.
+2.  **Customer Features:** Browse businesses, book appointments via a dedicated business page (showing services, staff, and a map), select staff members, manage their own bookings, edit their profile, and receive notifications.
+3.  **Platform Admin System:** A secure  dashboard for a  to manage all users and businesses (view, edit, suspend, delete) and approve new business sign-ups.
+4.  **Payments & Subscriptions:**
+    *   **Customer Deposits:** Business owners can set a configurable deposit amount (0%, 10%, 20%, 50%, or 100%) required from customers at the time of booking.
+    *   **Business Subscriptions:** Business owners pay a monthly subscription fee to the platform. The pricing is dynamic based on the number of staff members (£12/month for 1 staff, +£8/month for each additional staff). New businesses receive a 30-day free trial.
+5.  **UI/UX:** A responsive, mobile-friendly dark theme with lime green accents, featuring the Calendrax logo.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A full-stack application named Bookle has been developed with a React frontend, a FastAPI backend, and a MongoDB database. Key features implemented include JWT-based authentication for three user roles (Customer, Business Owner, Admin), comprehensive dashboards for each role, a business approval system, and a full staff management system for business owners. A backend structure for SendGrid/Twilio notifications is in place but requires API keys. Most frontend components, which previously used mock data, have been refactored to use live API data. The agent was in the middle of integrating Stripe for payment processing.
+A full-stack application named Calendrax has been developed with a React frontend, a monolithic FastAPI backend, and a MongoDB database. The app supports three user roles (Customer, Business Owner, Admin) with JWT authentication and dedicated dashboards. A business approval system, comprehensive staff management, a revenue dashboard for business owners, and an auto-refund mechanism are implemented.
+
+The payment system has two components:
+1.  **Customer Deposits:** A previously implemented system allows customers to pay deposits.
+2.  **Business Subscriptions:** The agent was in the middle of implementing a system for the platform to collect subscription fees from business owners via Stripe. This involved removing the previous Stripe Connect implementation. A LIVE Stripe key has been added to the environment.
 
 **Last working item**:
-- **Last item agent was working:** The agent was integrating Stripe to handle a 20% deposit for bookings. The work began by fetching the integration playbook, installing the required Python packages (, ), and adding Stripe configuration variables to the backend. The agent was preparing to modify the appointment creation logic to include a payment step.
+- **Last item agent was working:** Refactoring the payment system to support platform-collected subscription fees from business owners. The user clarified that Calendrax should collect subscription fees, which prompted the agent to remove the Stripe Connect code (used for paying out deposits to businesses) and start implementing a direct Stripe Checkout flow for subscriptions.
 - **Status:** IN PROGRESS
 - **Agent Testing Done:** N
-- **Which testing method agent to use?** Both. The backend API for creating a payment intent needs to be tested with , and the entire frontend booking flow must be tested to ensure the UI correctly integrates the payment process.
+- **Which testing method agent to use?** Both. The backend endpoint  needs  testing, and the frontend flow (Business Owner clicking Setup Payment Method on their profile) requires screenshot verification.
 - **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-- **Issue 1: (P0)** The Stripe payment integration is incomplete. The booking process will be blocked or non-functional until this is finished.
+- **Issue 1: (P0)** The business subscription payment flow is incomplete and untested. Business owners currently have no way to add their payment method to pay for the service.
+- **Issue 2: (P0) Critical Logic Conflict:** The agent removed Stripe Connect, which was the mechanism for routing customer deposits to business owners. The user's requirement was The platform will not be taking a commission on the payments to the business, implying deposits should still go to the business. The current setup will likely route all customer deposits to the platform's main Stripe account, conflicting with the user's business model.
 
   **Issues Detail:**
-  - **Issue 1:**
-     - **Attempted fixes:** The agent has initialized Stripe in  and added necessary environment variables. The next step is to create a  endpoint and integrate it into the booking workflow on both the backend and frontend.
+  - **Issue 1: Incomplete Subscription Flow**
+     - **Attempted fixes:** The agent added a  endpoint to the backend and a Setup Payment Method button on the  frontend.
      - **Next debug checklist:**
-        1.  Create a new backend endpoint  that takes a  and returns a  from Stripe.
-        2.  Modify the  endpoint to require a  and verify the payment was successful before creating the booking.
-        3.  Update the  frontend component to call the payment intent endpoint before booking.
-        4.  Integrate the Stripe Elements React component to collect payment information from the user.
-        5.  Handle the deposit logic (20% of service price) and the non-refundable cancellation policy.
-     - **Why fix this issue and what will be achieved with the fix?** This is a core business requirement. Completing it will enable monetization and finalize the booking workflow.
+        1. Test the new  endpoint to ensure it generates a valid Stripe Checkout URL.
+        2. Test the frontend Setup Payment Method button to confirm it triggers the correct API call and redirects the user.
+        3. Review the backend webhook handler ( in ) to ensure it correctly updates a business's subscription status after a successful payment.
+     - **Why fix this issue and what will be achieved with the fix?** This is the core monetization feature for the Calendrax platform.
      - **Status:** IN PROGRESS
      - **Is recurring issue?** N
      - **Should Test frontend/backend/both after fix?** Both
-     - **Blocked on other issue:** None
+     - **Blocked on other issue:** None.
+
+  - **Issue 2: Deposit Routing Conflict**
+     - **Attempted fixes:** None. This issue was introduced by the last refactoring.
+     - **Next debug checklist:**
+        1.  Before writing any code, **clarify the intended payment flow with the user**. Propose a solution that accommodates both requirements:
+            *   **Option A (Stripe Connect):** Re-implement Stripe Connect so business owners can link their bank accounts to receive customer deposits directly. Use a separate standard Stripe integration for collecting platform subscription fees.
+            *   **Option B (Platform as Intermediary):** Keep the current setup where all funds (deposits and subscriptions) go to the platform's Stripe account. This would require the platform to manually pay out deposit amounts to businesses, which is complex and not what the user likely wants.
+        2.  Based on user confirmation, implement the chosen solution. This will likely involve re-introducing Stripe Connect alongside the new subscription logic.
+     - **Why fix this issue and what will be achieved with the fix?** To align the application's payment logic with the user's business model, ensuring business owners receive their funds correctly.
+     - **Status:** NOT STARTED
+     - **Is recurring issue?** N
+     - **Should Test frontend/backend/both after fix?** Both.
+     - **Blocked on other issue:** Blocked on user clarification.
 
 **In progress Task List**:
-- **Task 1: Complete Stripe Integration**
-    - **Where to resume:** Continue modifying  to create the payment logic. The agent had just finished adding the Stripe initialization code and was about to locate the appointment creation route to update it.
-    - **What will be achieved with this?** A fully functional booking system with mandatory 20% deposits.
-    - **Status:** IN PROGRESS
+- **Task 1: Implement a dual Stripe payment system**
+    - **Where to resume:** Address the Deposit Routing Conflict (Issue 2) by seeking clarification from the user. Once the path is clear, begin implementation.
+    - **What will be achieved with this?** A fully functional payment system that correctly handles both customer-to-business deposits and business-to-platform subscription fees.
+    - **Status:** BLOCKED (awaiting user clarification)
     - **Should Test frontend/backend/both after fix?** Both
-    - **Blocked on something:** None
+    - **Blocked on something:** User decision on the payment flow.
 
 **Upcoming and Future Tasks**
 **Upcoming Tasks:**
-- **(P1) Create User Account:** The user requested an account for , but the agent did not confirm whether it should be a **Customer** or **Business Owner**. This task is pending clarification and execution.
-- **(P1) Enable Notifications:** The backend infrastructure for email (SendGrid) and SMS (Twilio) is complete. The system needs the user to provide API keys to become operational.
+- **(P1) Enable Notifications:** The backend is ready for SendGrid (email) and Twilio (SMS). The agent needs to prompt the user to provide the necessary API keys.
 
 **Future Tasks:**
-- **(P2)** Implement a Google Maps API integration with a proper key for advanced features instead of the current basic embed.
-- **(P2)** Add a customer review and rating system for businesses.
+- **(P2)** Integrate Google Maps with a proper API key to replace the basic embed.
+- **(P2)** Implement a customer review and rating system for businesses.
+- **(P2)** Add advanced data visualization charts to the Revenue dashboard.
+- **(P2) Refactor Backend:** Propose breaking down the monolithic  into a modular structure (e.g., , , ) for better maintainability.
 
 **Completed work in this session**
-- **Bug Fix - Critical Login Failure:** Resolved a recurring  serialization error and password hash mismatch that prevented Customers and Business Owners from logging in. Verified the fix E2E for all user roles.
-- **Bug Fix - Mock Data Refactor:** Rewrote , , and  to fetch data from the live backend API instead of using hardcoded mock data, fixing numerous related bugs (businesses not appearing, services not saving).
-- **Bug Fix - Service Deletion:** Repaired the non-functional Delete button for services in the business owner dashboard.
-- **Feature - Staff Management System:** Implemented a full backend and frontend system allowing business owners to add/edit/delete staff, assign services to them, and manage their availability separately.
-- **Feature - Business Owner Profile & Booking:** Added a profile editing page for business owners and implemented a feature allowing them to book appointments directly for customers.
-- **Feature - Customer Dashboard & Profile Overhaul:** Redesigned the customer portal with a new dashboard layout, improved navigation, and added a profile editing page.
-- **UI/UX Improvements:** Rebranded the app from Booka to Bookle, updated the logo across all pages, increased the logo size as requested, and added an on-screen booking confirmation message.
-- **Feature - Notification System Backend:** Built the backend structure () to support email (SendGrid) and SMS (Twilio) notifications for booking events.
+- **Feature - Stripe & Subscription System:**
+    - Implemented a staff-based subscription model with a 30-day free trial.
+    - Added configurable deposit levels for business owners.
+    - Implemented an admin override for free access.
+    - Updated subscription pricing based on user feedback.
+- **Rebranding:** Updated the app from Bookle to Calendrax, including the logo and all text references.
+- **Feature - Staff Management Updates:**
+    - Added confirmation modals for adding/deleting staff, showing the impact on the monthly subscription cost.
+    - Fixed the staff deletion bug and updated the logic to cancel the staff member's future bookings automatically.
+- **Feature - Revenue Dashboard:** Created a comprehensive revenue dashboard for business owners with weekly, monthly, and yearly stats, plus a breakdown by staff member.
+- **Feature - Auto-Refund:** Implemented automatic deposit refunds when a business declines a booking.
+- **Feature - Booking History:** Created History tabs on both the Customer and Business Owner dashboards to separate past appointments from upcoming ones.
+- **Configuration:** Updated the environment with the user's LIVE Stripe API key.
 
 **Earlier issues found/mentioned but not fixed**
 - None.
 
 **Known issue recurrence from previous fork**
 - **Issue:** MongoDB  serialization .
-- **Recurrence count:** 3 (Login, Business Registration, Service Creation).
-- **Status:** RESOLVED for existing endpoints, but remains a high risk for any new endpoints that return data from MongoDB. The  helper function in  is the standard fix and must be applied consistently.
+- **Recurrence count:** 3
+- **Status:** RESOLVED for existing endpoints, but remains a high-risk factor for any new database queries. The  helper function is the standard mitigation.
 
 **Code Architecture**
 
@@ -102,8 +104,8 @@ A full-stack application named Bookle has been developed with a React frontend, 
 - **Frontend:** React, React Router, Tailwind CSS, shadcn/ui, Axios
 - **Backend:** FastAPI, Python, MongoDB (via )
 - **Authentication:** JWT with role-based access control.
-- **Payments:** Stripe (implementation in progress).
-- **Notifications:** SendGrid, Twilio (backend support implemented).
+- **Payments:** Stripe (currently configured for subscriptions, deposit flow is ambiguous).
+- **Notifications:** SendGrid, Twilio (backend ready, keys pending).
 
 **key DB schema**
 - **users:** 
@@ -113,72 +115,63 @@ A full-stack application named Bookle has been developed with a React frontend, 
 - **services:** 
 
 **changes in tech stack**
-- Added  and  to the backend dependencies for payment processing.
+- The user's **LIVE** Stripe key has been added to .
 
 **All files of reference**
-- : The monolithic backend file, recently modified to add staff management, profile updates, and initial Stripe setup.
-- : New module for handling email and SMS notifications.
-- : Heavily refactored to use real API data and includes new tabs for Profile and Staff management.
-- : Rewritten with a new UI and to use real API data.
-- : Rewritten to use real API data and to support staff selection during booking.
-- : Updated with new functions for staff, profile, and payment endpoints.
+- : Heavily modified with logic for subscriptions, revenue, and payment handling.
+- : The main hub for recent features, including the Revenue tab, updated staff modals, and the (now incomplete) Profile/Subscription section.
+- : Updated with booking history logic.
+- : Contains new API functions for revenue and subscription management.
+- : Contains the LIVE Stripe API key.
 
 **Areas that need refactoring**:
-- The  file is extremely large and contains all application logic (models, routes, auth, payments, notifications, etc.). It urgently needs to be broken down into a structured project with separate modules for routers, models, and services to ensure future maintainability.
+-  is critically oversized and complex. It urgently needs to be broken into a modular project structure to reduce risk and improve maintainability.
 
 **key api endpoints**
-- : Update customer profile.
-- : Update business profile.
-- : Manage staff members.
-- : Manage a specific staff member.
-- : Endpoint for business owners to create bookings.
--  (to be created): For initiating Stripe payments.
+- : **(New)** Creates a Stripe Checkout session for a business owner to pay for their subscription.
+- : **(Updated)** Handles webhooks from Stripe, intended to confirm subscription payments.
+- : **(New)** Provides data for the business owner's revenue dashboard.
+- : **(Updated)** Triggers an auto-refund if a booking is declined.
 
 **Critical Info for New Agent**
-- **Your immediate priority is to complete the Stripe payment integration.** The user requires a 20% non-refundable deposit on all bookings. You must create the payment intent endpoint and integrate the payment flow into the frontend. Use the test Stripe key already available in the environment.
-- The  file is monolithic and complex. Tread carefully when adding new logic.
-- Be vigilant about the recurring ** serialization error**. Any new endpoint returning a document from the database must use the  helper function to prevent this bug.
-- The user account for  still needs to be created. You may need to ask the user for the desired role (Customer or Business Owner).
+- **Your immediate priority is to resolve the payment logic conflict.** The current implementation likely directs all customer deposits to the platform owner, which contradicts the user's requirements. You **must** clarify this with the user before proceeding. Propose a solution that uses Stripe Connect for business payouts and a separate standard integration for platform subscriptions.
+- **A LIVE Stripe key is in use.** Be extremely cautious with any payment-related code. All transactions are real.
+- After resolving the payment logic, your next task is to complete and test the business subscription flow, allowing business owners to add their payment method.
+- The  file is a significant maintenance risk. Plan to propose a refactoring task to the user once the critical payment features are stable.
 
 **documents and test reports created in this job**
 - 
 - 
+- 
 
 **Last 10 User Messages and any pending HUMAN messages**
-1. **User:** I have added two services in the Bussiness login for JG Body Clinic but they do not appear when I view the business as a user. -> **Status: DONE**. Agent found and fixed the issue (frontend was using mock data).
-2. **User:** Requested 4 new features: fix delete button, allow business owner to book for a customer, add a business profile page, and add a multi-person (staff) booking system. -> **Status: DONE**.
-3. **User:** Confirmed details for the new features. -> **Status: DONE**.
-4. **User:** Requested 5 UI/UX improvements for the customer-facing side, including booking confirmation, a home button, a larger logo, a profile page, and a dashboard-style homepage. -> **Status: DONE**.
-5. **User:** Integrate Stripe for Payments. Requested a 20% non-refundable deposit. -> **Status: IN PROGRESS**.
-6. **User:** When I click on a Business on the Business list as a user i get an error saying: Business not found -> **Status: DONE**. Agent fixed the page which was using mock data.
-7. **User:** When I log in as a user I can not see JG Body clinic on my Businesses list. -> **Status: DONE**. Agent fixed the dashboard which was using mock data.
-8. **User:** Is the logo size good now, or would you like it even bigger? -> User did not respond, but agent proceeded with other tasks.
-9. **User:** I would like the logo to be bigger please. 2. Set up the code and I will add Twillo keys later -> **Status: DONE**. Agent made logo bigger and set up notification code.
-10. **User:** make the Bookle logo much larger on the Welcome back screen -> **Status: DONE**.
+1.  **User:** Requested auto-refunds, a booking deletion warning for staff, and a Revenue dashboard. -> **Status: DONE**
+2.  **User:** Reported the Business Profile page was missing. -> **Status: DONE** (Agent found it was visible but on the far right of the navigation bar).
+3.  **User:** Requested booking history features. -> **Status: DONE**
+4.  **User:** Asked how to complete Stripe Connect onboarding. -> **Status: Superseded** (The implementation was changed).
+5.  **User:** Provided a LIVE Stripe secret key. -> **Status: DONE** (Agent updated the  file).
+6.  **User:** Clarified that the Stripe account is for Calendrax to collect subscription fees from businesses, not for businesses to receive customer payments. -> **Status: IN PROGRESS** (This clarification triggered the current incomplete refactor and the payment logic conflict).
+7.  **(Older messages summarized)**
 
 **Project Health Check:**
-- **Broken:** The booking workflow is currently non-functional as it's pending the completion of the Stripe payment integration.
-- **Mocked:** None. All mocked components have been replaced with API-driven logic.
+- **Broken:** The core payment logic is in a conflicting and incomplete state. Business owners cannot set up their subscription payments, and customer deposits are likely being misdirected.
+- **Mocked:** None.
 
 **3rd Party Integrations**
 - **Google Maps:** Basic embed, no API key used.
-- **SendGrid:** Backend structure is ready. Requires a user-provided API key to be functional.
-- **Twilio:** Backend structure is ready. Requires user-provided Account SID, Auth Token, and From Number.
-- **Stripe:** Integration is **IN PROGRESS**. Uses a test API key from the environment.
+- **SendGrid:** Backend structure is ready. Requires a user-provided API key.
+- **Twilio:** Backend structure is ready. Requires user-provided credentials.
+- **Stripe:** Integration is **IN PROGRESS** and in a conflicted state. Uses a **LIVE API KEY**.
 
 **Testing status**
-- **Testing agent used after significant changes:** YES (once, to resolve the initial login bug).
-- **Troubleshoot agent used after agent stuck in loop:** NO
+- **Testing agent used after significant changes:** YES
 - **Test files created:** []
-- **Known regressions:** Several regressions related to mock data were introduced and subsequently fixed during development.
+- **Known regressions:** The recent refactor has likely introduced a major regression in how customer deposits are handled.
 
 **Credentials to test flow:**
-- **Admin:**
-  - Email: 
-  - Password: 
-- **Business Owner:**
-  - Email: 
-  - Password:  (was reset by the agent)
+- **Admin:**  / 
+- **Business Owner:**  / 
+- **Customer:**  (password was used by the previous agent but is not documented; creating a new test customer is recommended).
 
 **What agent forgot to execute**
-- The agent was asked to create an account for  and inquired about the role (Customer or Business Owner) but never followed up to complete the account creation after the user's other requests took priority. This task remains outstanding.</analysis>
+- The previous agent did not recognize the critical conflict created by removing Stripe Connect. The system now lacks a mechanism to pay business owners their deposits, which goes against the user's stated business model. This must be addressed immediately.</analysis>
