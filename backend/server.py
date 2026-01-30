@@ -1577,26 +1577,41 @@ async def complete_booking_after_payment(data: dict, background_tasks: Backgroun
 
 @api_router.post("/webhook/stripe")
 async def stripe_webhook(request: Request):
-    """Handle Stripe webhook events"""
+    """Handle Stripe webhook events for customer deposits"""
     try:
         body = await request.body()
-        signature = request.headers.get("Stripe-Signature")
+        import json
+        event = json.loads(body)
         
-        host_url = str(request.base_url)
-        webhook_url = f"{host_url}api/webhook/stripe"
-        stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
+        event_type = event.get("type", "")
+        data = event.get("data", {}).get("object", {})
         
-        webhook_response = await stripe_checkout.handle_webhook(body, signature)
+        logger.info(f"Received Stripe webhook: {event_type}")
         
-        # Update transaction based on webhook event
-        if webhook_response.session_id:
+        if event_type == "checkout.session.completed":
+            session_id = data.get("id")
+            payment_status = data.get("payment_status")
+            
+            if session_id:
+                await db.payment_transactions.update_one(
+                    {"sessionId": session_id},
+                    {"$set": {
+                        "status": "completed" if payment_status == "paid" else payment_status,
+                        "paymentStatus": payment_status,
+                        "paymentIntentId": data.get("payment_intent"),
+                        "webhookEventType": event_type,
+                        "updatedAt": datetime.now(timezone.utc).isoformat()
+                    }}
+                )
+                logger.info(f"Updated transaction for session {session_id}: {payment_status}")
+        
+        elif event_type == "payment_intent.succeeded":
+            payment_intent_id = data.get("id")
             await db.payment_transactions.update_one(
-                {"sessionId": webhook_response.session_id},
+                {"paymentIntentId": payment_intent_id},
                 {"$set": {
-                    "status": webhook_response.payment_status,
-                    "paymentStatus": webhook_response.payment_status,
-                    "webhookEventId": webhook_response.event_id,
-                    "webhookEventType": webhook_response.event_type,
+                    "status": "completed",
+                    "paymentStatus": "paid",
                     "updatedAt": datetime.now(timezone.utc).isoformat()
                 }}
             )
