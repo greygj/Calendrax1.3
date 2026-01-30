@@ -398,9 +398,41 @@ const BusinessOwnerDashboard = () => {
     }
   };
 
+  // ========== PAYOUTS ==========
+  const loadPayouts = async () => {
+    setPayoutLoading(true);
+    try {
+      const res = await payoutAPI.getHistory();
+      setPayoutHistory(res.data);
+    } catch (error) {
+      console.error('Failed to load payout history:', error);
+    } finally {
+      setPayoutLoading(false);
+    }
+  };
+
+  // ========== ANALYTICS ==========
+  const loadAnalytics = async () => {
+    setAnalyticsLoading(true);
+    try {
+      const res = await analyticsAPI.getAdvanced();
+      setAnalytics(res.data);
+    } catch (error) {
+      console.error('Failed to load analytics:', error);
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (activeView === 'revenue') {
       loadRevenue();
+    }
+    if (activeView === 'payouts') {
+      loadPayouts();
+    }
+    if (activeView === 'analytics') {
+      loadAnalytics();
     }
   }, [activeView]);
 
