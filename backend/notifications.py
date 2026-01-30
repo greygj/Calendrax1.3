@@ -157,7 +157,7 @@ def get_booking_approved_email(
                 <p><strong style="color: #a3e635;">Time:</strong> {time}</p>
             </div>
             <p>We look forward to seeing you!</p>
-            <p style="color: #888; margin-top: 30px; font-size: 12px;">This is an automated message from Bookle.</p>
+            <p style="color: #888; margin-top: 30px; font-size: 12px;">This is an automated message from Calendrax.</p>
         </div>
     </body>
     </html>
@@ -188,7 +188,7 @@ def get_booking_declined_email(
                 <p><strong style="color: #a3e635;">Time:</strong> {time}</p>
             </div>
             <p>Please try booking a different time slot or contact the business directly.</p>
-            <p style="color: #888; margin-top: 30px; font-size: 12px;">This is an automated message from Bookle.</p>
+            <p style="color: #888; margin-top: 30px; font-size: 12px;">This is an automated message from Calendrax.</p>
         </div>
     </body>
     </html>
@@ -219,7 +219,7 @@ def get_booking_cancelled_email(
                 <p><strong style="color: #a3e635;">Time:</strong> {time}</p>
             </div>
             <p>The time slot is now available for other bookings.</p>
-            <p style="color: #888; margin-top: 30px; font-size: 12px;">This is an automated message from Bookle.</p>
+            <p style="color: #888; margin-top: 30px; font-size: 12px;">This is an automated message from Calendrax.</p>
         </div>
     </body>
     </html>
