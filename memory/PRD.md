@@ -236,11 +236,27 @@ STRIPE_API_KEY=sk_test_emergent
 
 ---
 
+### Phase 8: Payout History & Advanced Analytics ✅ (January 30, 2026)
+- [x] **Payout History Tab** - New dashboard for business owners to track customer deposits:
+  - Summary cards: Total Received, This Month, Year to Date, Net Received
+  - Comparison with previous month
+  - Bank account connection status notice
+  - Transaction history list with service details
+  - Refund tracking
+- [x] **Advanced Analytics Tab** - Comprehensive business insights:
+  - Key Metrics: Total Bookings, Avg Booking Value, Conversion Rate, Customer Retention
+  - Most Popular Services ranking with revenue
+  - Peak Booking Hours with visual bars
+  - Busiest Days of the week
+  - Booking Status Breakdown (confirmed, declined, etc.)
+  - Customer Insights (total, repeat, first-time)
+  - 6-Month Trend chart showing bookings and revenue
+
 ## Upcoming Tasks (P1)
-1. Add Google Maps API for accurate business location display
-2. Implement refund workflow (auto-refund when business declines booking)
+1. Enable Stripe Connect on your Stripe account to activate business payout functionality
+2. Add Google Maps API for accurate business location display
+3. Provide SendGrid/Twilio API keys to enable email/SMS notifications
 
 ## Future/Backlog (P2)
 1. Customer reviews and ratings
-2. Advanced analytics for business owners
-3. Refactor server.py into modular structure (routes/, models/, auth/)
+2. Refactor server.py into modular structure (routes/, models/, auth/)
