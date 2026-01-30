@@ -1825,6 +1825,42 @@ async def admin_update_subscription(subscription_id: str, updates: dict, admin: 
     
     return {"success": True}
 
+@api_router.put("/admin/subscriptions/{subscription_id}/free-access")
+async def admin_grant_free_access(subscription_id: str, grant: bool, admin: dict = Depends(require_admin)):
+    """Admin can grant or revoke free access for a business"""
+    subscription = await db.subscriptions.find_one({"id": subscription_id})
+    if not subscription:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    
+    update_data = {
+        "freeAccessOverride": grant,
+        "freeAccessGrantedBy": admin["id"] if grant else None,
+        "freeAccessGrantedAt": datetime.now(timezone.utc).isoformat() if grant else None
+    }
+    
+    # If granting free access, also set status to active
+    if grant:
+        update_data["status"] = "active"
+        update_data["lastPaymentStatus"] = "free_access"
+    
+    await db.subscriptions.update_one({"id": subscription_id}, {"$set": update_data})
+    
+    # Notify business owner
+    business = await db.businesses.find_one({"id": subscription["businessId"]})
+    if business:
+        notification_doc = {
+            "id": str(uuid.uuid4()),
+            "userId": business["ownerId"],
+            "type": "free_access_granted" if grant else "free_access_revoked",
+            "title": "Free Access " + ("Granted" if grant else "Revoked"),
+            "message": "Your business has been granted free access to Bookle." if grant else "Your free access has been revoked. Please set up payment to continue using Bookle.",
+            "read": False,
+            "createdAt": datetime.now(timezone.utc).isoformat()
+        }
+        await db.notifications.insert_one(notification_doc)
+    
+    return {"success": True, "freeAccess": grant}
+
 @api_router.get("/admin/appointments")
 async def admin_get_appointments(admin: dict = Depends(require_admin)):
     appointments = await db.appointments.find().sort("createdAt", -1).to_list(1000)
