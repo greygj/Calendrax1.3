@@ -1,7 +1,7 @@
-# Booka - Booking App PRD
+# Calendrax - Booking App PRD
 
 ## Original Problem Statement
-Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-production-a3e1.up.railway.app) and name it "Bookle".
+Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-production-a3e1.up.railway.app) and name it "Calendrax".
 
 ## Core Requirements
 
@@ -38,7 +38,7 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 - Dark theme with lime green accents
 - Responsive design for mobile devices
 - User accounts must persist after logout
-- **Bookle branding** with large custom logo
+- **Calendrax branding** with large custom logo
 - Consistent navigation across all user pages
 
 ## Tech Stack
@@ -102,7 +102,7 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 - [x] **"Booking History"** page for past bookings (separated from active bookings)
 - [x] **Profile page** with editable Name, Email, Phone (all mandatory)
 - [x] **Dashboard button** on business pages for easy navigation
-- [x] **Larger Bookle logo** on Browse Businesses screen
+- [x] **Larger Calendrax logo** on Browse Businesses screen
 
 ### Phase 3: Business Owner Portal ✅
 - [x] Business owner dashboard with stats
@@ -158,7 +158,7 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 - [x] Fixed MongoDB ObjectId serialization in all endpoints
 - [x] Fixed service delete button not working
 - [x] Fixed data persistence on logout
-- [x] Updated branding from "Booka" to "Bookle"
+- [x] Updated branding from "Booka" to "Calendrax"
 
 ---
 
