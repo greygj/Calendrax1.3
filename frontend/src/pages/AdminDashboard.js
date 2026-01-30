@@ -122,6 +122,15 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleToggleFreeAccess = async (subId, grant) => {
+    try {
+      await adminAPI.grantFreeAccess(subId, grant);
+      loadData();
+    } catch (err) {
+      setError('Failed to update free access');
+    }
+  };
+
   // Refund action
   const handleRefund = async (appointmentId, amount) => {
     try {
