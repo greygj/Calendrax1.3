@@ -45,6 +45,8 @@ JWT_EXPIRATION_HOURS = 24
 
 # Stripe Configuration
 STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY', 'sk_test_emergent')
+import stripe
+stripe.api_key = STRIPE_API_KEY
 
 # Offer codes for testing (bypass payment)
 VALID_OFFER_CODES = {
@@ -52,6 +54,20 @@ VALID_OFFER_CODES = {
     "BOOKLE100": {"type": "bypass", "description": "100% discount for testing"},
     "STAFF2025": {"type": "bypass", "description": "Staff testing code"}
 }
+
+# Deposit level options (percentage of service price)
+DEPOSIT_LEVELS = {
+    "none": 0,
+    "10": 10,
+    "20": 20,  # Default
+    "50": 50,
+    "full": 100
+}
+
+# Subscription pricing (GBP)
+SUBSCRIPTION_BASE_PRICE = 14.00  # 1 staff member
+SUBSCRIPTION_ADDITIONAL_STAFF = 9.00  # Per additional staff
+TRIAL_PERIOD_DAYS = 30
 
 # Create the main app
 app = FastAPI(title="Booka API")
