@@ -528,13 +528,15 @@ const CustomerDashboard = () => {
                             </div>
                           </div>
                           <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            booking.status === 'completed'
+                            booking.status === 'completed' || (booking.status === 'confirmed' && isDatePassed(booking.date))
                               ? 'bg-lime-500/20 text-lime-400'
                               : booking.status === 'cancelled'
                               ? 'bg-gray-500/20 text-gray-400'
                               : 'bg-red-500/20 text-red-400'
                           }`}>
-                            {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                            {(booking.status === 'confirmed' && isDatePassed(booking.date)) 
+                              ? 'Completed' 
+                              : booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                           </span>
                         </div>
                       </div>
