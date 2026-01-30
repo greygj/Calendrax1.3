@@ -40,7 +40,6 @@ JWT_EXPIRATION_HOURS = 24
 
 # Stripe Configuration
 STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY', 'sk_test_emergent')
-import stripe
 stripe.api_key = STRIPE_API_KEY
 
 # Offer codes for testing (bypass payment)
