@@ -329,11 +329,16 @@ const BusinessOwnerDashboard = () => {
     }
     
     try {
-      // Get preview of subscription change
-      const preview = await staffAPI.previewSubscriptionChange('remove');
+      // Get preview of subscription change and future bookings count
+      const [preview, bookingsRes] = await Promise.all([
+        staffAPI.previewSubscriptionChange('remove'),
+        staffAPI.getFutureBookingsCount(staffId)
+      ]);
+      
       setStaffConfirmData({
         type: 'delete',
         staffName: staff.name,
+        futureBookingsCount: bookingsRes.data.futureBookingsCount,
         ...preview.data
       });
       setPendingStaffAction({ type: 'delete', staffId: staffId });
@@ -343,6 +348,29 @@ const BusinessOwnerDashboard = () => {
       alert(error.response?.data?.detail || 'Failed to process request.');
     }
   };
+
+  // ========== REVENUE ==========
+  const loadRevenue = async () => {
+    setRevenueLoading(true);
+    try {
+      const [summaryRes, staffRes] = await Promise.all([
+        revenueAPI.getSummary(),
+        revenueAPI.getByStaff()
+      ]);
+      setRevenueSummary(summaryRes.data);
+      setStaffRevenue(staffRes.data);
+    } catch (error) {
+      console.error('Failed to load revenue data:', error);
+    } finally {
+      setRevenueLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeView === 'revenue') {
+      loadRevenue();
+    }
+  }, [activeView]);
 
   const toggleStaffService = (serviceId) => {
     setStaffForm(prev => ({
