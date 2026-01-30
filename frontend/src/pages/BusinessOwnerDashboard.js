@@ -428,16 +428,16 @@ const BusinessOwnerDashboard = () => {
   };
 
   useEffect(() => {
-    if (activeView === 'revenue') {
-      loadRevenue();
-    }
-    if (activeView === 'payouts') {
-      loadPayouts();
-    }
     if (activeView === 'analytics') {
-      loadAnalytics();
+      if (analyticsSubTab === 'revenue') {
+        loadRevenue();
+      } else if (analyticsSubTab === 'payouts') {
+        loadPayouts();
+      } else {
+        loadAnalytics();
+      }
     }
-  }, [activeView]);
+  }, [activeView, analyticsSubTab]);
 
   const toggleStaffService = (serviceId) => {
     setStaffForm(prev => ({
