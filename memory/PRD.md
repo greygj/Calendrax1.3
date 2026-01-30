@@ -237,20 +237,11 @@ STRIPE_API_KEY=sk_test_emergent
 ---
 
 ### Phase 8: Payout History & Advanced Analytics ✅ (January 30, 2026)
-- [x] **Payout History Tab** - New dashboard for business owners to track customer deposits:
-  - Summary cards: Total Received, This Month, Year to Date, Net Received
-  - Comparison with previous month
-  - Bank account connection status notice
-  - Transaction history list with service details
-  - Refund tracking
-- [x] **Advanced Analytics Tab** - Comprehensive business insights:
-  - Key Metrics: Total Bookings, Avg Booking Value, Conversion Rate, Customer Retention
-  - Most Popular Services ranking with revenue
-  - Peak Booking Hours with visual bars
-  - Busiest Days of the week
-  - Booking Status Breakdown (confirmed, declined, etc.)
-  - Customer Insights (total, repeat, first-time)
-  - 6-Month Trend chart showing bookings and revenue
+- [x] **Analytics Tab Consolidation** - Combined Revenue, Payouts, and Insights into a single Analytics tab with sub-navigation:
+  - **Overview**: Business insights (total bookings, avg. booking value, conversion rate, customer retention, popular services, peak hours, busiest days, status breakdown, 6-month trend)
+  - **Revenue**: Weekly, monthly, and yearly revenue with comparisons and staff breakdown
+  - **Payouts**: Deposit history, bank account connection status, transaction list
+- [x] Menu bar tidied from 10 tabs to 8 tabs
 
 ## Upcoming Tasks (P1)
 1. Enable Stripe Connect on your Stripe account to activate business payout functionality
