@@ -265,10 +265,16 @@ const BusinessOwnerDashboard = () => {
       if (editingStaff) {
         await staffAPI.update(editingStaff.id, staffForm);
       } else {
-        await staffAPI.create(staffForm);
+        const res = await staffAPI.create(staffForm);
+        // Show subscription increase notification
+        if (res.data.subscriptionUpdate) {
+          const update = res.data.subscriptionUpdate;
+          alert(`Staff member added successfully!\n\n${update.message}`);
+        }
       }
       setShowStaffModal(false);
       loadData();
+      loadSubscription();
     } catch (error) {
       console.error('Failed to save staff:', error);
       alert(error.response?.data?.detail || 'Failed to save staff. Maximum 5 staff members allowed.');
