@@ -1343,6 +1343,211 @@ const BusinessOwnerDashboard = () => {
           </div>
         )}
 
+        {/* Revenue View */}
+        {activeView === 'revenue' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-white text-xl font-semibold">Revenue</h2>
+              <button 
+                onClick={loadRevenue}
+                disabled={revenueLoading}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                {revenueLoading ? 'Loading...' : 'Refresh'}
+              </button>
+            </div>
+
+            {revenueLoading && !revenueSummary ? (
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                <p className="text-gray-400">Loading revenue data...</p>
+              </div>
+            ) : revenueSummary ? (
+              <>
+                {/* Overview Cards */}
+                <div className="grid md:grid-cols-3 gap-4">
+                  {/* Current Week */}
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                    <p className="text-gray-400 text-sm mb-1">This Week</p>
+                    <p className="text-white text-3xl font-bold">£{revenueSummary.currentWeek.revenue.toFixed(2)}</p>
+                    <p className="text-gray-500 text-sm">{revenueSummary.currentWeek.bookingCount} bookings</p>
+                    <div className={`flex items-center gap-1 mt-2 text-sm ${
+                      revenueSummary.comparison.weekOverWeek.change >= 0 ? 'text-lime-400' : 'text-red-400'
+                    }`}>
+                      {revenueSummary.comparison.weekOverWeek.change >= 0 ? (
+                        <TrendingUp className="w-4 h-4" />
+                      ) : (
+                        <TrendingDown className="w-4 h-4" />
+                      )}
+                      <span>
+                        {revenueSummary.comparison.weekOverWeek.change >= 0 ? '+' : ''}
+                        £{revenueSummary.comparison.weekOverWeek.change.toFixed(2)} vs last week
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Current Month */}
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                    <p className="text-gray-400 text-sm mb-1">{revenueSummary.currentMonth.label}</p>
+                    <p className="text-white text-3xl font-bold">£{revenueSummary.currentMonth.revenue.toFixed(2)}</p>
+                    <p className="text-gray-500 text-sm">{revenueSummary.currentMonth.bookingCount} bookings</p>
+                    <div className={`flex items-center gap-1 mt-2 text-sm ${
+                      revenueSummary.comparison.monthOverMonth.change >= 0 ? 'text-lime-400' : 'text-red-400'
+                    }`}>
+                      {revenueSummary.comparison.monthOverMonth.change >= 0 ? (
+                        <TrendingUp className="w-4 h-4" />
+                      ) : (
+                        <TrendingDown className="w-4 h-4" />
+                      )}
+                      <span>
+                        {revenueSummary.comparison.monthOverMonth.change >= 0 ? '+' : ''}
+                        £{revenueSummary.comparison.monthOverMonth.change.toFixed(2)} vs {revenueSummary.previousMonth.label}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Current Year */}
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                    <p className="text-gray-400 text-sm mb-1">{revenueSummary.currentYear.label}</p>
+                    <p className="text-white text-3xl font-bold">£{revenueSummary.currentYear.revenue.toFixed(2)}</p>
+                    <p className="text-gray-500 text-sm">{revenueSummary.currentYear.bookingCount} bookings</p>
+                  </div>
+                </div>
+
+                {/* Week Comparison */}
+                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                  <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                    <Calendar className="w-5 h-5 text-lime-400" />
+                    Week Comparison
+                  </h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="bg-zinc-800 rounded-lg p-4">
+                      <p className="text-gray-400 text-sm">{revenueSummary.currentWeek.label}</p>
+                      <p className="text-lime-400 text-2xl font-bold">£{revenueSummary.currentWeek.revenue.toFixed(2)}</p>
+                      <p className="text-gray-500 text-sm">{revenueSummary.currentWeek.bookingCount} bookings</p>
+                    </div>
+                    <div className="bg-zinc-800 rounded-lg p-4">
+                      <p className="text-gray-400 text-sm">{revenueSummary.previousWeek.label}</p>
+                      <p className="text-white text-2xl font-bold">£{revenueSummary.previousWeek.revenue.toFixed(2)}</p>
+                      <p className="text-gray-500 text-sm">{revenueSummary.previousWeek.bookingCount} bookings</p>
+                    </div>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-zinc-700">
+                    <div className={`flex items-center justify-center gap-2 text-lg ${
+                      revenueSummary.comparison.weekOverWeek.percentChange >= 0 ? 'text-lime-400' : 'text-red-400'
+                    }`}>
+                      {revenueSummary.comparison.weekOverWeek.percentChange >= 0 ? (
+                        <TrendingUp className="w-5 h-5" />
+                      ) : (
+                        <TrendingDown className="w-5 h-5" />
+                      )}
+                      <span className="font-semibold">
+                        {revenueSummary.comparison.weekOverWeek.percentChange >= 0 ? '+' : ''}
+                        {revenueSummary.comparison.weekOverWeek.percentChange.toFixed(1)}%
+                      </span>
+                      <span className="text-gray-400 text-sm">week over week</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Month Comparison */}
+                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                  <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                    <BarChart3 className="w-5 h-5 text-lime-400" />
+                    Month Comparison
+                  </h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="bg-zinc-800 rounded-lg p-4">
+                      <p className="text-gray-400 text-sm">{revenueSummary.currentMonth.label}</p>
+                      <p className="text-lime-400 text-2xl font-bold">£{revenueSummary.currentMonth.revenue.toFixed(2)}</p>
+                      <p className="text-gray-500 text-sm">{revenueSummary.currentMonth.bookingCount} bookings</p>
+                    </div>
+                    <div className="bg-zinc-800 rounded-lg p-4">
+                      <p className="text-gray-400 text-sm">{revenueSummary.previousMonth.label}</p>
+                      <p className="text-white text-2xl font-bold">£{revenueSummary.previousMonth.revenue.toFixed(2)}</p>
+                      <p className="text-gray-500 text-sm">{revenueSummary.previousMonth.bookingCount} bookings</p>
+                    </div>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-zinc-700">
+                    <div className={`flex items-center justify-center gap-2 text-lg ${
+                      revenueSummary.comparison.monthOverMonth.percentChange >= 0 ? 'text-lime-400' : 'text-red-400'
+                    }`}>
+                      {revenueSummary.comparison.monthOverMonth.percentChange >= 0 ? (
+                        <TrendingUp className="w-5 h-5" />
+                      ) : (
+                        <TrendingDown className="w-5 h-5" />
+                      )}
+                      <span className="font-semibold">
+                        {revenueSummary.comparison.monthOverMonth.percentChange >= 0 ? '+' : ''}
+                        {revenueSummary.comparison.monthOverMonth.percentChange.toFixed(1)}%
+                      </span>
+                      <span className="text-gray-400 text-sm">month over month</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Staff Revenue Breakdown */}
+                {staffRevenue && staffRevenue.staffRevenue.length > 0 && (
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                    <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                      <Users className="w-5 h-5 text-lime-400" />
+                      Revenue by Staff Member
+                    </h3>
+                    <div className="space-y-4">
+                      {staffRevenue.staffRevenue.map((staff, index) => (
+                        <div key={staff.staffId} className="bg-zinc-800 rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 bg-lime-500/20 rounded-full flex items-center justify-center text-lime-400 font-semibold text-sm">
+                                {index + 1}
+                              </div>
+                              <div>
+                                <h4 className="text-white font-medium">{staff.staffName}</h4>
+                                {staff.isOwner && <span className="text-lime-400 text-xs">Owner</span>}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-3 gap-4 text-sm">
+                            <div>
+                              <p className="text-gray-500">This Week</p>
+                              <p className="text-white font-medium">£{staff.currentWeek.revenue.toFixed(2)}</p>
+                              <div className={`flex items-center gap-1 text-xs ${
+                                staff.weekChange >= 0 ? 'text-lime-400' : 'text-red-400'
+                              }`}>
+                                {staff.weekChange >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                                {staff.weekChange >= 0 ? '+' : ''}£{staff.weekChange.toFixed(2)}
+                              </div>
+                            </div>
+                            <div>
+                              <p className="text-gray-500">This Month</p>
+                              <p className="text-white font-medium">£{staff.currentMonth.revenue.toFixed(2)}</p>
+                              <div className={`flex items-center gap-1 text-xs ${
+                                staff.monthChange >= 0 ? 'text-lime-400' : 'text-red-400'
+                              }`}>
+                                {staff.monthChange >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                                {staff.monthChange >= 0 ? '+' : ''}£{staff.monthChange.toFixed(2)}
+                              </div>
+                            </div>
+                            <div>
+                              <p className="text-gray-500">This Year</p>
+                              <p className="text-white font-medium">£{staff.currentYear.revenue.toFixed(2)}</p>
+                              <p className="text-gray-500 text-xs">{staff.currentYear.bookingCount} bookings</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                <BarChart3 className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                <p className="text-gray-500">No revenue data available</p>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Profile View */}
         {activeView === 'profile' && (
           <div className="space-y-6">
