@@ -1273,10 +1273,158 @@ const BusinessOwnerDashboard = () => {
 
         {/* Profile View */}
         {activeView === 'profile' && (
-          <div>
-            <h2 className="text-white text-xl font-semibold mb-6">Business Profile</h2>
+          <div className="space-y-6">
+            <h2 className="text-white text-xl font-semibold">Business Profile</h2>
             
+            {/* Subscription Status Card */}
+            {subscription && (
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                  <CreditCard className="w-5 h-5 text-lime-400" />
+                  Subscription Status
+                </h3>
+                <div className="grid md:grid-cols-4 gap-4">
+                  <div className="bg-zinc-800 rounded-lg p-4">
+                    <p className="text-gray-400 text-sm">Status</p>
+                    <p className={`font-semibold ${subscription.status === 'trial' ? 'text-yellow-400' : subscription.status === 'active' ? 'text-lime-400' : 'text-red-400'}`}>
+                      {subscription.status === 'trial' ? 'Free Trial' : subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1)}
+                    </p>
+                  </div>
+                  <div className="bg-zinc-800 rounded-lg p-4">
+                    <p className="text-gray-400 text-sm">Staff Members</p>
+                    <p className="text-white font-semibold">{subscription.staffCount}</p>
+                  </div>
+                  <div className="bg-zinc-800 rounded-lg p-4">
+                    <p className="text-gray-400 text-sm">Monthly Price</p>
+                    <p className="text-lime-400 font-semibold">£{subscription.priceMonthly?.toFixed(2)}</p>
+                  </div>
+                  {subscription.status === 'trial' && subscription.trialDaysRemaining > 0 && (
+                    <div className="bg-zinc-800 rounded-lg p-4">
+                      <p className="text-gray-400 text-sm">Trial Ends In</p>
+                      <p className="text-yellow-400 font-semibold">{subscription.trialDaysRemaining} days</p>
+                    </div>
+                  )}
+                </div>
+                {subscription.freeAccessOverride && (
+                  <p className="text-lime-400 text-sm mt-3 flex items-center gap-2">
+                    <Check className="w-4 h-4" /> Free access granted by admin
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Stripe Connect Card */}
+            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+              <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                <Banknote className="w-5 h-5 text-lime-400" />
+                Bank Account (Receive Payments)
+              </h3>
+              
+              {!stripeStatus?.connected ? (
+                <div className="space-y-4">
+                  <p className="text-gray-400">
+                    Connect your bank account to receive customer deposits directly. Powered by Stripe.
+                  </p>
+                  <button
+                    onClick={handleConnectStripe}
+                    disabled={stripeLoading}
+                    className="flex items-center gap-2 bg-lime-500 text-black px-6 py-3 rounded-lg font-medium hover:bg-lime-400 transition-colors disabled:opacity-50"
+                  >
+                    {stripeLoading ? (
+                      <>Processing...</>
+                    ) : (
+                      <>
+                        <CreditCard className="w-4 h-4" />
+                        Connect Bank Account
+                      </>
+                    )}
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-3 h-3 rounded-full ${stripeStatus.chargesEnabled ? 'bg-lime-500' : 'bg-yellow-500'}`}></div>
+                    <span className="text-white">
+                      {stripeStatus.chargesEnabled ? 'Account active - Ready to receive payments' : 'Account setup incomplete'}
+                    </span>
+                  </div>
+                  
+                  <div className="flex gap-3">
+                    {!stripeStatus.chargesEnabled && (
+                      <button
+                        onClick={handleConnectStripe}
+                        className="flex items-center gap-2 bg-yellow-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-yellow-400 transition-colors"
+                      >
+                        Complete Setup
+                      </button>
+                    )}
+                    <button
+                      onClick={handleOpenStripeDashboard}
+                      className="flex items-center gap-2 bg-zinc-800 text-white px-4 py-2 rounded-lg font-medium hover:bg-zinc-700 transition-colors"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      View Stripe Dashboard
+                    </button>
+                  </div>
+                </div>
+              )}
+              
+              {!stripeStatus?.connected && (
+                <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg flex items-start gap-2">
+                  <AlertCircle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-yellow-200 text-sm">
+                    Without a connected bank account, customer deposits will go to the platform. Connect your account to receive payments directly.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Deposit Settings */}
+            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+              <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                <Settings className="w-5 h-5 text-lime-400" />
+                Deposit Settings
+              </h3>
+              <p className="text-gray-400 mb-4">
+                Choose how much deposit customers must pay when booking your services.
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                {[
+                  { value: 'none', label: 'No Deposit' },
+                  { value: '10', label: '10%' },
+                  { value: '20', label: '20%' },
+                  { value: '50', label: '50%' },
+                  { value: 'full', label: 'Pay in Full' }
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => setProfileForm({...profileForm, depositLevel: option.value})}
+                    className={`p-4 rounded-lg border transition-all ${
+                      profileForm.depositLevel === option.value
+                        ? 'bg-lime-500/20 border-lime-500 text-lime-400'
+                        : 'bg-zinc-800 border-zinc-700 text-gray-400 hover:border-zinc-600'
+                    }`}
+                  >
+                    <span className="font-semibold">{option.label}</span>
+                  </button>
+                ))}
+              </div>
+              <p className="text-gray-500 text-sm mt-3">
+                {profileForm.depositLevel === 'none' && 'Customers can book without any upfront payment.'}
+                {profileForm.depositLevel === '10' && 'Customers pay 10% of the service price to confirm their booking.'}
+                {profileForm.depositLevel === '20' && 'Customers pay 20% of the service price to confirm their booking. (Recommended)'}
+                {profileForm.depositLevel === '50' && 'Customers pay 50% of the service price to confirm their booking.'}
+                {profileForm.depositLevel === 'full' && 'Customers pay the full service price upfront when booking.'}
+              </p>
+            </div>
+            
+            {/* Business Details Form */}
             <form onSubmit={handleProfileSave} className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-6">
+              <h3 className="text-white font-medium flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-lime-400" />
+                Business Details
+              </h3>
+              
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="text-gray-400 text-sm block mb-2">Business Name</label>
