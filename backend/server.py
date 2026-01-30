@@ -481,7 +481,18 @@ async def get_business(business_id: str):
     business = await db.businesses.find_one({"id": business_id})
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
-    return remove_mongo_id(business)
+    result = remove_mongo_id(business)
+    # Include deposit info for customers
+    deposit_level = business.get("depositLevel", "20")
+    result["depositPercentage"] = DEPOSIT_LEVELS.get(deposit_level, 20)
+    result["depositLevelLabel"] = {
+        "none": "No deposit required",
+        "10": "10% deposit",
+        "20": "20% deposit",
+        "50": "50% deposit",
+        "full": "Full payment required"
+    }.get(deposit_level, "20% deposit")
+    return result
 
 @api_router.get("/businesses/{business_id}/services")
 async def get_business_services(business_id: str):
