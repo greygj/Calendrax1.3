@@ -988,7 +988,20 @@ async def validate_offer_code(data: dict, user: dict = Depends(get_current_user)
 
 @api_router.post("/payments/create-checkout")
 async def create_checkout_session(request: Request, data: PaymentRequest, user: dict = Depends(get_current_user)):
-    """Create a Stripe checkout session for booking deposit (20%)"""
+    """Create a Stripe checkout session for booking deposit based on business settings"""
+    
+    # Validate business and service first to get deposit level
+    business = await db.businesses.find_one({"id": data.businessId})
+    if not business or not business.get("approved"):
+        raise HTTPException(status_code=400, detail="Business not available")
+    
+    service = await db.services.find_one({"id": data.serviceId})
+    if not service:
+        raise HTTPException(status_code=404, detail="Service not found")
+    
+    # Get deposit level from business settings (default to 20%)
+    deposit_level = business.get("depositLevel", "20")
+    deposit_percentage = DEPOSIT_LEVELS.get(deposit_level, 20)
     
     # Check for valid offer code (bypass payment)
     if data.offerCode:
@@ -1020,18 +1033,35 @@ async def create_checkout_session(request: Request, data: PaymentRequest, user: 
                 "message": "Payment bypassed with offer code"
             }
     
-    # Validate business and service
-    business = await db.businesses.find_one({"id": data.businessId})
-    if not business or not business.get("approved"):
-        raise HTTPException(status_code=400, detail="Business not available")
+    # If deposit is "none" (0%), bypass payment
+    if deposit_percentage == 0:
+        transaction_id = str(uuid.uuid4())
+        transaction_doc = {
+            "id": transaction_id,
+            "userId": user["id"],
+            "serviceId": data.serviceId,
+            "businessId": data.businessId,
+            "staffId": data.staffId,
+            "date": data.date,
+            "time": data.time,
+            "amount": 0,
+            "currency": "gbp",
+            "status": "bypassed",
+            "paymentStatus": "no_deposit",
+            "sessionId": None,
+            "createdAt": datetime.now(timezone.utc).isoformat()
+        }
+        await db.payment_transactions.insert_one(transaction_doc)
+        
+        return {
+            "bypassed": True,
+            "transactionId": transaction_id,
+            "message": "No deposit required for this business"
+        }
     
-    service = await db.services.find_one({"id": data.serviceId})
-    if not service:
-        raise HTTPException(status_code=404, detail="Service not found")
-    
-    # Calculate 20% deposit
+    # Calculate deposit based on business setting
     service_price = float(service["price"])
-    deposit_amount = round(service_price * 0.20, 2)
+    deposit_amount = round(service_price * (deposit_percentage / 100), 2)
     
     if deposit_amount < 0.50:
         deposit_amount = 0.50  # Stripe minimum is 50 cents/pence
@@ -1042,6 +1072,9 @@ async def create_checkout_session(request: Request, data: PaymentRequest, user: 
     # Build success and cancel URLs
     success_url = f"{data.originUrl}/booking-success?session_id={{CHECKOUT_SESSION_ID}}&transaction_id={transaction_id}"
     cancel_url = f"{data.originUrl}/business/{data.businessId}?cancelled=true"
+    
+    # Check if business has Stripe Connect and use it for destination
+    stripe_account_id = business.get("stripeConnectAccountId") if business.get("stripeConnectOnboarded") else None
     
     # Initialize Stripe checkout
     host_url = str(request.base_url)
