@@ -1876,6 +1876,205 @@ async def get_external_notification_status():
     """Check if email and SMS notifications are configured"""
     return get_notification_status()
 
+# ==================== REVENUE ROUTES ====================
+
+def get_week_range(date: datetime):
+    """Get start and end of the week containing the given date (Monday to Sunday)"""
+    start = date - timedelta(days=date.weekday())
+    end = start + timedelta(days=6)
+    return start.strftime("%Y-%m-%d"), end.strftime("%Y-%m-%d")
+
+def get_month_range(date: datetime):
+    """Get start and end of the month containing the given date"""
+    start = date.replace(day=1)
+    # Get last day of month
+    if date.month == 12:
+        end = date.replace(year=date.year + 1, month=1, day=1) - timedelta(days=1)
+    else:
+        end = date.replace(month=date.month + 1, day=1) - timedelta(days=1)
+    return start.strftime("%Y-%m-%d"), end.strftime("%Y-%m-%d")
+
+def get_year_range(date: datetime):
+    """Get start and end of the calendar year"""
+    start = date.replace(month=1, day=1)
+    end = date.replace(month=12, day=31)
+    return start.strftime("%Y-%m-%d"), end.strftime("%Y-%m-%d")
+
+async def calculate_revenue(business_id: str, start_date: str, end_date: str, staff_id: str = None):
+    """Calculate revenue for a given date range"""
+    query = {
+        "businessId": business_id,
+        "date": {"$gte": start_date, "$lte": end_date},
+        "status": {"$in": ["confirmed", "completed"]}
+    }
+    if staff_id:
+        query["staffId"] = staff_id
+    
+    appointments = await db.appointments.find(query).to_list(10000)
+    
+    total_revenue = sum(float(apt.get("paymentAmount", 0)) for apt in appointments)
+    booking_count = len(appointments)
+    
+    return {
+        "revenue": round(total_revenue, 2),
+        "bookingCount": booking_count
+    }
+
+@api_router.get("/revenue")
+async def get_revenue_summary(user: dict = Depends(require_business_owner)):
+    """Get revenue summary for the business"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    now = datetime.now(timezone.utc)
+    
+    # Current week
+    current_week_start, current_week_end = get_week_range(now)
+    current_week = await calculate_revenue(business["id"], current_week_start, current_week_end)
+    
+    # Previous week (for comparison)
+    prev_week_date = now - timedelta(weeks=1)
+    prev_week_start, prev_week_end = get_week_range(prev_week_date)
+    prev_week = await calculate_revenue(business["id"], prev_week_start, prev_week_end)
+    
+    # Current month
+    current_month_start, current_month_end = get_month_range(now)
+    current_month = await calculate_revenue(business["id"], current_month_start, current_month_end)
+    
+    # Previous month (for comparison)
+    prev_month_date = now.replace(day=1) - timedelta(days=1)
+    prev_month_start, prev_month_end = get_month_range(prev_month_date)
+    prev_month = await calculate_revenue(business["id"], prev_month_start, prev_month_end)
+    
+    # Current year
+    current_year_start, current_year_end = get_year_range(now)
+    current_year = await calculate_revenue(business["id"], current_year_start, current_year_end)
+    
+    # Previous year (for comparison)
+    prev_year_date = now.replace(year=now.year - 1)
+    prev_year_start, prev_year_end = get_year_range(prev_year_date)
+    prev_year = await calculate_revenue(business["id"], prev_year_start, prev_year_end)
+    
+    # Calculate week-over-week and month-over-month changes
+    week_change = current_week["revenue"] - prev_week["revenue"]
+    week_change_percent = ((current_week["revenue"] - prev_week["revenue"]) / prev_week["revenue"] * 100) if prev_week["revenue"] > 0 else 0
+    
+    month_change = current_month["revenue"] - prev_month["revenue"]
+    month_change_percent = ((current_month["revenue"] - prev_month["revenue"]) / prev_month["revenue"] * 100) if prev_month["revenue"] > 0 else 0
+    
+    return {
+        "currentWeek": {
+            **current_week,
+            "startDate": current_week_start,
+            "endDate": current_week_end,
+            "label": f"Week of {current_week_start}"
+        },
+        "previousWeek": {
+            **prev_week,
+            "startDate": prev_week_start,
+            "endDate": prev_week_end,
+            "label": f"Week of {prev_week_start}"
+        },
+        "currentMonth": {
+            **current_month,
+            "startDate": current_month_start,
+            "endDate": current_month_end,
+            "label": now.strftime("%B %Y")
+        },
+        "previousMonth": {
+            **prev_month,
+            "startDate": prev_month_start,
+            "endDate": prev_month_end,
+            "label": prev_month_date.strftime("%B %Y")
+        },
+        "currentYear": {
+            **current_year,
+            "startDate": current_year_start,
+            "endDate": current_year_end,
+            "label": str(now.year)
+        },
+        "previousYear": {
+            **prev_year,
+            "startDate": prev_year_start,
+            "endDate": prev_year_end,
+            "label": str(now.year - 1)
+        },
+        "comparison": {
+            "weekOverWeek": {
+                "change": round(week_change, 2),
+                "percentChange": round(week_change_percent, 1)
+            },
+            "monthOverMonth": {
+                "change": round(month_change, 2),
+                "percentChange": round(month_change_percent, 1)
+            }
+        }
+    }
+
+@api_router.get("/revenue/by-staff")
+async def get_revenue_by_staff(user: dict = Depends(require_business_owner)):
+    """Get revenue breakdown by staff member"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    now = datetime.now(timezone.utc)
+    
+    # Get date ranges
+    current_week_start, current_week_end = get_week_range(now)
+    prev_week_date = now - timedelta(weeks=1)
+    prev_week_start, prev_week_end = get_week_range(prev_week_date)
+    
+    current_month_start, current_month_end = get_month_range(now)
+    prev_month_date = now.replace(day=1) - timedelta(days=1)
+    prev_month_start, prev_month_end = get_month_range(prev_month_date)
+    
+    current_year_start, current_year_end = get_year_range(now)
+    
+    # Get all staff members
+    staff_members = await db.staff.find({"businessId": business["id"]}).to_list(100)
+    
+    staff_revenue = []
+    for staff in staff_members:
+        staff_data = {
+            "staffId": staff["id"],
+            "staffName": staff["name"],
+            "isOwner": staff.get("isOwner", False),
+            "currentWeek": await calculate_revenue(business["id"], current_week_start, current_week_end, staff["id"]),
+            "previousWeek": await calculate_revenue(business["id"], prev_week_start, prev_week_end, staff["id"]),
+            "currentMonth": await calculate_revenue(business["id"], current_month_start, current_month_end, staff["id"]),
+            "previousMonth": await calculate_revenue(business["id"], prev_month_start, prev_month_end, staff["id"]),
+            "currentYear": await calculate_revenue(business["id"], current_year_start, current_year_end, staff["id"])
+        }
+        
+        # Calculate changes for this staff member
+        prev_week_rev = staff_data["previousWeek"]["revenue"]
+        curr_week_rev = staff_data["currentWeek"]["revenue"]
+        prev_month_rev = staff_data["previousMonth"]["revenue"]
+        curr_month_rev = staff_data["currentMonth"]["revenue"]
+        
+        staff_data["weekChange"] = round(curr_week_rev - prev_week_rev, 2)
+        staff_data["weekChangePercent"] = round(((curr_week_rev - prev_week_rev) / prev_week_rev * 100) if prev_week_rev > 0 else 0, 1)
+        staff_data["monthChange"] = round(curr_month_rev - prev_month_rev, 2)
+        staff_data["monthChangePercent"] = round(((curr_month_rev - prev_month_rev) / prev_month_rev * 100) if prev_month_rev > 0 else 0, 1)
+        
+        staff_revenue.append(staff_data)
+    
+    # Sort by current month revenue (highest first)
+    staff_revenue.sort(key=lambda x: x["currentMonth"]["revenue"], reverse=True)
+    
+    return {
+        "staffRevenue": staff_revenue,
+        "dateRanges": {
+            "currentWeek": {"start": current_week_start, "end": current_week_end, "label": f"Week of {current_week_start}"},
+            "previousWeek": {"start": prev_week_start, "end": prev_week_end, "label": f"Week of {prev_week_start}"},
+            "currentMonth": {"start": current_month_start, "end": current_month_end, "label": now.strftime("%B %Y")},
+            "previousMonth": {"start": prev_month_start, "end": prev_month_end, "label": prev_month_date.strftime("%B %Y")},
+            "currentYear": {"start": current_year_start, "end": current_year_end, "label": str(now.year)}
+        }
+    }
+
 # ==================== ADMIN ROUTES ====================
 
 @api_router.get("/admin/stats")
