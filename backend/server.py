@@ -178,14 +178,21 @@ class Subscription(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     businessId: str
     ownerId: str
-    plan: str = "basic"  # basic, professional, enterprise
-    status: str = "active"  # active, inactive, cancelled, past_due
-    priceMonthly: float = 0
-    startDate: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    endDate: Optional[datetime] = None
+    staffCount: int = 1  # Number of staff members
+    status: str = "trial"  # trial, active, inactive, cancelled, past_due
+    priceMonthly: float = 14.0  # Base price for 1 staff
+    trialStartDate: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    trialEndDate: Optional[datetime] = None
+    subscriptionStartDate: Optional[datetime] = None
     lastPaymentDate: Optional[datetime] = None
     lastPaymentStatus: str = "pending"  # pending, success, failed
+    nextPaymentDate: Optional[datetime] = None
     failedPayments: int = 0
+    stripeCustomerId: Optional[str] = None
+    stripeSubscriptionId: Optional[str] = None
+    freeAccessOverride: bool = False  # Admin can grant free access
+    freeAccessGrantedBy: Optional[str] = None
+    freeAccessGrantedAt: Optional[datetime] = None
     createdAt: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class Appointment(BaseModel):
