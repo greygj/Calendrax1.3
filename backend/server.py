@@ -1643,18 +1643,65 @@ async def update_appointment_status(appointment_id: str, status: str, background
     if not appointment:
         raise HTTPException(status_code=404, detail="Appointment not found")
     
+    refund_result = None
+    
+    # If declining and deposit was paid, process refund
+    if status == "declined" and appointment.get("depositPaid") and appointment.get("transactionId"):
+        transaction = await db.payment_transactions.find_one({"id": appointment["transactionId"]})
+        if transaction and transaction.get("sessionId"):
+            try:
+                # Get the payment intent from the checkout session to refund
+                checkout_session = stripe.checkout.Session.retrieve(transaction["sessionId"])
+                if checkout_session.payment_intent:
+                    refund = stripe.Refund.create(
+                        payment_intent=checkout_session.payment_intent,
+                        reason="requested_by_customer"
+                    )
+                    refund_result = {
+                        "refundId": refund.id,
+                        "amount": refund.amount / 100,  # Convert from pence
+                        "status": refund.status
+                    }
+                    
+                    # Update transaction with refund info
+                    await db.payment_transactions.update_one(
+                        {"id": transaction["id"]},
+                        {"$set": {
+                            "refundId": refund.id,
+                            "refundStatus": refund.status,
+                            "refundAmount": refund.amount / 100,
+                            "refundedAt": datetime.now(timezone.utc).isoformat()
+                        }}
+                    )
+                    
+                    # Update appointment with refund info
+                    await db.appointments.update_one(
+                        {"id": appointment_id},
+                        {"$set": {
+                            "depositRefunded": True,
+                            "refundAmount": refund.amount / 100
+                        }}
+                    )
+            except Exception as e:
+                logger.error(f"Refund failed for appointment {appointment_id}: {str(e)}")
+                refund_result = {"error": str(e)}
+    
     await db.appointments.update_one({"id": appointment_id}, {"$set": {"status": status}})
     
     # Get customer details for notification
     customer = await db.users.find_one({"id": appointment["userId"]})
     
     # Create in-app notification for customer
+    refund_note = ""
+    if status == "declined" and refund_result and not refund_result.get("error"):
+        refund_note = f" Your deposit of £{refund_result['amount']:.2f} has been refunded."
+    
     notification_doc = {
         "id": str(uuid.uuid4()),
         "userId": appointment["userId"],
         "type": f"booking_{status}",
         "title": f"Booking {status.title()}",
-        "message": f"Your booking for {appointment['serviceName']} has been {status}",
+        "message": f"Your booking for {appointment['serviceName']} has been {status}.{refund_note}",
         "read": False,
         "createdAt": datetime.now(timezone.utc).isoformat()
     }
@@ -1685,7 +1732,7 @@ async def update_appointment_status(appointment_id: str, status: str, background
                 time=appointment["time"]
             )
     
-    return {"success": True}
+    return {"success": True, "refund": refund_result}
 
 @api_router.put("/appointments/{appointment_id}/cancel")
 async def cancel_appointment(appointment_id: str, background_tasks: BackgroundTasks, user: dict = Depends(get_current_user)):
