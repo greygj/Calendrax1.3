@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, Calendar, Clock, Users, Settings, ChevronRight, ChevronLeft, Building2, MapPin, X, Plus, Edit2, Trash2, Bell, Check, XCircle, User, UserPlus, Save, CreditCard, Banknote, ExternalLink, AlertCircle, TrendingUp, TrendingDown, DollarSign, BarChart3, AlertTriangle } from 'lucide-react';
-import { serviceAPI, availabilityAPI, appointmentAPI, notificationAPI, staffAPI, businessAPI, stripeConnectAPI, subscriptionAPI, revenueAPI } from '../services/api';
+import { LogOut, Calendar, Clock, Users, Settings, ChevronRight, ChevronLeft, Building2, MapPin, X, Plus, Edit2, Trash2, Bell, Check, XCircle, User, UserPlus, Save, CreditCard, Banknote, ExternalLink, AlertCircle, TrendingUp, TrendingDown, DollarSign, BarChart3, AlertTriangle, PieChart, Activity, RefreshCw, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { serviceAPI, availabilityAPI, appointmentAPI, notificationAPI, staffAPI, businessAPI, stripeConnectAPI, subscriptionAPI, revenueAPI, payoutAPI, analyticsAPI } from '../services/api';
 
 const BusinessOwnerDashboard = () => {
   const { user, logout, updateUser } = useAuth();
