@@ -54,7 +54,7 @@ const BusinessOwnerDashboard = () => {
   
   // Profile state
   const [profileForm, setProfileForm] = useState({
-    businessName: '', description: '', postcode: '', address: '', phone: '', email: '', website: ''
+    businessName: '', description: '', postcode: '', address: '', phone: '', email: '', website: '', depositLevel: '20'
   });
   const [profileSaving, setProfileSaving] = useState(false);
   
@@ -62,8 +62,18 @@ const BusinessOwnerDashboard = () => {
 
   const business = user?.business || businessData;
 
+  // Check for Stripe redirect
+  useEffect(() => {
+    if (searchParams.get('stripe_connected') === 'true') {
+      loadStripeStatus();
+      alert('Stripe account connected successfully!');
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     loadData();
+    loadStripeStatus();
+    loadSubscription();
   }, []);
 
   const loadData = async () => {
