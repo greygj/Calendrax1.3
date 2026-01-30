@@ -266,22 +266,54 @@ const BusinessOwnerDashboard = () => {
     e.preventDefault();
     try {
       if (editingStaff) {
+        // Editing existing staff - no subscription change
         await staffAPI.update(editingStaff.id, staffForm);
+        setShowStaffModal(false);
+        loadData();
+        loadSubscription();
       } else {
-        const res = await staffAPI.create(staffForm);
-        // Show subscription increase notification
-        if (res.data.subscriptionUpdate) {
-          const update = res.data.subscriptionUpdate;
-          alert(`Staff member added successfully!\n\n${update.message}`);
-        }
+        // Adding new staff - show confirmation with subscription increase
+        const preview = await staffAPI.previewSubscriptionChange('add');
+        setStaffConfirmData({
+          type: 'add',
+          staffName: staffForm.name,
+          ...preview.data
+        });
+        setPendingStaffAction({ type: 'add', data: staffForm });
+        setShowStaffModal(false);
+        setShowStaffConfirmModal(true);
       }
-      setShowStaffModal(false);
-      loadData();
-      loadSubscription();
     } catch (error) {
       console.error('Failed to save staff:', error);
       alert(error.response?.data?.detail || 'Failed to save staff. Maximum 5 staff members allowed.');
     }
+  };
+
+  const handleConfirmStaffAction = async () => {
+    try {
+      if (pendingStaffAction.type === 'add') {
+        await staffAPI.create(pendingStaffAction.data);
+      } else if (pendingStaffAction.type === 'delete') {
+        const res = await staffAPI.delete(pendingStaffAction.staffId);
+        if (selectedStaff?.id === pendingStaffAction.staffId) {
+          setSelectedStaff(staffMembers.find(s => s.id !== pendingStaffAction.staffId) || null);
+        }
+      }
+      setShowStaffConfirmModal(false);
+      setStaffConfirmData(null);
+      setPendingStaffAction(null);
+      loadData();
+      loadSubscription();
+    } catch (error) {
+      console.error('Failed to complete staff action:', error);
+      alert(error.response?.data?.detail || 'Failed to complete action.');
+    }
+  };
+
+  const handleCancelStaffAction = () => {
+    setShowStaffConfirmModal(false);
+    setStaffConfirmData(null);
+    setPendingStaffAction(null);
   };
 
   const handleDeleteStaff = async (staffId) => {
@@ -290,17 +322,20 @@ const BusinessOwnerDashboard = () => {
       alert('Cannot delete the business owner from staff.');
       return;
     }
-    if (window.confirm('Are you sure you want to remove this staff member?')) {
-      try {
-        await staffAPI.delete(staffId);
-        if (selectedStaff?.id === staffId) {
-          setSelectedStaff(staffMembers.find(s => s.id !== staffId) || null);
-        }
-        loadData();
-      } catch (error) {
-        console.error('Failed to delete staff:', error);
-        alert(error.response?.data?.detail || 'Failed to remove staff member.');
-      }
+    
+    try {
+      // Get preview of subscription change
+      const preview = await staffAPI.previewSubscriptionChange('remove');
+      setStaffConfirmData({
+        type: 'delete',
+        staffName: staff.name,
+        ...preview.data
+      });
+      setPendingStaffAction({ type: 'delete', staffId: staffId });
+      setShowStaffConfirmModal(true);
+    } catch (error) {
+      console.error('Failed to preview subscription change:', error);
+      alert(error.response?.data?.detail || 'Failed to process request.');
     }
   };
 
