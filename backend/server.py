@@ -620,8 +620,30 @@ async def delete_staff(staff_id: str, user: dict = Depends(require_business_owne
     if staff.get("isOwner"):
         raise HTTPException(status_code=400, detail="Cannot delete the business owner from staff")
     
+    # Get current staff count for subscription calculation
+    current_staff_count = await db.staff.count_documents({"businessId": business["id"]})
+    old_price = calculate_subscription_price(current_staff_count)
+    new_staff_count = max(1, current_staff_count - 1)
+    new_price = calculate_subscription_price(new_staff_count)
+    
+    # Delete the staff member
     await db.staff.delete_one({"id": staff_id})
-    return {"success": True}
+    
+    # Update subscription with new staff count
+    await db.subscriptions.update_one(
+        {"businessId": business["id"]},
+        {"$set": {"staffCount": new_staff_count, "priceMonthly": new_price}}
+    )
+    
+    return {
+        "success": True,
+        "subscriptionUpdate": {
+            "previousPrice": old_price,
+            "newPrice": new_price,
+            "staffCount": new_staff_count,
+            "message": f"Your subscription will decrease from £{old_price:.2f}/month to £{new_price:.2f}/month"
+        }
+    }
 
 @api_router.get("/businesses/{business_id}/staff")
 async def get_business_staff(business_id: str):
