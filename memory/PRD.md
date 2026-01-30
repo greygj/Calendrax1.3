@@ -154,6 +154,17 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 - [x] **Failed Payment Lockout** - Business owners blocked from login if subscription fails
 - [x] **Admin Free Access Override** - Admin can grant/revoke free access to any business
 
+### Phase 8: Revenue & Auto-Refunds ✅ (January 30, 2026)
+- [x] **Auto-Refund on Decline** - When business declines a booking, deposit is automatically refunded via Stripe
+- [x] **Staff Deletion Warning** - Shows count of future bookings that will be cancelled, refunds deposits automatically
+- [x] **Revenue Dashboard** - New tab for business owners showing:
+  - Total revenue for current week, month, and year
+  - Week-over-week comparison with percentage change
+  - Month-over-month comparison with percentage change
+  - Revenue breakdown by staff member (week/month/year)
+  - Booking counts for each period
+  - Trending indicators (up/down arrows)
+
 ### Bug Fixes ✅
 - [x] Fixed MongoDB ObjectId serialization in all endpoints
 - [x] Fixed service delete button not working
@@ -165,7 +176,6 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 
 ## MOCKED Features (Not Yet Fully Implemented)
 - **Stripe Connect Onboarding** - Redirects to Stripe, requires real Stripe account to complete
-- **Refund Processing**: Backend logic exists but not fully integrated with Stripe refunds
 - **Google Maps API**: Basic embed without API key
 - **Email Notifications**: Code ready, awaiting SendGrid API key
 - **SMS Notifications**: Code ready, awaiting Twilio credentials
