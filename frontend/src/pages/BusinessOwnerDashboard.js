@@ -1052,90 +1052,181 @@ const BusinessOwnerDashboard = () => {
         {/* Appointments View */}
         {activeView === 'appointments' && (
           <div className="space-y-6">
-            {/* Book for Customer Button */}
-            <div className="flex justify-end">
-              <button
-                onClick={openBookForCustomer}
-                className="flex items-center gap-2 bg-lime-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-lime-400 transition-colors"
-              >
-                <UserPlus className="w-4 h-4" /> Book for Customer
-              </button>
-            </div>
-
-            {/* Pending Appointments */}
-            {pendingAppointments.length > 0 && (
-              <div>
-                <h2 className="text-white text-xl font-semibold mb-4 flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-yellow-400" />
-                  Pending Requests ({pendingAppointments.length})
-                </h2>
-                <div className="space-y-3">
-                  {pendingAppointments.map(apt => (
-                    <div key={apt.id} className="bg-zinc-900 border border-yellow-500/30 rounded-xl p-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="text-white font-medium">{apt.customerName}</h4>
-                          <p className="text-gray-400 text-sm">{apt.customerEmail}</p>
-                          <p className="text-lime-400 mt-2">{apt.serviceName}</p>
-                          {apt.staffName && <p className="text-gray-500 text-sm">with {apt.staffName}</p>}
-                          <p className="text-gray-500 text-sm mt-1">
-                            {apt.date} at {apt.time}
-                          </p>
-                        </div>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleApproveBooking(apt)}
-                            className="p-2 bg-lime-500 text-black rounded-lg hover:bg-lime-400 transition-colors"
-                          >
-                            <Check className="w-5 h-5" />
-                          </button>
-                          <button
-                            onClick={() => handleDeclineBooking(apt)}
-                            className="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors"
-                          >
-                            <XCircle className="w-5 h-5" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+            {/* Tabs for Current vs History */}
+            <div className="flex items-center justify-between">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setAppointmentTab('current')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    appointmentTab === 'current'
+                      ? 'bg-lime-500 text-black'
+                      : 'bg-zinc-800 text-gray-400 hover:text-white'
+                  }`}
+                >
+                  Current ({pendingAppointments.length + confirmedAppointments.length})
+                </button>
+                <button
+                  onClick={() => setAppointmentTab('history')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    appointmentTab === 'history'
+                      ? 'bg-lime-500 text-black'
+                      : 'bg-zinc-800 text-gray-400 hover:text-white'
+                  }`}
+                >
+                  History ({historyAppointments.length})
+                </button>
               </div>
-            )}
-
-            {/* Confirmed Appointments */}
-            <div>
-              <h2 className="text-white text-xl font-semibold mb-4 flex items-center gap-2">
-                <Check className="w-5 h-5 text-lime-400" />
-                Confirmed ({confirmedAppointments.length})
-              </h2>
-              {confirmedAppointments.length > 0 ? (
-                <div className="space-y-3">
-                  {confirmedAppointments.map(apt => (
-                    <div key={apt.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="text-white font-medium">{apt.customerName}</h4>
-                          <p className="text-lime-400">{apt.serviceName}</p>
-                          {apt.staffName && <p className="text-gray-500 text-sm">with {apt.staffName}</p>}
-                          <p className="text-gray-500 text-sm mt-1">
-                            {apt.date} at {apt.time}
-                          </p>
-                        </div>
-                        <span className="px-3 py-1 bg-lime-500/20 text-lime-400 text-sm rounded-full">
-                          Confirmed
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
-                  <Calendar className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                  <p className="text-gray-500">No confirmed appointments</p>
-                </div>
+              
+              {/* Book for Customer Button */}
+              {appointmentTab === 'current' && (
+                <button
+                  onClick={openBookForCustomer}
+                  className="flex items-center gap-2 bg-lime-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-lime-400 transition-colors"
+                >
+                  <UserPlus className="w-4 h-4" /> Book for Customer
+                </button>
               )}
             </div>
+
+            {/* Current Appointments Tab */}
+            {appointmentTab === 'current' && (
+              <>
+                {/* Pending Appointments */}
+                {pendingAppointments.length > 0 && (
+                  <div>
+                    <h2 className="text-white text-xl font-semibold mb-4 flex items-center gap-2">
+                      <Clock className="w-5 h-5 text-yellow-400" />
+                      Pending Requests ({pendingAppointments.length})
+                    </h2>
+                    <div className="space-y-3">
+                      {pendingAppointments.map(apt => (
+                        <div key={apt.id} className="bg-zinc-900 border border-yellow-500/30 rounded-xl p-4">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <h4 className="text-white font-medium">{apt.customerName}</h4>
+                              <p className="text-gray-400 text-sm">{apt.customerEmail}</p>
+                              <p className="text-lime-400 mt-2">{apt.serviceName}</p>
+                              {apt.staffName && <p className="text-gray-500 text-sm">with {apt.staffName}</p>}
+                              <p className="text-gray-500 text-sm mt-1">
+                                {apt.date} at {apt.time}
+                              </p>
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => handleApproveBooking(apt)}
+                                className="p-2 bg-lime-500 text-black rounded-lg hover:bg-lime-400 transition-colors"
+                              >
+                                <Check className="w-5 h-5" />
+                              </button>
+                              <button
+                                onClick={() => handleDeclineBooking(apt)}
+                                className="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors"
+                              >
+                                <XCircle className="w-5 h-5" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Confirmed Appointments */}
+                <div>
+                  <h2 className="text-white text-xl font-semibold mb-4 flex items-center gap-2">
+                    <Check className="w-5 h-5 text-lime-400" />
+                    Confirmed ({confirmedAppointments.length})
+                  </h2>
+                  {confirmedAppointments.length > 0 ? (
+                    <div className="space-y-3">
+                      {confirmedAppointments.map(apt => (
+                        <div key={apt.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <h4 className="text-white font-medium">{apt.customerName}</h4>
+                              <p className="text-lime-400">{apt.serviceName}</p>
+                              {apt.staffName && <p className="text-gray-500 text-sm">with {apt.staffName}</p>}
+                              <p className="text-gray-500 text-sm mt-1">
+                                {apt.date} at {apt.time}
+                              </p>
+                            </div>
+                            <span className="px-3 py-1 bg-lime-500/20 text-lime-400 text-sm rounded-full">
+                              Confirmed
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                      <Calendar className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                      <p className="text-gray-500">No confirmed appointments</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* No appointments at all */}
+                {pendingAppointments.length === 0 && confirmedAppointments.length === 0 && (
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-12 text-center">
+                    <Calendar className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                    <p className="text-gray-400 mb-2">No upcoming appointments</p>
+                    <p className="text-gray-500 text-sm">New bookings will appear here</p>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* History Tab */}
+            {appointmentTab === 'history' && (
+              <div>
+                <h2 className="text-white text-xl font-semibold mb-4 flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-gray-400" />
+                  Appointment History
+                </h2>
+                {historyAppointments.length > 0 ? (
+                  <div className="space-y-3">
+                    {historyAppointments.map(apt => (
+                      <div key={apt.id} className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h4 className="text-white font-medium">{apt.customerName}</h4>
+                            <p className="text-gray-400">{apt.serviceName}</p>
+                            {apt.staffName && <p className="text-gray-500 text-sm">with {apt.staffName}</p>}
+                            <p className="text-gray-500 text-sm mt-1">
+                              {apt.date} at {apt.time}
+                            </p>
+                            {apt.depositRefunded && (
+                              <p className="text-yellow-400 text-xs mt-1">
+                                Deposit refunded: £{apt.refundAmount?.toFixed(2)}
+                              </p>
+                            )}
+                          </div>
+                          <span className={`px-3 py-1 text-sm rounded-full ${
+                            apt.status === 'completed' || (apt.status === 'confirmed' && isDatePassed(apt.date))
+                              ? 'bg-lime-500/20 text-lime-400'
+                              : apt.status === 'cancelled'
+                              ? 'bg-gray-500/20 text-gray-400'
+                              : apt.status === 'declined'
+                              ? 'bg-red-500/20 text-red-400'
+                              : 'bg-gray-500/20 text-gray-400'
+                          }`}>
+                            {apt.status === 'confirmed' && isDatePassed(apt.date) 
+                              ? 'Completed' 
+                              : apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-12 text-center">
+                    <Clock className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                    <p className="text-gray-500">No appointment history yet</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 
