@@ -331,17 +331,20 @@ async def register(user_data: UserCreate):
         }
         await db.businesses.insert_one(business_doc)
         
-        # Create default subscription (inactive until approved)
+        # Create subscription with 30-day trial
+        trial_end = datetime.now(timezone.utc) + timedelta(days=TRIAL_PERIOD_DAYS)
         subscription_doc = {
             "id": str(uuid.uuid4()),
             "businessId": business_id,
             "ownerId": user_id,
-            "plan": "basic",
-            "status": "inactive",
-            "priceMonthly": 0,
-            "startDate": datetime.now(timezone.utc).isoformat(),
+            "staffCount": 1,
+            "status": "trial",
+            "priceMonthly": SUBSCRIPTION_BASE_PRICE,
+            "trialStartDate": datetime.now(timezone.utc).isoformat(),
+            "trialEndDate": trial_end.isoformat(),
             "lastPaymentStatus": "pending",
             "failedPayments": 0,
+            "freeAccessOverride": False,
             "createdAt": datetime.now(timezone.utc).isoformat()
         }
         await db.subscriptions.insert_one(subscription_doc)
