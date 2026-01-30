@@ -144,9 +144,24 @@ const CustomerDashboard = () => {
     }
   };
 
-  // Categorize bookings
-  const upcomingBookings = myBookings.filter(b => b.status === 'pending' || b.status === 'confirmed');
-  const pastBookings = myBookings.filter(b => b.status === 'cancelled' || b.status === 'declined' || b.status === 'completed');
+  // Helper to check if booking date has passed
+  const isDatePassed = (dateStr) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const bookingDate = new Date(dateStr);
+    return bookingDate < today;
+  };
+
+  // Categorize bookings - upcoming vs history
+  const upcomingBookings = myBookings.filter(b => 
+    (b.status === 'pending' || b.status === 'confirmed') && !isDatePassed(b.date)
+  );
+  const pastBookings = myBookings.filter(b => 
+    b.status === 'cancelled' || 
+    b.status === 'declined' || 
+    b.status === 'completed' ||
+    ((b.status === 'pending' || b.status === 'confirmed') && isDatePassed(b.date))
+  );
 
   return (
     <div className="min-h-screen bg-black">
