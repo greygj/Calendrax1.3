@@ -1692,6 +1692,80 @@ const BusinessOwnerDashboard = () => {
         </div>
       )}
 
+      {/* Staff Subscription Confirmation Modal */}
+      {showStaffConfirmModal && staffConfirmData && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-md">
+            <div className="p-6">
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
+                staffConfirmData.type === 'add' ? 'bg-lime-500/20' : 'bg-yellow-500/20'
+              }`}>
+                {staffConfirmData.type === 'add' ? (
+                  <UserPlus className={`w-8 h-8 ${staffConfirmData.type === 'add' ? 'text-lime-400' : 'text-yellow-400'}`} />
+                ) : (
+                  <Trash2 className="w-8 h-8 text-yellow-400" />
+                )}
+              </div>
+              
+              <h3 className="text-white text-xl font-semibold text-center mb-2">
+                {staffConfirmData.type === 'add' ? 'Add Staff Member' : 'Remove Staff Member'}
+              </h3>
+              
+              <p className="text-gray-400 text-center mb-4">
+                {staffConfirmData.type === 'add' 
+                  ? `Are you sure you want to add "${staffConfirmData.staffName}"?`
+                  : `Are you sure you want to remove "${staffConfirmData.staffName}"?`
+                }
+              </p>
+              
+              <div className="bg-zinc-800 rounded-lg p-4 mb-6">
+                <p className="text-gray-400 text-sm mb-3">Subscription Change:</p>
+                <div className="flex items-center justify-between">
+                  <div className="text-center">
+                    <p className="text-gray-500 text-xs">Current</p>
+                    <p className="text-white font-semibold">£{staffConfirmData.currentPrice?.toFixed(2)}</p>
+                    <p className="text-gray-500 text-xs">{staffConfirmData.currentStaffCount} staff</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-600" />
+                  <div className="text-center">
+                    <p className="text-gray-500 text-xs">New</p>
+                    <p className={`font-semibold ${staffConfirmData.type === 'add' ? 'text-lime-400' : 'text-yellow-400'}`}>
+                      £{staffConfirmData.newPrice?.toFixed(2)}
+                    </p>
+                    <p className="text-gray-500 text-xs">{staffConfirmData.newStaffCount} staff</p>
+                  </div>
+                </div>
+                <p className={`text-sm text-center mt-3 ${staffConfirmData.type === 'add' ? 'text-lime-400' : 'text-yellow-400'}`}>
+                  {staffConfirmData.type === 'add' 
+                    ? `+£${staffConfirmData.priceIncrease?.toFixed(2)}/month`
+                    : `-£${staffConfirmData.priceDecrease?.toFixed(2)}/month`
+                  }
+                </p>
+              </div>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={handleCancelStaffAction}
+                  className="flex-1 bg-zinc-800 text-white font-semibold py-3 rounded-lg hover:bg-zinc-700 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmStaffAction}
+                  className={`flex-1 font-semibold py-3 rounded-lg transition-colors ${
+                    staffConfirmData.type === 'add' 
+                      ? 'bg-lime-500 text-black hover:bg-lime-400'
+                      : 'bg-yellow-500 text-black hover:bg-yellow-400'
+                  }`}
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Book for Customer Modal */}
       {showBookingModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
