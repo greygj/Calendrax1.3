@@ -131,15 +131,28 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 - [x] Notification triggers: booking created, approved, declined, cancelled
 
 ### Phase 6: Payment Integration ✅ (January 29, 2026)
-- [x] Stripe payment integration for booking deposits (20% of service price)
+- [x] Stripe payment integration for booking deposits
 - [x] Offer code system for testing (TESTFREE, BOOKLE100, STAFF2025 bypass payment)
 - [x] Payment checkout session creation with Stripe
 - [x] Payment status verification and polling
 - [x] Booking completion after payment/bypass
 - [x] Frontend booking flow with payment summary
-- [x] Deposit calculation displayed to customer (20% non-refundable)
 - [x] "Complete Booking (Free)" option when valid offer code applied
 - [x] BookingSuccess page for post-payment confirmation
+
+### Phase 7: Stripe Connect & Subscription System ✅ (January 30, 2026)
+- [x] **Stripe Connect Integration** - Business owners can connect bank accounts to receive deposits
+- [x] **Configurable Deposit Levels** - Business owners choose: No deposit, 10%, 20% (default), 50%, Pay in Full
+- [x] **Staff-based Subscription Pricing**:
+  - 1 Staff: £14/month (base)
+  - 2 Staff: £23/month (+£9)
+  - 3 Staff: £32/month (+£9)
+  - 4 Staff: £41/month (+£9)
+  - 5 Staff: £50/month (+£9)
+- [x] **30-day Free Trial** - No payment required until trial ends
+- [x] **Subscription Notifications** - Alert when adding staff increases subscription cost
+- [x] **Failed Payment Lockout** - Business owners blocked from login if subscription fails
+- [x] **Admin Free Access Override** - Admin can grant/revoke free access to any business
 
 ### Bug Fixes ✅
 - [x] Fixed MongoDB ObjectId serialization in all endpoints
@@ -149,7 +162,8 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 
 ---
 
-## MOCKED Features (Not Yet Implemented)
+## MOCKED Features (Not Yet Fully Implemented)
+- **Stripe Connect Onboarding** - Redirects to Stripe, requires real Stripe account to complete
 - **Refund Processing**: Backend logic exists but not fully integrated with Stripe refunds
 - **Google Maps API**: Basic embed without API key
 - **Email Notifications**: Code ready, awaiting SendGrid API key
@@ -173,6 +187,24 @@ STRIPE_API_KEY=sk_test_emergent
 ```
 
 ---
+
+## Subscription Pricing
+| Staff Count | Monthly Price |
+|-------------|---------------|
+| 1 | £14.00 |
+| 2 | £23.00 |
+| 3 | £32.00 |
+| 4 | £41.00 |
+| 5 | £50.00 |
+
+## Deposit Level Options
+| Setting | Customer Pays |
+|---------|---------------|
+| No Deposit | £0 (book without payment) |
+| 10% | 10% of service price |
+| 20% | 20% of service price (default) |
+| 50% | 50% of service price |
+| Pay in Full | 100% of service price |
 
 ## Offer Codes for Testing
 | Code | Description |
