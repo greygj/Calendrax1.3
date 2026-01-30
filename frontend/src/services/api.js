@@ -65,7 +65,14 @@ export const staffAPI = {
   create: (data) => apiClient.post('/staff', data),
   update: (id, data) => apiClient.put(`/staff/${id}`, data),
   delete: (id) => apiClient.delete(`/staff/${id}`),
-  previewSubscriptionChange: (action) => apiClient.get(`/staff/subscription-preview?action=${action}`)
+  previewSubscriptionChange: (action) => apiClient.get(`/staff/subscription-preview?action=${action}`),
+  getFutureBookingsCount: (id) => apiClient.get(`/staff/${id}/future-bookings-count`)
+};
+
+// Revenue
+export const revenueAPI = {
+  getSummary: () => apiClient.get('/revenue'),
+  getByStaff: () => apiClient.get('/revenue/by-staff')
 };
 
 // Availability
