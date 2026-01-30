@@ -589,36 +589,38 @@ const BusinessPage = () => {
             {/* Payment & Booking Section */}
             {selectedTime && (
               <div className="space-y-4">
-                {/* Offer Code Input */}
-                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-                  <h3 className="text-white text-sm font-medium mb-3 flex items-center gap-2">
-                    <Tag className="w-4 h-4 text-lime-400" /> Have an offer code?
-                  </h3>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={offerCode}
-                      onChange={(e) => {
-                        setOfferCode(e.target.value.toUpperCase());
-                        setOfferCodeValid(null);
-                        setOfferCodeMessage('');
-                      }}
-                      placeholder="Enter code"
-                      className="flex-1 bg-zinc-800 border border-zinc-700 text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-lime-500"
-                    />
-                    <button
-                      onClick={handleValidateOfferCode}
-                      className="bg-zinc-800 border border-zinc-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-zinc-700 transition-colors"
-                    >
-                      Apply
-                    </button>
+                {/* Offer Code Input - only show if deposit is required */}
+                {!isNoDeposit && (
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+                    <h3 className="text-white text-sm font-medium mb-3 flex items-center gap-2">
+                      <Tag className="w-4 h-4 text-lime-400" /> Have an offer code?
+                    </h3>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={offerCode}
+                        onChange={(e) => {
+                          setOfferCode(e.target.value.toUpperCase());
+                          setOfferCodeValid(null);
+                          setOfferCodeMessage('');
+                        }}
+                        placeholder="Enter code"
+                        className="flex-1 bg-zinc-800 border border-zinc-700 text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-lime-500"
+                      />
+                      <button
+                        onClick={handleValidateOfferCode}
+                        className="bg-zinc-800 border border-zinc-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-zinc-700 transition-colors"
+                      >
+                        Apply
+                      </button>
+                    </div>
+                    {offerCodeMessage && (
+                      <p className={`text-sm mt-2 ${offerCodeValid ? 'text-lime-400' : 'text-red-400'}`}>
+                        {offerCodeMessage}
+                      </p>
+                    )}
                   </div>
-                  {offerCodeMessage && (
-                    <p className={`text-sm mt-2 ${offerCodeValid ? 'text-lime-400' : 'text-red-400'}`}>
-                      {offerCodeMessage}
-                    </p>
-                  )}
-                </div>
+                )}
 
                 {/* Booking Summary */}
                 <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
@@ -645,9 +647,15 @@ const BusinessPage = () => {
                       <span>Full Price</span>
                       <span className="text-white">£{selectedService.price}</span>
                     </div>
-                    {!offerCodeValid && (
+                    {isNoDeposit && !offerCodeValid && (
                       <div className="flex justify-between text-lime-400 font-medium">
-                        <span>Deposit (20%)</span>
+                        <span>Deposit</span>
+                        <span>Not required</span>
+                      </div>
+                    )}
+                    {!isNoDeposit && !offerCodeValid && (
+                      <div className="flex justify-between text-lime-400 font-medium">
+                        <span>{isFullPayment ? 'Payment' : `Deposit (${depositPercentage}%)`}</span>
                         <span>£{depositAmount}</span>
                       </div>
                     )}
