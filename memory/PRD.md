@@ -144,19 +144,20 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 - [x] **Stripe Connect Integration** - Business owners can connect bank accounts to receive deposits
 - [x] **Configurable Deposit Levels** - Business owners choose: No deposit, 10%, 20% (default), 50%, Pay in Full
 - [x] **Staff-based Subscription Pricing**:
-  - 1 Staff: £14/month (base)
-  - 2 Staff: £23/month (+£9)
-  - 3 Staff: £32/month (+£9)
-  - 4 Staff: £41/month (+£9)
-  - 5 Staff: £50/month (+£9)
+  - 1 Staff: £12/month (base)
+  - 2 Staff: £20/month (+£8)
+  - 3 Staff: £28/month (+£8)
+  - 4 Staff: £36/month (+£8)
+  - 5 Staff: £44/month (+£8)
 - [x] **30-day Free Trial** - No payment required until trial ends
-- [x] **Subscription Notifications** - Alert when adding staff increases subscription cost
+- [x] **Subscription Notifications** - Confirmation dialog when adding/removing staff shows price change
 - [x] **Failed Payment Lockout** - Business owners blocked from login if subscription fails
 - [x] **Admin Free Access Override** - Admin can grant/revoke free access to any business
 
 ### Bug Fixes ✅
 - [x] Fixed MongoDB ObjectId serialization in all endpoints
 - [x] Fixed service delete button not working
+- [x] Fixed staff delete button not working
 - [x] Fixed data persistence on logout
 - [x] Updated branding from "Booka" to "Calendrax"
 
