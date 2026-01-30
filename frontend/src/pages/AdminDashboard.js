@@ -330,7 +330,9 @@ const AdminDashboard = () => {
               {subscriptions.map(sub => (
                 <div key={sub.id} className={`bg-zinc-900 border rounded-xl p-4 ${
                   sub.lastPaymentStatus === 'failed' ? 'border-red-500/50' 
+                  : sub.freeAccessOverride ? 'border-lime-500/50'
                   : sub.status === 'active' ? 'border-zinc-800' 
+                  : sub.status === 'trial' ? 'border-yellow-500/50'
                   : 'border-yellow-500/50'
                 }`}>
                   <div className="flex items-center justify-between">
@@ -338,24 +340,42 @@ const AdminDashboard = () => {
                       <div className="flex items-center gap-2">
                         <h4 className="text-white font-medium">{sub.business?.businessName || 'Unknown Business'}</h4>
                         <span className={`text-xs px-2 py-0.5 rounded uppercase ${
-                          sub.status === 'active' ? 'bg-lime-500/20 text-lime-400'
+                          sub.freeAccessOverride ? 'bg-lime-500/20 text-lime-400'
+                          : sub.status === 'active' ? 'bg-lime-500/20 text-lime-400'
+                          : sub.status === 'trial' ? 'bg-yellow-500/20 text-yellow-400'
                           : sub.status === 'past_due' ? 'bg-yellow-500/20 text-yellow-400'
                           : 'bg-red-500/20 text-red-400'
                         }`}>
-                          {sub.status}
+                          {sub.freeAccessOverride ? 'FREE ACCESS' : sub.status}
                         </span>
                       </div>
-                      <p className="text-gray-500 text-sm mt-1">Plan: {sub.plan} • £{sub.priceMonthly}/month</p>
+                      <p className="text-gray-500 text-sm mt-1">
+                        Staff: {sub.staffCount || 1} • £{sub.priceMonthly?.toFixed(2) || '14.00'}/month
+                        {sub.status === 'trial' && sub.trialDaysRemaining > 0 && (
+                          <span className="text-yellow-400 ml-2">({sub.trialDaysRemaining} trial days left)</span>
+                        )}
+                      </p>
                       {sub.lastPaymentStatus === 'failed' && (
                         <p className="text-red-400 text-sm mt-1">Failed payments: {sub.failedPayments}</p>
                       )}
                     </div>
                     <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleToggleFreeAccess(sub.id, !sub.freeAccessOverride)}
+                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                          sub.freeAccessOverride 
+                            ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
+                            : 'bg-lime-500/20 text-lime-400 hover:bg-lime-500/30'
+                        }`}
+                      >
+                        {sub.freeAccessOverride ? 'Revoke Free' : 'Grant Free'}
+                      </button>
                       <select
                         value={sub.status}
                         onChange={(e) => handleUpdateSubscription(sub.id, e.target.value)}
                         className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-1.5 text-white text-sm"
                       >
+                        <option value="trial">Trial</option>
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
                         <option value="past_due">Past Due</option>
