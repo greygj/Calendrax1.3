@@ -378,6 +378,28 @@ async def login(credentials: UserLogin):
     if user.get("suspended"):
         raise HTTPException(status_code=403, detail=f"Account suspended: {user.get('suspendedReason', 'Contact support')}")
     
+    # Check subscription status for business owners
+    subscription_blocked = False
+    subscription_message = None
+    if user["role"] == UserRole.BUSINESS_OWNER:
+        business = await db.businesses.find_one({"ownerId": user["id"]})
+        if business:
+            subscription = await db.subscriptions.find_one({"businessId": business["id"]})
+            if subscription:
+                # Check if subscription is blocked (failed payment and not free access)
+                if not subscription.get("freeAccessOverride", False):
+                    if subscription.get("status") == "inactive" or subscription.get("lastPaymentStatus") == "failed":
+                        # Check if trial has ended
+                        trial_end = subscription.get("trialEndDate")
+                        if trial_end:
+                            trial_end_dt = datetime.fromisoformat(trial_end.replace('Z', '+00:00')) if isinstance(trial_end, str) else trial_end
+                            if datetime.now(timezone.utc) > trial_end_dt:
+                                subscription_blocked = True
+                                subscription_message = "Your subscription payment has failed. Please update your payment method to continue using Bookle."
+    
+    if subscription_blocked:
+        raise HTTPException(status_code=403, detail=subscription_message)
+    
     token = create_token(user["id"], user["role"])
     
     # Get business if owner
