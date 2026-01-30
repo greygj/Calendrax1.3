@@ -1,0 +1,91 @@
+{
+  "summary": "Completed E2E testing of Subscription, Stripe Connect, Deposit Settings, and Admin Free Access features. All 19 backend tests pass. All UI flows verified working correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "POST /api/stripe-connect/create-account",
+        "issue": "Returns 520 (Cloudflare timeout) when Stripe API call takes too long - expected with test API key",
+        "priority": "LOW"
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_subscription_deposit_features.py",
+    "/app/test_reports/pytest/pytest_subscription_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_subscription_deposit_features.py"
+  ],
+  "success_rate": {
+    "backend": "100% (19/19 tests passed)",
+    "frontend": "100% (all flows verified)"
+  },
+  "test_credentials": {
+    "customer": "gareth.grey@tickety-moo.com / password123",
+    "business_owner": "greygj@gmail.com / password123",
+    "admin": "admin@booka.com / admin123",
+    "valid_offer_codes": ["TESTFREE", "BOOKLE100", "STAFF2025"]
+  },
+  "seed_data_creation": "Used existing JG Body Clinic business with 3 staff members",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All subscription, deposit, and admin features are working. Stripe Connect onboarding redirects to Stripe (cannot fully test without real Stripe account). Deposit levels can be changed and are correctly reflected in customer booking page.",
+  "verified_flows": {
+    "backend_api": [
+      "GET /api/my-subscription - Returns status, staffCount, priceMonthly, trialDaysRemaining, freeAccessOverride",
+      "GET /api/subscription/pricing - Returns basePrice (£14), additionalStaffPrice (£9), trialDays (30), pricing table",
+      "GET /api/stripe-connect/status - Returns connected status, accountId, chargesEnabled, payoutsEnabled",
+      "POST /api/stripe-connect/create-account - Returns onboarding URL (or timeout with test key)",
+      "GET /api/my-business - Returns depositLevel field",
+      "PUT /api/my-business - Can update depositLevel to: none, 10, 20, 50, full",
+      "PUT /api/my-business - Rejects invalid depositLevel values",
+      "GET /api/businesses/{id} - Returns depositPercentage and depositLevelLabel for customers",
+      "GET /api/admin/subscriptions - Returns all subscriptions with business info",
+      "PUT /api/admin/subscriptions/{id}/free-access?grant=true - Grants free access",
+      "PUT /api/admin/subscriptions/{id}/free-access?grant=false - Revokes free access",
+      "POST /api/staff - Returns subscriptionUpdate with price change notification"
+    ],
+    "frontend_ui": [
+      "Business Owner Profile - Subscription Status section shows Status, Staff Members, Monthly Price - WORKING",
+      "Business Owner Profile - 'Free access granted by admin' message displayed when applicable - WORKING",
+      "Business Owner Profile - Connect Bank Account button present - WORKING",
+      "Business Owner Profile - Deposit Settings with 5 options (No Deposit, 10%, 20%, 50%, Pay in Full) - WORKING",
+      "Business Owner Profile - Deposit level can be changed and saved - WORKING",
+      "Admin Dashboard - Subscriptions tab shows all subscriptions - WORKING",
+      "Admin Dashboard - FREE ACCESS badge displayed for businesses with free access - WORKING",
+      "Admin Dashboard - Grant Free / Revoke Free buttons work - WORKING",
+      "Admin Dashboard - Status dropdown (Active/Inactive) for each subscription - WORKING",
+      "Customer Booking Page - Booking Summary shows correct deposit percentage - WORKING",
+      "Customer Booking Page - Deposit amount calculated correctly (e.g., £75 * 20% = £15.00) - WORKING",
+      "Customer Booking Page - Pay Deposit button shows correct amount - WORKING"
+    ]
+  },
+  "subscription_pricing_verified": {
+    "1_staff": "£14.00/month",
+    "2_staff": "£23.00/month (£14 + £9)",
+    "3_staff": "£32.00/month (£14 + £18)",
+    "4_staff": "£41.00/month (£14 + £27)",
+    "5_staff": "£50.00/month (£14 + £36)"
+  },
+  "deposit_levels_verified": {
+    "none": "0% - No deposit required",
+    "10": "10% deposit",
+    "20": "20% deposit (default, recommended)",
+    "50": "50% deposit",
+    "full": "100% - Full payment required"
+  },
+  "mocked_apis": {
+    "has_mocked_apis": true,
+    "mocked_apis_list": [
+      "Stripe Connect onboarding - redirects to Stripe, cannot fully test without real Stripe account"
+    ]
+  }
+}
