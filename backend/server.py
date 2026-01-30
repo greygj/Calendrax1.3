@@ -654,7 +654,7 @@ async def update_staff(staff_id: str, updates: StaffUpdate, user: dict = Depends
 
 @api_router.delete("/staff/{staff_id}")
 async def delete_staff(staff_id: str, user: dict = Depends(require_business_owner)):
-    """Delete a staff member (cannot delete owner)"""
+    """Delete a staff member (cannot delete owner) - also deletes their future bookings"""
     business = await db.businesses.find_one({"ownerId": user["id"]})
     staff = await db.staff.find_one({"id": staff_id, "businessId": business["id"]})
     if not staff:
@@ -668,6 +668,62 @@ async def delete_staff(staff_id: str, user: dict = Depends(require_business_owne
     new_staff_count = max(1, current_staff_count - 1)
     new_price = calculate_subscription_price(new_staff_count)
     
+    # Find and delete future bookings for this staff member
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    future_bookings = await db.appointments.find({
+        "staffId": staff_id,
+        "businessId": business["id"],
+        "date": {"$gte": today},
+        "status": {"$in": ["pending", "confirmed"]}
+    }).to_list(1000)
+    
+    deleted_bookings_count = len(future_bookings)
+    
+    # Notify customers about cancelled bookings
+    for booking in future_bookings:
+        # Create notification for customer
+        notification_doc = {
+            "id": str(uuid.uuid4()),
+            "userId": booking["userId"],
+            "type": "booking_cancelled_staff_removed",
+            "title": "Booking Cancelled",
+            "message": f"Your booking for {booking['serviceName']} on {booking['date']} at {booking['time']} has been cancelled as the staff member is no longer available.",
+            "read": False,
+            "createdAt": datetime.now(timezone.utc).isoformat()
+        }
+        await db.notifications.insert_one(notification_doc)
+        
+        # If deposit was paid, process refund
+        if booking.get("depositPaid") and booking.get("transactionId"):
+            transaction = await db.payment_transactions.find_one({"id": booking["transactionId"]})
+            if transaction and transaction.get("sessionId"):
+                try:
+                    checkout_session = stripe.checkout.Session.retrieve(transaction["sessionId"])
+                    if checkout_session.payment_intent:
+                        refund = stripe.Refund.create(
+                            payment_intent=checkout_session.payment_intent,
+                            reason="requested_by_customer"
+                        )
+                        await db.payment_transactions.update_one(
+                            {"id": transaction["id"]},
+                            {"$set": {
+                                "refundId": refund.id,
+                                "refundStatus": refund.status,
+                                "refundAmount": refund.amount / 100,
+                                "refundedAt": datetime.now(timezone.utc).isoformat()
+                            }}
+                        )
+                except Exception as e:
+                    logger.error(f"Refund failed for booking {booking['id']}: {str(e)}")
+    
+    # Delete the future bookings
+    await db.appointments.delete_many({
+        "staffId": staff_id,
+        "businessId": business["id"],
+        "date": {"$gte": today},
+        "status": {"$in": ["pending", "confirmed"]}
+    })
+    
     # Delete the staff member
     await db.staff.delete_one({"id": staff_id})
     
@@ -679,6 +735,7 @@ async def delete_staff(staff_id: str, user: dict = Depends(require_business_owne
     
     return {
         "success": True,
+        "deletedBookings": deleted_bookings_count,
         "subscriptionUpdate": {
             "previousPrice": old_price,
             "newPrice": new_price,
@@ -686,6 +743,23 @@ async def delete_staff(staff_id: str, user: dict = Depends(require_business_owne
             "message": f"Your subscription will decrease from £{old_price:.2f}/month to £{new_price:.2f}/month"
         }
     }
+
+@api_router.get("/staff/{staff_id}/future-bookings-count")
+async def get_staff_future_bookings_count(staff_id: str, user: dict = Depends(require_business_owner)):
+    """Get count of future bookings for a staff member (used for deletion warning)"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    count = await db.appointments.count_documents({
+        "staffId": staff_id,
+        "businessId": business["id"],
+        "date": {"$gte": today},
+        "status": {"$in": ["pending", "confirmed"]}
+    })
+    
+    return {"futureBookingsCount": count}
 
 @api_router.get("/businesses/{business_id}/staff")
 async def get_business_staff(business_id: str):
