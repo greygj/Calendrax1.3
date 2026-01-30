@@ -1334,37 +1334,55 @@ async def create_checkout_session(request: Request, data: PaymentRequest, user: 
     success_url = f"{data.originUrl}/booking-success?session_id={{CHECKOUT_SESSION_ID}}&transaction_id={transaction_id}"
     cancel_url = f"{data.originUrl}/business/{data.businessId}?cancelled=true"
     
-    # Check if business has Stripe Connect and use it for destination
+    # Check if business has Stripe Connect and use it for destination charges
     stripe_account_id = business.get("stripeConnectAccountId") if business.get("stripeConnectOnboarded") else None
     
-    # Initialize Stripe checkout
-    host_url = str(request.base_url)
-    webhook_url = f"{host_url}api/webhook/stripe"
-    stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
-    
-    # Create checkout session
-    checkout_request = CheckoutSessionRequest(
-        amount=deposit_amount,
-        currency="gbp",
-        success_url=success_url,
-        cancel_url=cancel_url,
-        metadata={
-            "transaction_id": transaction_id,
-            "user_id": user["id"],
-            "service_id": data.serviceId,
-            "business_id": data.businessId,
-            "staff_id": data.staffId or "",
-            "date": data.date,
-            "time": data.time,
-            "service_name": service["name"],
-            "business_name": business["businessName"],
-            "full_price": str(service_price),
-            "deposit_amount": str(deposit_amount)
-        }
-    )
-    
     try:
-        session = await stripe_checkout.create_checkout_session(checkout_request)
+        # Build checkout session parameters
+        checkout_params = {
+            "payment_method_types": ["card"],
+            "line_items": [{
+                "price_data": {
+                    "currency": "gbp",
+                    "product_data": {
+                        "name": f"Deposit for {service['name']}",
+                        "description": f"Booking at {business['businessName']} on {data.date} at {data.time}"
+                    },
+                    "unit_amount": int(deposit_amount * 100),  # Convert to pence
+                },
+                "quantity": 1
+            }],
+            "mode": "payment",
+            "success_url": success_url,
+            "cancel_url": cancel_url,
+            "metadata": {
+                "transaction_id": transaction_id,
+                "user_id": user["id"],
+                "service_id": data.serviceId,
+                "business_id": data.businessId,
+                "staff_id": data.staffId or "",
+                "date": data.date,
+                "time": data.time,
+                "service_name": service["name"],
+                "business_name": business["businessName"],
+                "full_price": str(service_price),
+                "deposit_amount": str(deposit_amount)
+            }
+        }
+        
+        # If business has connected Stripe account, route payment to them (destination charge)
+        if stripe_account_id:
+            checkout_params["payment_intent_data"] = {
+                "transfer_data": {
+                    "destination": stripe_account_id
+                }
+            }
+            logger.info(f"Creating checkout with destination charge to {stripe_account_id}")
+        else:
+            logger.info("Creating checkout without destination (business not connected)")
+        
+        # Create checkout session using native Stripe SDK
+        session = stripe.checkout.Session.create(**checkout_params)
         
         # Save transaction record
         transaction_doc = {
@@ -1381,21 +1399,23 @@ async def create_checkout_session(request: Request, data: PaymentRequest, user: 
             "currency": "gbp",
             "status": "pending",
             "paymentStatus": "initiated",
-            "sessionId": session.session_id,
+            "sessionId": session.id,
+            "stripeConnectAccountId": stripe_account_id,  # Track where payment goes
             "createdAt": datetime.now(timezone.utc).isoformat()
         }
         await db.payment_transactions.insert_one(transaction_doc)
         
         return {
             "url": session.url,
-            "sessionId": session.session_id,
+            "sessionId": session.id,
             "transactionId": transaction_id,
             "depositAmount": deposit_amount,
-            "fullPrice": service_price
+            "fullPrice": service_price,
+            "paymentDestination": "business" if stripe_account_id else "platform"
         }
     except Exception as e:
         logger.error(f"Stripe checkout error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to create payment session")
+        raise HTTPException(status_code=500, detail=f"Failed to create payment session: {str(e)}")
 
 @api_router.get("/payments/status/{session_id}")
 async def get_payment_status(session_id: str, request: Request, user: dict = Depends(get_current_user)):
