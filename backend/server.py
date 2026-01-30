@@ -2213,6 +2213,232 @@ async def get_revenue_by_staff(user: dict = Depends(require_business_owner)):
         }
     }
 
+
+# ==================== PAYOUT HISTORY ROUTES ====================
+
+@api_router.get("/payouts")
+async def get_payout_history(user: dict = Depends(require_business_owner)):
+    """Get payout history for the business - customer deposits received"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    # Get all completed payment transactions for this business
+    transactions = await db.payment_transactions.find({
+        "businessId": business["id"],
+        "paymentStatus": {"$in": ["paid", "completed"]}
+    }).sort("createdAt", -1).to_list(500)
+    
+    payouts = []
+    total_received = 0
+    total_refunded = 0
+    
+    for tx in transactions:
+        amount = float(tx.get("amount", 0))
+        refund_amount = float(tx.get("refundAmount", 0))
+        
+        # Get appointment details
+        appointment = await db.appointments.find_one({"transactionId": tx["id"]})
+        
+        payout = {
+            "id": tx["id"],
+            "date": tx.get("createdAt", ""),
+            "amount": amount,
+            "currency": tx.get("currency", "gbp"),
+            "customerEmail": tx.get("userEmail", ""),
+            "serviceName": appointment.get("serviceName", "Unknown Service") if appointment else "Unknown Service",
+            "staffName": appointment.get("staffName", "") if appointment else "",
+            "bookingDate": tx.get("date", ""),
+            "bookingTime": tx.get("time", ""),
+            "status": "refunded" if tx.get("refundId") else "received",
+            "refundAmount": refund_amount,
+            "refundedAt": tx.get("refundedAt"),
+            "destination": "business" if tx.get("stripeConnectAccountId") else "platform"
+        }
+        payouts.append(payout)
+        
+        if tx.get("refundId"):
+            total_refunded += refund_amount
+        else:
+            total_received += amount
+    
+    # Calculate summary by period
+    now = datetime.now(timezone.utc)
+    current_month_start, current_month_end = get_month_range(now)
+    prev_month_date = now.replace(day=1) - timedelta(days=1)
+    prev_month_start, prev_month_end = get_month_range(prev_month_date)
+    current_year_start, current_year_end = get_year_range(now)
+    
+    current_month_total = sum(
+        float(tx.get("amount", 0)) for tx in transactions 
+        if tx.get("createdAt", "")[:10] >= current_month_start and tx.get("createdAt", "")[:10] <= current_month_end and not tx.get("refundId")
+    )
+    prev_month_total = sum(
+        float(tx.get("amount", 0)) for tx in transactions 
+        if tx.get("createdAt", "")[:10] >= prev_month_start and tx.get("createdAt", "")[:10] <= prev_month_end and not tx.get("refundId")
+    )
+    year_total = sum(
+        float(tx.get("amount", 0)) for tx in transactions 
+        if tx.get("createdAt", "")[:10] >= current_year_start and tx.get("createdAt", "")[:10] <= current_year_end and not tx.get("refundId")
+    )
+    
+    stripe_connected = business.get("stripeConnectOnboarded", False)
+    
+    return {
+        "payouts": payouts,
+        "summary": {
+            "totalReceived": round(total_received, 2),
+            "totalRefunded": round(total_refunded, 2),
+            "netReceived": round(total_received - total_refunded, 2),
+            "currentMonth": round(current_month_total, 2),
+            "previousMonth": round(prev_month_total, 2),
+            "yearToDate": round(year_total, 2),
+            "transactionCount": len(payouts)
+        },
+        "stripeConnected": stripe_connected,
+        "payoutDestination": "Your Bank Account" if stripe_connected else "Platform Account (Connect bank to receive directly)"
+    }
+
+# ==================== ADVANCED ANALYTICS ROUTES ====================
+
+@api_router.get("/analytics")
+async def get_advanced_analytics(user: dict = Depends(require_business_owner)):
+    """Get advanced analytics for the business"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    now = datetime.now(timezone.utc)
+    current_month_start, current_month_end = get_month_range(now)
+    prev_month_date = now.replace(day=1) - timedelta(days=1)
+    prev_month_start, prev_month_end = get_month_range(prev_month_date)
+    current_year_start, current_year_end = get_year_range(now)
+    
+    # Get all appointments for analysis
+    all_appointments = await db.appointments.find({"businessId": business["id"]}).to_list(10000)
+    
+    # Get services for popularity analysis
+    services = await db.services.find({"businessId": business["id"]}).to_list(100)
+    service_map = {s["id"]: s["name"] for s in services}
+    
+    # 1. Service Popularity Analysis
+    service_bookings = {}
+    for apt in all_appointments:
+        sid = apt.get("serviceId")
+        if sid:
+            if sid not in service_bookings:
+                service_bookings[sid] = {"count": 0, "revenue": 0, "name": service_map.get(sid, "Unknown")}
+            service_bookings[sid]["count"] += 1
+            service_bookings[sid]["revenue"] += float(apt.get("paymentAmount", 0))
+    
+    popular_services = sorted(
+        [{"serviceId": k, **v} for k, v in service_bookings.items()],
+        key=lambda x: x["count"],
+        reverse=True
+    )[:5]
+    
+    # 2. Peak Hours Analysis (when most bookings happen)
+    hour_distribution = {}
+    for apt in all_appointments:
+        time_str = apt.get("time", "")
+        if time_str:
+            hour = int(time_str.split(":")[0]) if ":" in time_str else 0
+            hour_distribution[hour] = hour_distribution.get(hour, 0) + 1
+    
+    peak_hours = sorted(
+        [{"hour": k, "count": v, "label": f"{k}:00 - {k+1}:00"} for k, v in hour_distribution.items()],
+        key=lambda x: x["count"],
+        reverse=True
+    )[:5]
+    
+    # 3. Day of Week Analysis
+    day_distribution = {}
+    day_names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    for apt in all_appointments:
+        date_str = apt.get("date", "")
+        if date_str:
+            try:
+                date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+                day_num = date_obj.weekday()
+                day_distribution[day_num] = day_distribution.get(day_num, 0) + 1
+            except:
+                pass
+    
+    busiest_days = sorted(
+        [{"day": day_names[k], "dayNum": k, "count": v} for k, v in day_distribution.items()],
+        key=lambda x: x["count"],
+        reverse=True
+    )
+    
+    # 4. Customer Retention Analysis
+    customer_booking_counts = {}
+    for apt in all_appointments:
+        uid = apt.get("userId")
+        if uid:
+            customer_booking_counts[uid] = customer_booking_counts.get(uid, 0) + 1
+    
+    total_customers = len(customer_booking_counts)
+    repeat_customers = sum(1 for count in customer_booking_counts.values() if count > 1)
+    new_customers = total_customers - repeat_customers
+    retention_rate = round((repeat_customers / total_customers * 100) if total_customers > 0 else 0, 1)
+    
+    # 5. Booking Status Breakdown
+    status_counts = {}
+    for apt in all_appointments:
+        status = apt.get("status", "unknown")
+        status_counts[status] = status_counts.get(status, 0) + 1
+    
+    # 6. Monthly Trend (last 6 months)
+    monthly_trend = []
+    for i in range(5, -1, -1):
+        trend_date = now - timedelta(days=30 * i)
+        month_start, month_end = get_month_range(trend_date)
+        month_apts = [
+            apt for apt in all_appointments 
+            if apt.get("date", "")[:10] >= month_start and apt.get("date", "")[:10] <= month_end
+        ]
+        month_revenue = sum(float(apt.get("paymentAmount", 0)) for apt in month_apts if apt.get("status") in ["confirmed", "completed"])
+        monthly_trend.append({
+            "month": trend_date.strftime("%b %Y"),
+            "bookings": len(month_apts),
+            "revenue": round(month_revenue, 2)
+        })
+    
+    # 7. Average Metrics
+    confirmed_apts = [apt for apt in all_appointments if apt.get("status") in ["confirmed", "completed"]]
+    avg_booking_value = round(
+        sum(float(apt.get("paymentAmount", 0)) for apt in confirmed_apts) / len(confirmed_apts) if confirmed_apts else 0,
+        2
+    )
+    
+    # Conversion rate (confirmed / total)
+    total_bookings = len(all_appointments)
+    confirmed_count = len(confirmed_apts)
+    conversion_rate = round((confirmed_count / total_bookings * 100) if total_bookings > 0 else 0, 1)
+    
+    return {
+        "popularServices": popular_services,
+        "peakHours": peak_hours,
+        "busiestDays": busiest_days,
+        "customerRetention": {
+            "totalCustomers": total_customers,
+            "repeatCustomers": repeat_customers,
+            "newCustomers": new_customers,
+            "retentionRate": retention_rate
+        },
+        "bookingStatusBreakdown": [
+            {"status": k, "count": v} for k, v in sorted(status_counts.items(), key=lambda x: x[1], reverse=True)
+        ],
+        "monthlyTrend": monthly_trend,
+        "averageMetrics": {
+            "averageBookingValue": avg_booking_value,
+            "conversionRate": conversion_rate,
+            "totalBookings": total_bookings,
+            "confirmedBookings": confirmed_count
+        }
+    }
+
+
 # ==================== ADMIN ROUTES ====================
 
 @api_router.get("/admin/stats")
