@@ -29,6 +29,7 @@ const BusinessOwnerDashboard = () => {
   
   // Subscription state
   const [subscription, setSubscription] = useState(null);
+  const [subscriptionLoading, setSubscriptionLoading] = useState(false);
   
   // Staff management state
   const [selectedStaff, setSelectedStaff] = useState(null);
