@@ -77,6 +77,13 @@ const BusinessOwnerDashboard = () => {
       loadStripeStatus();
       alert('Stripe account connected successfully!');
     }
+    if (searchParams.get('subscription_success') === 'true') {
+      loadSubscription();
+      alert('Subscription payment method added successfully! Your subscription is now active.');
+    }
+    if (searchParams.get('subscription_cancelled') === 'true') {
+      alert('Subscription setup was cancelled. You can add a payment method anytime from your Profile.');
+    }
   }, [searchParams]);
 
   useEffect(() => {
