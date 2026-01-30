@@ -141,7 +141,10 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 - [x] BookingSuccess page for post-payment confirmation
 
 ### Phase 7: Stripe Connect & Subscription System ✅ (January 30, 2026)
-- [x] **Stripe Connect Integration** - Business owners can connect bank accounts to receive deposits
+- [x] **Dual Stripe Payment System** - Refactored to support two separate payment flows:
+  - **Customer Deposits → Business Owners** via Stripe Connect (destination charges)
+  - **Platform Subscription Fees → Calendrax** via standard Stripe
+- [x] **Stripe Connect Integration** - Business owners can connect bank accounts to receive deposits directly
 - [x] **Configurable Deposit Levels** - Business owners choose: No deposit, 10%, 20% (default), 50%, Pay in Full
 - [x] **Staff-based Subscription Pricing**:
   - 1 Staff: £12/month (base)
