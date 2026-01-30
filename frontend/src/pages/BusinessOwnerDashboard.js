@@ -1668,9 +1668,9 @@ const BusinessOwnerDashboard = () => {
               <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                 <h3 className="text-white font-medium mb-4 flex items-center gap-2">
                   <CreditCard className="w-5 h-5 text-lime-400" />
-                  Subscription Status
+                  Subscription & Payment
                 </h3>
-                <div className="grid md:grid-cols-4 gap-4">
+                <div className="grid md:grid-cols-4 gap-4 mb-4">
                   <div className="bg-zinc-800 rounded-lg p-4">
                     <p className="text-gray-400 text-sm">Status</p>
                     <p className={`font-semibold ${subscription.status === 'trial' ? 'text-yellow-400' : subscription.status === 'active' ? 'text-lime-400' : 'text-red-400'}`}>
@@ -1692,11 +1692,70 @@ const BusinessOwnerDashboard = () => {
                     </div>
                   )}
                 </div>
-                {subscription.freeAccessOverride && (
-                  <p className="text-lime-400 text-sm mt-3 flex items-center gap-2">
+                
+                {subscription.freeAccessOverride ? (
+                  <p className="text-lime-400 text-sm flex items-center gap-2">
                     <Check className="w-4 h-4" /> Free access granted by admin
                   </p>
+                ) : subscription.status === 'trial' ? (
+                  <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="text-yellow-400 font-medium">Set Up Payment Method</p>
+                        <p className="text-yellow-200/70 text-sm mt-1">
+                          Add your payment details before your trial ends to continue using Calendrax.
+                        </p>
+                      </div>
+                      <button
+                        onClick={handleSetupSubscriptionPayment}
+                        disabled={subscriptionLoading}
+                        className="flex items-center gap-2 bg-yellow-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-yellow-400 transition-colors disabled:opacity-50"
+                      >
+                        <CreditCard className="w-4 h-4" />
+                        {subscriptionLoading ? 'Processing...' : 'Add Payment'}
+                      </button>
+                    </div>
+                  </div>
+                ) : subscription.status === 'active' ? (
+                  <div className="flex items-center justify-between">
+                    <p className="text-lime-400 text-sm flex items-center gap-2">
+                      <Check className="w-4 h-4" /> Subscription active - Payment method on file
+                    </p>
+                    <button
+                      onClick={handleSetupSubscriptionPayment}
+                      disabled={subscriptionLoading}
+                      className="text-gray-400 hover:text-white text-sm underline"
+                    >
+                      Update payment method
+                    </button>
+                  </div>
+                ) : (
+                  <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="text-red-400 font-medium">Payment Required</p>
+                        <p className="text-red-200/70 text-sm mt-1">
+                          Your subscription is inactive. Please add a payment method to continue.
+                        </p>
+                      </div>
+                      <button
+                        onClick={handleSetupSubscriptionPayment}
+                        disabled={subscriptionLoading}
+                        className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-400 transition-colors disabled:opacity-50"
+                      >
+                        <CreditCard className="w-4 h-4" />
+                        {subscriptionLoading ? 'Processing...' : 'Add Payment'}
+                      </button>
+                    </div>
+                  </div>
                 )}
+                
+                {/* Pricing breakdown */}
+                <div className="mt-4 pt-4 border-t border-zinc-800">
+                  <p className="text-gray-500 text-sm">
+                    Pricing: £12/month base + £8 for each additional staff member
+                  </p>
+                </div>
               </div>
             )}
 
