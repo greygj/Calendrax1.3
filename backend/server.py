@@ -1076,6 +1076,118 @@ async def setup_subscription_payment(request: Request, user: dict = Depends(requ
         logger.error(f"Subscription setup error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to setup subscription: {str(e)}")
 
+@api_router.get("/subscription/verify/{session_id}")
+async def verify_subscription_payment(session_id: str, user: dict = Depends(require_business_owner)):
+    """Verify subscription payment was successful and update status"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    subscription = await db.subscriptions.find_one({"businessId": business["id"]})
+    if not subscription:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    
+    try:
+        # Retrieve the checkout session
+        checkout_session = stripe.checkout.Session.retrieve(session_id)
+        
+        if checkout_session.payment_status == "paid":
+            # Update subscription status
+            await db.subscriptions.update_one(
+                {"id": subscription["id"]},
+                {"$set": {
+                    "status": "active",
+                    "stripeSubscriptionId": checkout_session.subscription,
+                    "stripeCustomerId": checkout_session.customer,
+                    "lastPaymentStatus": "success",
+                    "lastPaymentDate": datetime.now(timezone.utc).isoformat(),
+                    "subscriptionStartDate": datetime.now(timezone.utc).isoformat()
+                }}
+            )
+            return {"success": True, "status": "active"}
+        else:
+            return {"success": False, "status": checkout_session.payment_status}
+    except Exception as e:
+        logger.error(f"Error verifying subscription: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to verify subscription")
+
+@api_router.post("/webhook/subscription")
+async def subscription_webhook(request: Request):
+    """Handle Stripe webhook events for subscriptions"""
+    try:
+        body = await request.body()
+        sig_header = request.headers.get("Stripe-Signature")
+        
+        # For now, just parse the event without signature verification
+        # In production, you should verify the webhook signature
+        import json
+        event = json.loads(body)
+        
+        event_type = event.get("type", "")
+        data = event.get("data", {}).get("object", {})
+        
+        if event_type == "checkout.session.completed":
+            # Subscription payment successful
+            metadata = data.get("metadata", {})
+            subscription_id = metadata.get("subscription_id")
+            
+            if subscription_id:
+                await db.subscriptions.update_one(
+                    {"id": subscription_id},
+                    {"$set": {
+                        "status": "active",
+                        "stripeSubscriptionId": data.get("subscription"),
+                        "stripeCustomerId": data.get("customer"),
+                        "lastPaymentStatus": "success",
+                        "lastPaymentDate": datetime.now(timezone.utc).isoformat()
+                    }}
+                )
+        
+        elif event_type == "invoice.payment_succeeded":
+            # Recurring payment successful
+            customer_id = data.get("customer")
+            sub = await db.subscriptions.find_one({"stripeCustomerId": customer_id})
+            if sub:
+                await db.subscriptions.update_one(
+                    {"id": sub["id"]},
+                    {"$set": {
+                        "lastPaymentStatus": "success",
+                        "lastPaymentDate": datetime.now(timezone.utc).isoformat(),
+                        "failedPayments": 0
+                    }}
+                )
+        
+        elif event_type == "invoice.payment_failed":
+            # Payment failed
+            customer_id = data.get("customer")
+            sub = await db.subscriptions.find_one({"stripeCustomerId": customer_id})
+            if sub:
+                failed_count = sub.get("failedPayments", 0) + 1
+                new_status = "past_due" if failed_count < 3 else "inactive"
+                await db.subscriptions.update_one(
+                    {"id": sub["id"]},
+                    {"$set": {
+                        "lastPaymentStatus": "failed",
+                        "failedPayments": failed_count,
+                        "status": new_status
+                    }}
+                )
+        
+        elif event_type == "customer.subscription.deleted":
+            # Subscription cancelled
+            stripe_sub_id = data.get("id")
+            sub = await db.subscriptions.find_one({"stripeSubscriptionId": stripe_sub_id})
+            if sub:
+                await db.subscriptions.update_one(
+                    {"id": sub["id"]},
+                    {"$set": {"status": "cancelled"}}
+                )
+        
+        return {"status": "success"}
+    except Exception as e:
+        logger.error(f"Subscription webhook error: {str(e)}")
+        return {"status": "error", "message": str(e)}
+
 @api_router.post("/subscription/cancel")
 async def cancel_subscription(user: dict = Depends(require_business_owner)):
     """Cancel the subscription (effective at end of billing period)"""
