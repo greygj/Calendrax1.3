@@ -185,7 +185,7 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 ---
 
 ## MOCKED Features (Not Yet Fully Implemented)
-- **Stripe Connect Onboarding** - Redirects to Stripe, requires real Stripe account to complete
+- **Stripe Connect Onboarding** - Backend code is ready but the Stripe account needs to be enrolled in Stripe Connect program
 - **Google Maps API**: Basic embed without API key
 - **Email Notifications**: Code ready, awaiting SendGrid API key
 - **SMS Notifications**: Code ready, awaiting Twilio credentials
