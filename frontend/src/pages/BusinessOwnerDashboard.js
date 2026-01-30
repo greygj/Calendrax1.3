@@ -1520,64 +1520,537 @@ const BusinessOwnerDashboard = () => {
           </div>
         )}
 
-        {/* Revenue View */}
-        {activeView === 'revenue' && (
+        {/* Analytics View (includes Revenue, Payouts, and Insights) */}
+        {activeView === 'analytics' && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-white text-xl font-semibold">Revenue</h2>
-              <button 
-                onClick={loadRevenue}
-                disabled={revenueLoading}
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                {revenueLoading ? 'Loading...' : 'Refresh'}
-              </button>
+            {/* Sub-tabs */}
+            <div className="flex items-center gap-1 bg-zinc-900 border border-zinc-800 rounded-xl p-1">
+              {[
+                { id: 'overview', label: 'Overview', icon: PieChart },
+                { id: 'revenue', label: 'Revenue', icon: DollarSign },
+                { id: 'payouts', label: 'Payouts', icon: Banknote }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setAnalyticsSubTab(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+                    analyticsSubTab === tab.id
+                      ? 'bg-lime-500 text-black'
+                      : 'text-gray-400 hover:text-white hover:bg-zinc-800'
+                  }`}
+                >
+                  <tab.icon className="w-4 h-4" />
+                  {tab.label}
+                </button>
+              ))}
             </div>
 
-            {revenueLoading && !revenueSummary ? (
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
-                <p className="text-gray-400">Loading revenue data...</p>
-              </div>
-            ) : revenueSummary ? (
+            {/* Overview Sub-tab */}
+            {analyticsSubTab === 'overview' && (
               <>
-                {/* Overview Cards */}
-                <div className="grid md:grid-cols-3 gap-4">
-                  {/* Current Week */}
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-                    <p className="text-gray-400 text-sm mb-1">This Week</p>
-                    <p className="text-white text-3xl font-bold">£{revenueSummary.currentWeek.revenue.toFixed(2)}</p>
-                    <p className="text-gray-500 text-sm">{revenueSummary.currentWeek.bookingCount} bookings</p>
-                    <div className={`flex items-center gap-1 mt-2 text-sm ${
-                      revenueSummary.comparison.weekOverWeek.change >= 0 ? 'text-lime-400' : 'text-red-400'
-                    }`}>
-                      {revenueSummary.comparison.weekOverWeek.change >= 0 ? (
-                        <TrendingUp className="w-4 h-4" />
-                      ) : (
-                        <TrendingDown className="w-4 h-4" />
-                      )}
-                      <span>
-                        {revenueSummary.comparison.weekOverWeek.change >= 0 ? '+' : ''}
-                        £{revenueSummary.comparison.weekOverWeek.change.toFixed(2)} vs last week
-                      </span>
-                    </div>
-                  </div>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-white text-xl font-semibold">Business Insights</h2>
+                  <button 
+                    onClick={loadAnalytics}
+                    disabled={analyticsLoading}
+                    className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+                  >
+                    <RefreshCw className={`w-4 h-4 ${analyticsLoading ? 'animate-spin' : ''}`} />
+                    {analyticsLoading ? 'Loading...' : 'Refresh'}
+                  </button>
+                </div>
 
-                  {/* Current Month */}
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-                    <p className="text-gray-400 text-sm mb-1">{revenueSummary.currentMonth.label}</p>
-                    <p className="text-white text-3xl font-bold">£{revenueSummary.currentMonth.revenue.toFixed(2)}</p>
-                    <p className="text-gray-500 text-sm">{revenueSummary.currentMonth.bookingCount} bookings</p>
-                    <div className={`flex items-center gap-1 mt-2 text-sm ${
-                      revenueSummary.comparison.monthOverMonth.change >= 0 ? 'text-lime-400' : 'text-red-400'
+                {analyticsLoading && !analytics ? (
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                    <p className="text-gray-400">Loading analytics...</p>
+                  </div>
+                ) : analytics ? (
+                  <>
+                    {/* Key Metrics Overview */}
+                    <div className="grid md:grid-cols-4 gap-4">
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <p className="text-gray-400 text-sm mb-1">Total Bookings</p>
+                        <p className="text-white text-2xl font-bold">{analytics.averageMetrics.totalBookings}</p>
+                        <p className="text-lime-400 text-sm">{analytics.averageMetrics.confirmedBookings} confirmed</p>
+                      </div>
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <p className="text-gray-400 text-sm mb-1">Avg. Booking Value</p>
+                        <p className="text-lime-400 text-2xl font-bold">£{analytics.averageMetrics.averageBookingValue.toFixed(2)}</p>
+                      </div>
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <p className="text-gray-400 text-sm mb-1">Conversion Rate</p>
+                        <p className="text-white text-2xl font-bold">{analytics.averageMetrics.conversionRate}%</p>
+                        <p className="text-gray-500 text-sm">confirmed / total</p>
+                      </div>
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <p className="text-gray-400 text-sm mb-1">Customer Retention</p>
+                        <p className="text-lime-400 text-2xl font-bold">{analytics.customerRetention.retentionRate}%</p>
+                        <p className="text-gray-500 text-sm">{analytics.customerRetention.repeatCustomers} repeat customers</p>
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {/* Popular Services */}
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                          <TrendingUp className="w-5 h-5 text-lime-400" />
+                          Most Popular Services
+                        </h3>
+                        {analytics.popularServices.length > 0 ? (
+                          <div className="space-y-3">
+                            {analytics.popularServices.map((service, index) => (
+                              <div key={service.serviceId} className="flex items-center justify-between bg-zinc-800 rounded-lg p-3">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 bg-lime-500/20 rounded-full flex items-center justify-center text-lime-400 font-semibold text-sm">
+                                    {index + 1}
+                                  </div>
+                                  <div>
+                                    <p className="text-white font-medium">{service.name}</p>
+                                    <p className="text-gray-500 text-sm">{service.count} bookings</p>
+                                  </div>
+                                </div>
+                                <p className="text-lime-400 font-semibold">£{service.revenue.toFixed(2)}</p>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-gray-500 text-center py-4">No service data yet</p>
+                        )}
+                      </div>
+
+                      {/* Peak Hours */}
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                          <Clock className="w-5 h-5 text-lime-400" />
+                          Peak Booking Hours
+                        </h3>
+                        {analytics.peakHours.length > 0 ? (
+                          <div className="space-y-3">
+                            {analytics.peakHours.map((hour, index) => (
+                              <div key={hour.hour} className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm ${
+                                    index === 0 ? 'bg-lime-500 text-black' : 'bg-zinc-800 text-white'
+                                  }`}>
+                                    {index + 1}
+                                  </div>
+                                  <span className="text-white">{hour.label}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-24 bg-zinc-800 rounded-full h-2">
+                                    <div 
+                                      className="bg-lime-500 h-2 rounded-full" 
+                                      style={{ width: `${(hour.count / analytics.peakHours[0].count) * 100}%` }}
+                                    />
+                                  </div>
+                                  <span className="text-gray-400 text-sm w-12">{hour.count}</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-gray-500 text-center py-4">No booking time data yet</p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {/* Busiest Days */}
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                          <Calendar className="w-5 h-5 text-lime-400" />
+                          Busiest Days
+                        </h3>
+                        {analytics.busiestDays.length > 0 ? (
+                          <div className="space-y-3">
+                            {analytics.busiestDays.map((day, index) => (
+                              <div key={day.day} className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm ${
+                                    index === 0 ? 'bg-lime-500 text-black' : 'bg-zinc-800 text-white'
+                                  }`}>
+                                    {index + 1}
+                                  </div>
+                                  <span className="text-white">{day.day}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-24 bg-zinc-800 rounded-full h-2">
+                                    <div 
+                                      className="bg-lime-500 h-2 rounded-full" 
+                                      style={{ width: `${(day.count / analytics.busiestDays[0].count) * 100}%` }}
+                                    />
+                                  </div>
+                                  <span className="text-gray-400 text-sm w-12">{day.count}</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-gray-500 text-center py-4">No day data yet</p>
+                        )}
+                      </div>
+
+                      {/* Booking Status Breakdown */}
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                          <PieChart className="w-5 h-5 text-lime-400" />
+                          Booking Status Breakdown
+                        </h3>
+                        {analytics.bookingStatusBreakdown.length > 0 ? (
+                          <div className="space-y-3">
+                            {analytics.bookingStatusBreakdown.map((item) => {
+                              const colors = {
+                                confirmed: 'bg-lime-500',
+                                completed: 'bg-green-500',
+                                pending: 'bg-yellow-500',
+                                cancelled: 'bg-red-500',
+                                declined: 'bg-red-400'
+                              };
+                              return (
+                                <div key={item.status} className="flex items-center justify-between">
+                                  <div className="flex items-center gap-3">
+                                    <div className={`w-3 h-3 rounded-full ${colors[item.status] || 'bg-gray-500'}`} />
+                                    <span className="text-white capitalize">{item.status}</span>
+                                  </div>
+                                  <span className="text-gray-400">{item.count}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <p className="text-gray-500 text-center py-4">No status data yet</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Customer Insights */}
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                        <Users className="w-5 h-5 text-lime-400" />
+                        Customer Insights
+                      </h3>
+                      <div className="grid md:grid-cols-3 gap-4">
+                        <div className="bg-zinc-800 rounded-lg p-4 text-center">
+                          <p className="text-3xl font-bold text-white">{analytics.customerRetention.totalCustomers}</p>
+                          <p className="text-gray-400 text-sm">Total Customers</p>
+                        </div>
+                        <div className="bg-zinc-800 rounded-lg p-4 text-center">
+                          <p className="text-3xl font-bold text-lime-400">{analytics.customerRetention.repeatCustomers}</p>
+                          <p className="text-gray-400 text-sm">Repeat Customers</p>
+                        </div>
+                        <div className="bg-zinc-800 rounded-lg p-4 text-center">
+                          <p className="text-3xl font-bold text-yellow-400">{analytics.customerRetention.newCustomers}</p>
+                          <p className="text-gray-400 text-sm">First-time Customers</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Monthly Trend */}
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                        <Activity className="w-5 h-5 text-lime-400" />
+                        6-Month Trend
+                      </h3>
+                      <div className="grid grid-cols-6 gap-2">
+                        {analytics.monthlyTrend.map((month, index) => {
+                          const maxBookings = Math.max(...analytics.monthlyTrend.map(m => m.bookings)) || 1;
+                          const heightPercent = (month.bookings / maxBookings) * 100;
+                          return (
+                            <div key={index} className="text-center">
+                              <div className="h-32 bg-zinc-800 rounded-lg flex flex-col justify-end p-1">
+                                <div 
+                                  className="bg-lime-500 rounded transition-all"
+                                  style={{ height: `${heightPercent}%`, minHeight: month.bookings > 0 ? '8px' : '0' }}
+                                />
+                              </div>
+                              <p className="text-xs text-gray-400 mt-2">{month.month}</p>
+                              <p className="text-xs text-white">{month.bookings}</p>
+                              <p className="text-xs text-lime-400">£{month.revenue}</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                    <PieChart className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                    <p className="text-gray-500">No analytics data available</p>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Revenue Sub-tab */}
+            {analyticsSubTab === 'revenue' && (
+              <>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-white text-xl font-semibold">Revenue</h2>
+                  <button 
+                    onClick={loadRevenue}
+                    disabled={revenueLoading}
+                    className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+                  >
+                    <RefreshCw className={`w-4 h-4 ${revenueLoading ? 'animate-spin' : ''}`} />
+                    {revenueLoading ? 'Loading...' : 'Refresh'}
+                  </button>
+                </div>
+
+                {revenueLoading && !revenueSummary ? (
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                    <p className="text-gray-400">Loading revenue data...</p>
+                  </div>
+                ) : revenueSummary ? (
+                  <>
+                    {/* Overview Cards */}
+                    <div className="grid md:grid-cols-3 gap-4">
+                      {/* Current Week */}
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <p className="text-gray-400 text-sm mb-1">This Week</p>
+                        <p className="text-white text-3xl font-bold">£{revenueSummary.currentWeek.revenue.toFixed(2)}</p>
+                        <p className="text-gray-500 text-sm">{revenueSummary.currentWeek.bookingCount} bookings</p>
+                        <div className={`flex items-center gap-1 mt-2 text-sm ${
+                          revenueSummary.comparison.weekOverWeek.change >= 0 ? 'text-lime-400' : 'text-red-400'
+                        }`}>
+                          {revenueSummary.comparison.weekOverWeek.change >= 0 ? (
+                            <TrendingUp className="w-4 h-4" />
+                          ) : (
+                            <TrendingDown className="w-4 h-4" />
+                          )}
+                          <span>
+                            {revenueSummary.comparison.weekOverWeek.change >= 0 ? '+' : ''}
+                            £{revenueSummary.comparison.weekOverWeek.change.toFixed(2)} vs last week
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Current Month */}
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <p className="text-gray-400 text-sm mb-1">{revenueSummary.currentMonth.label}</p>
+                        <p className="text-white text-3xl font-bold">£{revenueSummary.currentMonth.revenue.toFixed(2)}</p>
+                        <p className="text-gray-500 text-sm">{revenueSummary.currentMonth.bookingCount} bookings</p>
+                        <div className={`flex items-center gap-1 mt-2 text-sm ${
+                          revenueSummary.comparison.monthOverMonth.change >= 0 ? 'text-lime-400' : 'text-red-400'
+                        }`}>
+                          {revenueSummary.comparison.monthOverMonth.change >= 0 ? (
+                            <TrendingUp className="w-4 h-4" />
+                          ) : (
+                            <TrendingDown className="w-4 h-4" />
+                          )}
+                          <span>
+                            {revenueSummary.comparison.monthOverMonth.change >= 0 ? '+' : ''}
+                            £{revenueSummary.comparison.monthOverMonth.change.toFixed(2)} vs {revenueSummary.previousMonth.label}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Current Year */}
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <p className="text-gray-400 text-sm mb-1">{revenueSummary.currentYear.label}</p>
+                        <p className="text-lime-400 text-3xl font-bold">£{revenueSummary.currentYear.revenue.toFixed(2)}</p>
+                        <p className="text-gray-500 text-sm">{revenueSummary.currentYear.bookingCount} bookings</p>
+                      </div>
+                    </div>
+
+                    {/* Revenue by Staff */}
+                    {staffRevenue && staffRevenue.length > 0 && (
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                          <Users className="w-5 h-5 text-lime-400" />
+                          Revenue by Staff Member
+                        </h3>
+                        <div className="space-y-4">
+                          {staffRevenue.map((staff) => {
+                            const curr_month_rev = staff.currentMonth?.revenue || 0;
+                            const prev_month_rev = staff.previousMonth?.revenue || 0;
+                            const change = curr_month_rev - prev_month_rev;
+                            return (
+                              <div key={staff.staffId} className="bg-zinc-800 rounded-lg p-4">
+                                <div className="flex items-center justify-between mb-3">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-lime-500/20 rounded-full flex items-center justify-center">
+                                      <User className="w-5 h-5 text-lime-400" />
+                                    </div>
+                                    <div>
+                                      <p className="text-white font-medium">{staff.staffName}</p>
+                                      <p className="text-gray-500 text-sm">{staff.totalBookings} total bookings</p>
+                                    </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="text-lime-400 text-xl font-bold">£{staff.totalRevenue.toFixed(2)}</p>
+                                    <p className="text-gray-500 text-sm">all time</p>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-3 gap-2 text-center">
+                                  <div className="bg-zinc-700/50 rounded p-2">
+                                    <p className="text-white font-semibold">£{(staff.currentWeek?.revenue || 0).toFixed(2)}</p>
+                                    <p className="text-gray-400 text-xs">This Week</p>
+                                  </div>
+                                  <div className="bg-zinc-700/50 rounded p-2">
+                                    <p className="text-white font-semibold">£{curr_month_rev.toFixed(2)}</p>
+                                    <p className="text-gray-400 text-xs">This Month</p>
+                                  </div>
+                                  <div className="bg-zinc-700/50 rounded p-2">
+                                    <p className={`font-semibold ${change >= 0 ? 'text-lime-400' : 'text-red-400'}`}>
+                                      {change >= 0 ? '+' : ''}£{change.toFixed(2)}
+                                    </p>
+                                    <p className="text-gray-400 text-xs">vs Last Month</p>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                    <BarChart3 className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                    <p className="text-gray-500">No revenue data available</p>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Payouts Sub-tab */}
+            {analyticsSubTab === 'payouts' && (
+              <>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-white text-xl font-semibold">Payout History</h2>
+                  <button 
+                    onClick={loadPayouts}
+                    disabled={payoutLoading}
+                    className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+                  >
+                    <RefreshCw className={`w-4 h-4 ${payoutLoading ? 'animate-spin' : ''}`} />
+                    {payoutLoading ? 'Loading...' : 'Refresh'}
+                  </button>
+                </div>
+
+                {payoutLoading && !payoutHistory ? (
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                    <p className="text-gray-400">Loading payout data...</p>
+                  </div>
+                ) : payoutHistory ? (
+                  <>
+                    {/* Payout Summary Cards */}
+                    <div className="grid md:grid-cols-4 gap-4">
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <p className="text-gray-400 text-sm mb-1">Total Received</p>
+                        <p className="text-lime-400 text-2xl font-bold">£{payoutHistory.summary.totalReceived.toFixed(2)}</p>
+                        <p className="text-gray-500 text-sm">{payoutHistory.summary.transactionCount} deposits</p>
+                      </div>
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <p className="text-gray-400 text-sm mb-1">This Month</p>
+                        <p className="text-white text-2xl font-bold">£{payoutHistory.summary.currentMonth.toFixed(2)}</p>
+                        <p className={`text-sm flex items-center gap-1 ${
+                          payoutHistory.summary.currentMonth >= payoutHistory.summary.previousMonth ? 'text-lime-400' : 'text-red-400'
+                        }`}>
+                          {payoutHistory.summary.currentMonth >= payoutHistory.summary.previousMonth ? (
+                            <ArrowUpRight className="w-3 h-3" />
+                          ) : (
+                            <ArrowDownRight className="w-3 h-3" />
+                          )}
+                          vs £{payoutHistory.summary.previousMonth.toFixed(2)} last month
+                        </p>
+                      </div>
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <p className="text-gray-400 text-sm mb-1">Year to Date</p>
+                        <p className="text-white text-2xl font-bold">£{payoutHistory.summary.yearToDate.toFixed(2)}</p>
+                      </div>
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <p className="text-gray-400 text-sm mb-1">Net Received</p>
+                        <p className="text-lime-400 text-2xl font-bold">£{payoutHistory.summary.netReceived.toFixed(2)}</p>
+                        {payoutHistory.summary.totalRefunded > 0 && (
+                          <p className="text-red-400 text-sm">-£{payoutHistory.summary.totalRefunded.toFixed(2)} refunded</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Payout Destination Notice */}
+                    <div className={`rounded-xl p-4 flex items-start gap-3 ${
+                      payoutHistory.stripeConnected ? 'bg-lime-500/10 border border-lime-500/20' : 'bg-yellow-500/10 border border-yellow-500/20'
                     }`}>
-                      {revenueSummary.comparison.monthOverMonth.change >= 0 ? (
-                        <TrendingUp className="w-4 h-4" />
+                      {payoutHistory.stripeConnected ? (
+                        <>
+                          <Check className="w-5 h-5 text-lime-400 flex-shrink-0 mt-0.5" />
+                          <div>
+                            <p className="text-lime-400 font-medium">Deposits going to: {payoutHistory.payoutDestination}</p>
+                            <p className="text-lime-200 text-sm">Customer deposits are routed directly to your connected bank account.</p>
+                          </div>
+                        </>
                       ) : (
-                        <TrendingDown className="w-4 h-4" />
+                        <>
+                          <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                          <div>
+                            <p className="text-yellow-400 font-medium">Deposits going to: Platform Account</p>
+                            <p className="text-yellow-200 text-sm">Connect your bank account in Profile to receive deposits directly.</p>
+                          </div>
+                        </>
                       )}
-                      <span>
-                        {revenueSummary.comparison.monthOverMonth.change >= 0 ? '+' : ''}
-                        £{revenueSummary.comparison.monthOverMonth.change.toFixed(2)} vs {revenueSummary.previousMonth.label}
+                    </div>
+
+                    {/* Transaction History */}
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+                      <div className="p-4 border-b border-zinc-800">
+                        <h3 className="text-white font-medium flex items-center gap-2">
+                          <Banknote className="w-5 h-5 text-lime-400" />
+                          Recent Deposits
+                        </h3>
+                      </div>
+                      {payoutHistory.payouts.length > 0 ? (
+                        <div className="divide-y divide-zinc-800">
+                          {payoutHistory.payouts.slice(0, 20).map((payout) => (
+                            <div key={payout.id} className="p-4 hover:bg-zinc-800/50 transition-colors">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                                    payout.status === 'refunded' ? 'bg-red-500/20 text-red-400' : 'bg-lime-500/20 text-lime-400'
+                                  }`}>
+                                    {payout.status === 'refunded' ? <XCircle className="w-5 h-5" /> : <Check className="w-5 h-5" />}
+                                  </div>
+                                  <div>
+                                    <p className="text-white font-medium">{payout.serviceName}</p>
+                                    <p className="text-gray-500 text-sm">
+                                      {payout.customerEmail} • {payout.bookingDate} at {payout.bookingTime}
+                                      {payout.staffName && ` • ${payout.staffName}`}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <p className={`font-semibold ${payout.status === 'refunded' ? 'text-red-400' : 'text-lime-400'}`}>
+                                    {payout.status === 'refunded' ? '-' : '+'}£{payout.amount.toFixed(2)}
+                                  </p>
+                                  <p className="text-gray-500 text-xs">
+                                    {new Date(payout.date).toLocaleDateString()}
+                                  </p>
+                                  {payout.status === 'refunded' && (
+                                    <p className="text-red-400 text-xs">Refunded</p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="p-8 text-center">
+                          <Banknote className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                          <p className="text-gray-500">No deposits received yet</p>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                    <Banknote className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                    <p className="text-gray-500">No payout data available</p>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
                       </span>
                     </div>
                   </div>
