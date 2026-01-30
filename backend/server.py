@@ -651,15 +651,298 @@ async def update_my_business(updates: dict, user: dict = Depends(require_busines
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
     
-    # Only allow updating certain fields
-    allowed_fields = ["businessName", "description", "postcode", "address", "logo", "phone", "email", "website"]
+    # Only allow updating certain fields (including depositLevel)
+    allowed_fields = ["businessName", "description", "postcode", "address", "logo", "phone", "email", "website", "depositLevel"]
     update_data = {k: v for k, v in updates.items() if k in allowed_fields and v is not None}
+    
+    # Validate depositLevel if provided
+    if "depositLevel" in update_data:
+        if update_data["depositLevel"] not in DEPOSIT_LEVELS:
+            raise HTTPException(status_code=400, detail="Invalid deposit level. Must be: none, 10, 20, 50, or full")
     
     if update_data:
         await db.businesses.update_one({"id": business["id"]}, {"$set": update_data})
     
     updated_business = await db.businesses.find_one({"id": business["id"]})
     return remove_mongo_id(updated_business)
+
+# ==================== STRIPE CONNECT ROUTES ====================
+
+@api_router.post("/stripe-connect/create-account")
+async def create_stripe_connect_account(request: Request, user: dict = Depends(require_business_owner)):
+    """Create a Stripe Connect account for the business owner"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    # Check if already has a connect account
+    if business.get("stripeConnectAccountId"):
+        # Return the existing account link for onboarding completion
+        try:
+            account_link = stripe.AccountLink.create(
+                account=business["stripeConnectAccountId"],
+                refresh_url=f"{request.headers.get('origin', '')}/dashboard?stripe_refresh=true",
+                return_url=f"{request.headers.get('origin', '')}/dashboard?stripe_connected=true",
+                type="account_onboarding",
+            )
+            return {"url": account_link.url, "accountId": business["stripeConnectAccountId"]}
+        except Exception as e:
+            logger.error(f"Error creating account link: {e}")
+    
+    try:
+        # Create a new Express Connect account
+        account = stripe.Account.create(
+            type="express",
+            country="GB",
+            email=user["email"],
+            capabilities={
+                "card_payments": {"requested": True},
+                "transfers": {"requested": True},
+            },
+            business_type="individual",
+            metadata={
+                "business_id": business["id"],
+                "owner_id": user["id"]
+            }
+        )
+        
+        # Save the account ID to the business
+        await db.businesses.update_one(
+            {"id": business["id"]},
+            {"$set": {"stripeConnectAccountId": account.id}}
+        )
+        
+        # Create an account link for onboarding
+        account_link = stripe.AccountLink.create(
+            account=account.id,
+            refresh_url=f"{request.headers.get('origin', '')}/dashboard?stripe_refresh=true",
+            return_url=f"{request.headers.get('origin', '')}/dashboard?stripe_connected=true",
+            type="account_onboarding",
+        )
+        
+        return {"url": account_link.url, "accountId": account.id}
+    except Exception as e:
+        logger.error(f"Stripe Connect error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to create Stripe account: {str(e)}")
+
+@api_router.get("/stripe-connect/status")
+async def get_stripe_connect_status(user: dict = Depends(require_business_owner)):
+    """Get the Stripe Connect account status for the business"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    if not business.get("stripeConnectAccountId"):
+        return {
+            "connected": False,
+            "accountId": None,
+            "chargesEnabled": False,
+            "payoutsEnabled": False,
+            "detailsSubmitted": False
+        }
+    
+    try:
+        account = stripe.Account.retrieve(business["stripeConnectAccountId"])
+        
+        # Update business onboarding status if completed
+        if account.charges_enabled and account.payouts_enabled and not business.get("stripeConnectOnboarded"):
+            await db.businesses.update_one(
+                {"id": business["id"]},
+                {"$set": {"stripeConnectOnboarded": True}}
+            )
+        
+        return {
+            "connected": True,
+            "accountId": account.id,
+            "chargesEnabled": account.charges_enabled,
+            "payoutsEnabled": account.payouts_enabled,
+            "detailsSubmitted": account.details_submitted,
+            "email": account.email
+        }
+    except Exception as e:
+        logger.error(f"Error retrieving Stripe account: {e}")
+        return {
+            "connected": False,
+            "accountId": business.get("stripeConnectAccountId"),
+            "error": str(e)
+        }
+
+@api_router.post("/stripe-connect/dashboard-link")
+async def get_stripe_dashboard_link(user: dict = Depends(require_business_owner)):
+    """Get a link to the Stripe Express dashboard for the business"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business or not business.get("stripeConnectAccountId"):
+        raise HTTPException(status_code=404, detail="No Stripe account connected")
+    
+    try:
+        login_link = stripe.Account.create_login_link(business["stripeConnectAccountId"])
+        return {"url": login_link.url}
+    except Exception as e:
+        logger.error(f"Error creating login link: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create dashboard link")
+
+# ==================== SUBSCRIPTION ROUTES ====================
+
+def calculate_subscription_price(staff_count: int) -> float:
+    """Calculate monthly subscription price based on staff count"""
+    if staff_count <= 1:
+        return SUBSCRIPTION_BASE_PRICE
+    return SUBSCRIPTION_BASE_PRICE + (SUBSCRIPTION_ADDITIONAL_STAFF * (staff_count - 1))
+
+@api_router.get("/my-subscription")
+async def get_my_subscription(user: dict = Depends(require_business_owner)):
+    """Get subscription details for the business"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    subscription = await db.subscriptions.find_one({"businessId": business["id"]})
+    if not subscription:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    
+    # Get current staff count
+    staff_count = await db.staff.count_documents({"businessId": business["id"]})
+    if staff_count == 0:
+        staff_count = 1  # Minimum 1 staff (owner)
+    
+    # Calculate trial days remaining
+    trial_days_remaining = 0
+    if subscription.get("status") == "trial" and subscription.get("trialEndDate"):
+        trial_end = subscription["trialEndDate"]
+        if isinstance(trial_end, str):
+            trial_end = datetime.fromisoformat(trial_end.replace('Z', '+00:00'))
+        remaining = trial_end - datetime.now(timezone.utc)
+        trial_days_remaining = max(0, remaining.days)
+    
+    return {
+        "id": subscription["id"],
+        "status": subscription.get("status", "trial"),
+        "staffCount": staff_count,
+        "priceMonthly": calculate_subscription_price(staff_count),
+        "trialEndDate": subscription.get("trialEndDate"),
+        "trialDaysRemaining": trial_days_remaining,
+        "lastPaymentStatus": subscription.get("lastPaymentStatus"),
+        "nextPaymentDate": subscription.get("nextPaymentDate"),
+        "freeAccessOverride": subscription.get("freeAccessOverride", False)
+    }
+
+@api_router.get("/subscription/pricing")
+async def get_subscription_pricing():
+    """Get subscription pricing information"""
+    return {
+        "basePrice": SUBSCRIPTION_BASE_PRICE,
+        "additionalStaffPrice": SUBSCRIPTION_ADDITIONAL_STAFF,
+        "trialDays": TRIAL_PERIOD_DAYS,
+        "pricing": [
+            {"staffCount": 1, "price": 14.00},
+            {"staffCount": 2, "price": 23.00},
+            {"staffCount": 3, "price": 32.00},
+            {"staffCount": 4, "price": 41.00},
+            {"staffCount": 5, "price": 50.00}
+        ]
+    }
+
+@api_router.post("/subscription/setup-payment")
+async def setup_subscription_payment(request: Request, user: dict = Depends(require_business_owner)):
+    """Create a Stripe Checkout session for subscription setup"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    subscription = await db.subscriptions.find_one({"businessId": business["id"]})
+    if not subscription:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    
+    # Get staff count for pricing
+    staff_count = await db.staff.count_documents({"businessId": business["id"]})
+    if staff_count == 0:
+        staff_count = 1
+    
+    price = calculate_subscription_price(staff_count)
+    origin_url = request.headers.get('origin', '')
+    
+    try:
+        # Create or get Stripe customer
+        if not subscription.get("stripeCustomerId"):
+            customer = stripe.Customer.create(
+                email=user["email"],
+                name=user["fullName"],
+                metadata={"business_id": business["id"]}
+            )
+            await db.subscriptions.update_one(
+                {"id": subscription["id"]},
+                {"$set": {"stripeCustomerId": customer.id}}
+            )
+            customer_id = customer.id
+        else:
+            customer_id = subscription["stripeCustomerId"]
+        
+        # Create checkout session for subscription
+        checkout_session = stripe.checkout.Session.create(
+            customer=customer_id,
+            payment_method_types=["card"],
+            line_items=[{
+                "price_data": {
+                    "currency": "gbp",
+                    "product_data": {
+                        "name": f"Bookle Subscription ({staff_count} staff)",
+                        "description": f"Monthly subscription for {business['businessName']}"
+                    },
+                    "unit_amount": int(price * 100),  # Convert to pence
+                    "recurring": {"interval": "month"}
+                },
+                "quantity": 1
+            }],
+            mode="subscription",
+            success_url=f"{origin_url}/dashboard?subscription_success=true&session_id={{CHECKOUT_SESSION_ID}}",
+            cancel_url=f"{origin_url}/dashboard?subscription_cancelled=true",
+            metadata={
+                "business_id": business["id"],
+                "subscription_id": subscription["id"],
+                "staff_count": str(staff_count)
+            }
+        )
+        
+        return {"url": checkout_session.url, "sessionId": checkout_session.id}
+    except Exception as e:
+        logger.error(f"Subscription setup error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to setup subscription: {str(e)}")
+
+@api_router.post("/subscription/cancel")
+async def cancel_subscription(user: dict = Depends(require_business_owner)):
+    """Cancel the subscription (effective at end of billing period)"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    subscription = await db.subscriptions.find_one({"businessId": business["id"]})
+    if not subscription:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    
+    # If in trial, just cancel immediately
+    if subscription.get("status") == "trial":
+        await db.subscriptions.update_one(
+            {"id": subscription["id"]},
+            {"$set": {"status": "cancelled"}}
+        )
+        return {"success": True, "message": "Trial cancelled"}
+    
+    # Cancel Stripe subscription if exists
+    if subscription.get("stripeSubscriptionId"):
+        try:
+            stripe.Subscription.modify(
+                subscription["stripeSubscriptionId"],
+                cancel_at_period_end=True
+            )
+        except Exception as e:
+            logger.error(f"Error cancelling Stripe subscription: {e}")
+    
+    await db.subscriptions.update_one(
+        {"id": subscription["id"]},
+        {"$set": {"status": "cancelled"}}
+    )
+    
+    return {"success": True, "message": "Subscription will be cancelled at the end of the billing period"}
 
 # ==================== PAYMENT ROUTES ====================
 
