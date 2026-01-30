@@ -165,6 +165,13 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
   - Booking counts for each period
   - Trending indicators (up/down arrows)
 
+### Phase 9: Booking History ✅ (January 30, 2026)
+- [x] **Customer Booking History** - Past bookings automatically move from "My Bookings" to "Booking History" when date passes
+- [x] **Business Appointment History** - Added "Current" and "History" tabs to Appointments page
+  - Current tab shows pending and confirmed upcoming appointments
+  - History tab shows completed, cancelled, and declined appointments
+- [x] Past confirmed bookings automatically show as "Completed" status
+
 ### Bug Fixes ✅
 - [x] Fixed MongoDB ObjectId serialization in all endpoints
 - [x] Fixed service delete button not working
