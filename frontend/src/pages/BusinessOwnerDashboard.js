@@ -35,6 +35,9 @@ const BusinessOwnerDashboard = () => {
   const [showStaffModal, setShowStaffModal] = useState(false);
   const [editingStaff, setEditingStaff] = useState(null);
   const [staffForm, setStaffForm] = useState({ name: '', serviceIds: [] });
+  const [showStaffConfirmModal, setShowStaffConfirmModal] = useState(false);
+  const [staffConfirmData, setStaffConfirmData] = useState(null);
+  const [pendingStaffAction, setPendingStaffAction] = useState(null);
   
   // Service management state
   const [showServiceModal, setShowServiceModal] = useState(false);
