@@ -565,7 +565,26 @@ async def create_staff(staff_data: StaffCreate, user: dict = Depends(require_bus
         "createdAt": datetime.now(timezone.utc).isoformat()
     }
     await db.staff.insert_one(staff_doc)
-    return remove_mongo_id(staff_doc)
+    
+    # Calculate new subscription price and notify
+    new_staff_count = existing_count + 1
+    old_price = calculate_subscription_price(existing_count if existing_count > 0 else 1)
+    new_price = calculate_subscription_price(new_staff_count)
+    
+    # Update subscription with new staff count
+    await db.subscriptions.update_one(
+        {"businessId": business["id"]},
+        {"$set": {"staffCount": new_staff_count, "priceMonthly": new_price}}
+    )
+    
+    result = remove_mongo_id(staff_doc)
+    result["subscriptionUpdate"] = {
+        "previousPrice": old_price,
+        "newPrice": new_price,
+        "staffCount": new_staff_count,
+        "message": f"Your subscription will increase from £{old_price:.2f}/month to £{new_price:.2f}/month"
+    }
+    return result
 
 @api_router.put("/staff/{staff_id}")
 async def update_staff(staff_id: str, updates: StaffUpdate, user: dict = Depends(require_business_owner)):
