@@ -40,6 +40,9 @@ const BusinessOwnerDashboard = () => {
   const [staffConfirmData, setStaffConfirmData] = useState(null);
   const [pendingStaffAction, setPendingStaffAction] = useState(null);
   
+  // Analytics sub-tab state
+  const [analyticsSubTab, setAnalyticsSubTab] = useState('overview');
+  
   // Revenue state
   const [revenueSummary, setRevenueSummary] = useState(null);
   const [staffRevenue, setStaffRevenue] = useState(null);
