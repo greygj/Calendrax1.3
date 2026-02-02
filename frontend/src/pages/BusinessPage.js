@@ -136,10 +136,10 @@ const BusinessPage = () => {
 
   // Load availability for visible month when staff is selected
   useEffect(() => {
-    if (selectedService && (availableStaff.length <= 1 || selectedStaff)) {
+    if (selectedServices.length > 0 && (availableStaff.length <= 1 || selectedStaff)) {
       loadMonthAvailability();
     }
-  }, [selectedService, currentMonth, selectedStaff]);
+  }, [selectedServices, currentMonth, selectedStaff]);
 
   const loadMonthAvailability = async () => {
     const { daysInMonth } = getDaysInMonth(currentMonth);
