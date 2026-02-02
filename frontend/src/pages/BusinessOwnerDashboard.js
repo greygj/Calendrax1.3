@@ -2056,9 +2056,21 @@ const BusinessOwnerDashboard = () => {
                                   </div>
                                 </div>
                                 <div className="text-right">
-                                  <p className={`font-semibold ${payout.status === 'refunded' ? 'text-red-400' : 'text-lime-400'}`}>
-                                    {payout.status === 'refunded' ? '-' : '+'}£{payout.amount.toFixed(2)}
-                                  </p>
+                                  {payout.status !== 'refunded' ? (
+                                    <>
+                                      <p className="text-gray-400 text-xs">
+                                        Deposit: £{(payout.depositAmount || payout.amount).toFixed(2)}
+                                        {payout.platformFee > 0 && <span className="text-yellow-400"> - £{payout.platformFee.toFixed(2)} fee</span>}
+                                      </p>
+                                      <p className="text-lime-400 font-semibold">
+                                        +£{(payout.businessReceives || payout.amount).toFixed(2)}
+                                      </p>
+                                    </>
+                                  ) : (
+                                    <p className="text-red-400 font-semibold">
+                                      -£{payout.amount.toFixed(2)}
+                                    </p>
+                                  )}
                                   <p className="text-gray-500 text-xs">
                                     {new Date(payout.date).toLocaleDateString()}
                                   </p>
