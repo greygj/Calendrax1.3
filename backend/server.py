@@ -2237,11 +2237,15 @@ async def get_payout_history(user: dict = Depends(require_business_owner)):
     }).sort("createdAt", -1).to_list(500)
     
     payouts = []
+    total_deposits = 0
+    total_fees = 0
     total_received = 0
     total_refunded = 0
     
     for tx in transactions:
-        amount = float(tx.get("amount", 0))
+        deposit_amount = float(tx.get("amount", 0))
+        application_fee = float(tx.get("applicationFee", 0))
+        business_receives = float(tx.get("businessReceives", deposit_amount - application_fee))
         refund_amount = float(tx.get("refundAmount", 0))
         
         # Get appointment details
@@ -2250,7 +2254,10 @@ async def get_payout_history(user: dict = Depends(require_business_owner)):
         payout = {
             "id": tx["id"],
             "date": tx.get("createdAt", ""),
-            "amount": amount,
+            "depositAmount": deposit_amount,
+            "platformFee": application_fee,
+            "businessReceives": business_receives,
+            "amount": business_receives,  # Keep for backward compatibility
             "currency": tx.get("currency", "gbp"),
             "customerEmail": tx.get("userEmail", ""),
             "serviceName": appointment.get("serviceName", "Unknown Service") if appointment else "Unknown Service",
@@ -2267,7 +2274,9 @@ async def get_payout_history(user: dict = Depends(require_business_owner)):
         if tx.get("refundId"):
             total_refunded += refund_amount
         else:
-            total_received += amount
+            total_deposits += deposit_amount
+            total_fees += application_fee
+            total_received += business_receives
     
     # Calculate summary by period
     now = datetime.now(timezone.utc)
