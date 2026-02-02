@@ -62,15 +62,16 @@ const BusinessPage = () => {
     }
   };
 
-  // Get staff members who can perform the selected service
-  const getAvailableStaffForService = () => {
-    if (!selectedService) return [];
+  // Get staff members who can perform ALL selected services
+  const getAvailableStaffForServices = () => {
+    if (selectedServices.length === 0) return [];
+    const selectedServiceIds = selectedServices.map(s => s.id);
     return staffMembers.filter(staff => 
-      staff.serviceIds && staff.serviceIds.includes(selectedService.id)
+      staff.serviceIds && selectedServiceIds.every(sid => staff.serviceIds.includes(sid))
     );
   };
 
-  const availableStaff = getAvailableStaffForService();
+  const availableStaff = getAvailableStaffForServices();
 
   const getAvailabilityKey = (dateStr, staffId) => `${dateStr}_${staffId || 'default'}`;
 
