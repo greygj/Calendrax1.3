@@ -1364,14 +1364,19 @@ async def create_checkout_session(request: Request, data: PaymentRequest, user: 
             }
         }
         
+        # Platform application fee (5% of deposit to cover Stripe fees)
+        PLATFORM_FEE_PERCENT = 5
+        application_fee = int(deposit_amount * 100 * PLATFORM_FEE_PERCENT / 100)  # In pence
+        
         # If business has connected Stripe account, route payment to them (destination charge)
         if stripe_account_id:
             checkout_params["payment_intent_data"] = {
+                "application_fee_amount": application_fee,  # Platform takes 5%
                 "transfer_data": {
                     "destination": stripe_account_id
                 }
             }
-            logger.info(f"Creating checkout with destination charge to {stripe_account_id}")
+            logger.info(f"Creating checkout with destination charge to {stripe_account_id}, application fee: {application_fee} pence")
         else:
             logger.info("Creating checkout without destination (business not connected)")
         
