@@ -8,6 +8,8 @@ import Dashboard from "./pages/Dashboard";
 import BusinessPage from "./pages/BusinessPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import BookingSuccess from "./pages/BookingSuccess";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
