@@ -175,17 +175,43 @@ const BusinessPage = () => {
     setCurrentMonth(newMonth);
   };
 
-  const handleServiceSelect = (service) => {
-    setSelectedService(service);
-    setSelectedStaff(null);
-    setSelectedDate(null);
-    setSelectedTime('');
-    setAvailabilityCache({});
-    
+  const handleServiceToggle = (service) => {
+    setSelectedServices(prev => {
+      const isSelected = prev.some(s => s.id === service.id);
+      if (isSelected) {
+        // Remove service
+        const newServices = prev.filter(s => s.id !== service.id);
+        // Reset downstream selections if no services left
+        if (newServices.length === 0) {
+          setSelectedStaff(null);
+          setSelectedDate(null);
+          setSelectedTime('');
+          setAvailabilityCache({});
+        }
+        return newServices;
+      } else {
+        // Add service
+        const newServices = [...prev, service];
+        // Reset staff if new service combination changes available staff
+        const selectedIds = newServices.map(s => s.id);
+        const newAvailableStaff = staffMembers.filter(staff => 
+          staff.serviceIds && selectedIds.every(sid => staff.serviceIds.includes(sid))
+        );
+        if (selectedStaff && !newAvailableStaff.some(s => s.id === selectedStaff.id)) {
+          setSelectedStaff(null);
+          setSelectedDate(null);
+          setSelectedTime('');
+        }
+        setAvailabilityCache({});
+        return newServices;
+      }
+    });
+  };
+
+  const handleProceedToStaff = () => {
     // Auto-select staff if only one available
-    const staffForService = staffMembers.filter(s => s.serviceIds?.includes(service.id));
-    if (staffForService.length === 1) {
-      setSelectedStaff(staffForService[0]);
+    if (availableStaff.length === 1) {
+      setSelectedStaff(availableStaff[0]);
     }
   };
 
