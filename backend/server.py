@@ -1354,6 +1354,9 @@ async def create_checkout_session(request: Request, data: PaymentRequest, user: 
     success_url = f"{data.originUrl}/booking-success?session_id={{CHECKOUT_SESSION_ID}}&transaction_id={transaction_id}"
     cancel_url = f"{data.originUrl}/business/{data.businessId}?cancelled=true"
     
+    # Build service description for checkout
+    services_description = ", ".join(service_names)
+    
     # Check if business has Stripe Connect and use it for destination charges
     stripe_account_id = business.get("stripeConnectAccountId") if business.get("stripeConnectOnboarded") else None
     
@@ -1365,8 +1368,8 @@ async def create_checkout_session(request: Request, data: PaymentRequest, user: 
                 "price_data": {
                     "currency": "gbp",
                     "product_data": {
-                        "name": f"Deposit for {service['name']}",
-                        "description": f"Booking at {business['businessName']} on {data.date} at {data.time}"
+                        "name": f"Deposit for {services_description}" if len(services) > 1 else f"Deposit for {services[0]['name']}",
+                        "description": f"Booking at {business['businessName']} on {data.date} at {data.time} ({total_duration} mins)"
                     },
                     "unit_amount": int(deposit_amount * 100),  # Convert to pence
                 },
@@ -1378,15 +1381,16 @@ async def create_checkout_session(request: Request, data: PaymentRequest, user: 
             "metadata": {
                 "transaction_id": transaction_id,
                 "user_id": user["id"],
-                "service_id": data.serviceId,
+                "service_ids": ",".join(data.serviceIds),
                 "business_id": data.businessId,
                 "staff_id": data.staffId or "",
                 "date": data.date,
                 "time": data.time,
-                "service_name": service["name"],
+                "service_names": services_description,
                 "business_name": business["businessName"],
-                "full_price": str(service_price),
-                "deposit_amount": str(deposit_amount)
+                "full_price": str(total_price),
+                "deposit_amount": str(deposit_amount),
+                "total_duration": str(total_duration)
             }
         }
         
@@ -1414,13 +1418,15 @@ async def create_checkout_session(request: Request, data: PaymentRequest, user: 
             "id": transaction_id,
             "userId": user["id"],
             "userEmail": user["email"],
-            "serviceId": data.serviceId,
+            "serviceIds": data.serviceIds,
+            "serviceId": data.serviceIds[0],  # For backward compatibility
             "businessId": data.businessId,
             "staffId": data.staffId,
             "date": data.date,
             "time": data.time,
+            "totalDuration": total_duration,
             "amount": deposit_amount,
-            "fullPrice": service_price,
+            "fullPrice": total_price,
             "applicationFee": application_fee / 100 if stripe_account_id else 0,  # Platform fee in pounds
             "businessReceives": deposit_amount - (application_fee / 100) if stripe_account_id else 0,
             "currency": "gbp",
