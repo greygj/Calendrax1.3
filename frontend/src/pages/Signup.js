@@ -1,10 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, User, Mail, Phone, Lock, Eye, EyeOff, Briefcase, Upload, MapPin, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Signup = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectUrl = searchParams.get('redirect');
   const { signup } = useAuth();
   const [activeTab, setActiveTab] = useState('customer');
   const [showPassword, setShowPassword] = useState(false);
