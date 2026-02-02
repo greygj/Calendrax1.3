@@ -438,31 +438,46 @@ const BusinessPage = () => {
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Left Column - Services & Booking */}
           <div>
-            {/* Services */}
+            {/* Services - Multi-select */}
             <div className="mb-8">
-              <h2 className="text-white text-lg font-semibold mb-4">Select a Service</h2>
+              <h2 className="text-white text-lg font-semibold mb-2">Select Services</h2>
+              <p className="text-gray-400 text-sm mb-4">You can select multiple treatments</p>
               {businessServices.length > 0 ? (
                 <div className="space-y-3">
-                  {businessServices.map(service => (
-                    <button
-                      key={service.id}
-                      onClick={() => handleServiceSelect(service)}
-                      className={`w-full text-left p-4 rounded-xl border transition-all ${
-                        selectedService?.id === service.id
-                          ? 'bg-lime-500/10 border-lime-500'
-                          : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
-                      }`}
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="text-white font-medium">{service.name}</h4>
-                        <span className="text-lime-400 font-semibold">£{service.price}</span>
-                      </div>
-                      <p className="text-gray-500 text-sm mb-2">{service.description}</p>
-                      <span className="text-gray-400 text-sm flex items-center gap-1">
-                        <Clock className="w-4 h-4" /> {service.duration} min
-                      </span>
-                    </button>
-                  ))}
+                  {businessServices.map(service => {
+                    const isSelected = selectedServices.some(s => s.id === service.id);
+                    return (
+                      <button
+                        key={service.id}
+                        onClick={() => handleServiceToggle(service)}
+                        className={`w-full text-left p-4 rounded-xl border transition-all ${
+                          isSelected
+                            ? 'bg-lime-500/10 border-lime-500'
+                            : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
+                        }`}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div className="flex items-start gap-3">
+                            <div className={`w-6 h-6 rounded border-2 flex items-center justify-center mt-0.5 transition-all ${
+                              isSelected ? 'bg-lime-500 border-lime-500' : 'border-zinc-600'
+                            }`}>
+                              {isSelected && (
+                                <Check className="w-4 h-4 text-black" />
+                              )}
+                            </div>
+                            <div>
+                              <h4 className="text-white font-medium">{service.name}</h4>
+                              <p className="text-gray-500 text-sm mt-1">{service.description}</p>
+                              <span className="text-gray-400 text-sm flex items-center gap-1 mt-2">
+                                <Clock className="w-4 h-4" /> {service.duration} min
+                              </span>
+                            </div>
+                          </div>
+                          <span className="text-lime-400 font-semibold">£{service.price}</span>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
@@ -470,43 +485,77 @@ const BusinessPage = () => {
                   <p className="text-gray-500">No services available at the moment</p>
                 </div>
               )}
+
+              {/* Selected Services Summary */}
+              {selectedServices.length > 0 && (
+                <div className="mt-4 bg-zinc-800 rounded-xl p-4">
+                  <h3 className="text-white font-medium mb-3 flex items-center gap-2">
+                    <ShoppingCart className="w-4 h-4 text-lime-400" />
+                    Selected Treatments ({selectedServices.length})
+                  </h3>
+                  <div className="space-y-2 mb-3">
+                    {selectedServices.map(s => (
+                      <div key={s.id} className="flex justify-between text-sm">
+                        <span className="text-gray-300">{s.name} ({s.duration} min)</span>
+                        <span className="text-white">£{s.price}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="border-t border-zinc-700 pt-3 space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Total Duration:</span>
+                      <span className="text-white font-medium">{totalDuration} minutes</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Total Price:</span>
+                      <span className="text-lime-400 font-bold">£{totalPrice.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Staff Selection - Show if multiple staff can perform the service */}
+            {/* Staff Selection - Show if multiple staff can perform ALL selected services */}
             {showStaffSelection && (
               <div className="mb-8">
                 <h2 className="text-white text-lg font-semibold mb-4 flex items-center gap-2">
                   <User className="w-5 h-5 text-lime-400" /> Select Staff Member
                 </h2>
-                <div className="space-y-3">
-                  {availableStaff.map(staff => (
-                    <button
-                      key={staff.id}
-                      onClick={() => handleStaffSelect(staff)}
-                      className={`w-full text-left p-4 rounded-xl border transition-all ${
-                        selectedStaff?.id === staff.id
-                          ? 'bg-lime-500/10 border-lime-500'
-                          : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-lime-500/20 flex items-center justify-center">
-                          <User className="w-5 h-5 text-lime-400" />
+                {availableStaff.length > 0 ? (
+                  <div className="space-y-3">
+                    {availableStaff.map(staff => (
+                      <button
+                        key={staff.id}
+                        onClick={() => handleStaffSelect(staff)}
+                        className={`w-full text-left p-4 rounded-xl border transition-all ${
+                          selectedStaff?.id === staff.id
+                            ? 'bg-lime-500/10 border-lime-500'
+                            : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-lime-500/20 flex items-center justify-center">
+                            <User className="w-5 h-5 text-lime-400" />
+                          </div>
+                          <div>
+                            <h4 className="text-white font-medium">{staff.name}</h4>
+                            {staff.isOwner && (
+                              <span className="text-lime-400 text-xs">Business Owner</span>
+                            )}
+                          </div>
                         </div>
-                        <div>
-                          <h4 className="text-white font-medium">{staff.name}</h4>
-                          {staff.isOwner && (
-                            <span className="text-lime-400 text-xs">Business Owner</span>
-                          )}
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
+                    <p className="text-yellow-400 text-sm">No staff member can perform all selected services. Try selecting fewer services.</p>
+                  </div>
+                )}
               </div>
             )}
 
-            {/* Calendar - Show after selecting service (and staff if required) */}
+            {/* Calendar - Show after selecting services (and staff if required) */}
             {canShowCalendar && (
               <div className="mb-8">
                 <h2 className="text-white text-lg font-semibold mb-4 flex items-center gap-2">
