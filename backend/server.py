@@ -1395,6 +1395,8 @@ async def create_checkout_session(request: Request, data: PaymentRequest, user: 
             "time": data.time,
             "amount": deposit_amount,
             "fullPrice": service_price,
+            "applicationFee": application_fee / 100 if stripe_account_id else 0,  # Platform fee in pounds
+            "businessReceives": deposit_amount - (application_fee / 100) if stripe_account_id else 0,
             "currency": "gbp",
             "status": "pending",
             "paymentStatus": "initiated",
