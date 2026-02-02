@@ -709,8 +709,12 @@ const BusinessPage = () => {
                   </h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between text-gray-400">
-                      <span>Service</span>
-                      <span className="text-white">{selectedService.name}</span>
+                      <span>Services ({selectedServices.length})</span>
+                      <span className="text-white">{selectedServices.map(s => s.name).join(', ')}</span>
+                    </div>
+                    <div className="flex justify-between text-gray-400">
+                      <span>Duration</span>
+                      <span className="text-white">{totalDuration} minutes</span>
                     </div>
                     {selectedStaff && (
                       <div className="flex justify-between text-gray-400">
@@ -725,7 +729,7 @@ const BusinessPage = () => {
                     <div className="border-t border-zinc-800 my-2"></div>
                     <div className="flex justify-between text-gray-400">
                       <span>Full Price</span>
-                      <span className="text-white">£{selectedService.price}</span>
+                      <span className="text-white">£{totalPrice.toFixed(2)}</span>
                     </div>
                     {isNoDeposit && !offerCodeValid && (
                       <div className="flex justify-between text-lime-400 font-medium">
@@ -777,7 +781,7 @@ const BusinessPage = () => {
                   ) : (
                     <>
                       <CreditCard className="w-5 h-5" />
-                      {isFullPayment ? `Pay £${selectedService.price} & Book` : `Pay Deposit £${depositAmount} & Book`}
+                      {isFullPayment ? `Pay £${totalPrice.toFixed(2)} & Book` : `Pay Deposit £${depositAmount} & Book`}
                     </>
                   )}
                 </button>
