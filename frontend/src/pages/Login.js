@@ -31,11 +31,11 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-black flex flex-col items-center justify-center px-4">
       {/* Logo */}
-      <div className="mb-10">
+      <div className="mb-8">
         <img 
           src="https://customer-assets.emergentagent.com/job_f0df9ebf-768b-4fcd-bb61-3b3b5c837dfa/artifacts/92mrru0r_Calendrax%20Logo%20New.png" 
           alt="Calendrax" 
-          className="h-80 mx-auto"
+          className="h-48 mx-auto"
         />
       </div>
 
