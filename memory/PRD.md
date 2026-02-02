@@ -274,6 +274,21 @@ STRIPE_API_KEY=sk_test_emergent
   - Deposit calculated on total price
   - Appointment record stores all service IDs
 
+### Phase 11: Public Landing Page ✅ (February 2, 2026)
+- [x] **Public Landing Page** at `/` - Visitors can browse businesses without logging in:
+  - Hero section with search bar
+  - Featured businesses grid with cards
+  - Business card shows: logo, name, description, location, service count
+  - "View & Book" button on each card
+- [x] **Login Redirect Flow**:
+  - Clicking "View & Book" when not logged in → Redirects to `/login?redirect=/business/{id}`
+  - After login/signup → Automatically redirects to the business page
+- [x] **Header Navigation**:
+  - Sign In / Sign Up buttons for visitors
+  - "Go to Dashboard" button for logged-in users
+- [x] **CTA Section** for business owners to sign up
+- [x] **Footer** with Terms & Privacy links
+
 ## Upcoming Tasks (P1)
 1. Enable Stripe Connect on your Stripe account to activate business payout functionality
 2. Add Google Maps API for accurate business location display
