@@ -1527,12 +1527,29 @@ async def complete_booking_after_payment(data: dict, background_tasks: Backgroun
             pass  # Skip re-verification for now, trust transaction status
         raise HTTPException(status_code=400, detail="Payment not completed")
     
-    # Get service and business details
-    service = await db.services.find_one({"id": transaction["serviceId"]})
+    # Get all services for the booking
+    service_ids = transaction.get("serviceIds", [transaction.get("serviceId")])
+    if isinstance(service_ids, str):
+        service_ids = [service_ids]
+    
+    services = []
+    service_names = []
+    total_price = 0
+    total_duration = transaction.get("totalDuration", 0)
+    
+    for sid in service_ids:
+        service = await db.services.find_one({"id": sid})
+        if service:
+            services.append(service)
+            service_names.append(service["name"])
+            total_price += float(service["price"])
+            if total_duration == 0:
+                total_duration += int(service.get("duration", 30))
+    
     business = await db.businesses.find_one({"id": transaction["businessId"]})
     
-    if not service or not business:
-        raise HTTPException(status_code=404, detail="Service or business not found")
+    if not services or not business:
+        raise HTTPException(status_code=404, detail="Services or business not found")
     
     # Get staff member if specified
     staff_name = None
@@ -1543,6 +1560,9 @@ async def complete_booking_after_payment(data: dict, background_tasks: Backgroun
     
     # Get business owner details for notification
     business_owner = await db.users.find_one({"id": business["ownerId"]})
+    
+    # Build service names string
+    services_display = ", ".join(service_names)
     
     # Create the appointment
     deposit_amount = transaction.get("amount", 0)
@@ -1555,15 +1575,17 @@ async def complete_booking_after_payment(data: dict, background_tasks: Backgroun
         "customerPhone": user.get("mobile"),
         "businessId": business["id"],
         "businessName": business["businessName"],
-        "serviceId": service["id"],
-        "serviceName": service["name"],
+        "serviceIds": service_ids,
+        "serviceId": service_ids[0],  # For backward compatibility
+        "serviceName": services_display,
         "staffId": transaction.get("staffId"),
         "staffName": staff_name,
         "date": transaction["date"],
         "time": transaction["time"],
+        "duration": total_duration,
         "status": "pending",
         "paymentStatus": "deposit_paid" if not is_bypassed else "bypassed",
-        "paymentAmount": float(service["price"]),
+        "paymentAmount": total_price,
         "depositAmount": float(deposit_amount),
         "depositPaid": not is_bypassed,
         "offerCodeUsed": transaction.get("offerCode"),
@@ -1578,7 +1600,7 @@ async def complete_booking_after_payment(data: dict, background_tasks: Backgroun
         "userId": business["ownerId"],
         "type": "new_booking",
         "title": "New Booking Request",
-        "message": f"{user['fullName']} requested {service['name']} on {transaction['date']} at {transaction['time']}" + (f" with {staff_name}" if staff_name else "") + payment_note,
+        "message": f"{user['fullName']} requested {services_display} ({total_duration} mins) on {transaction['date']} at {transaction['time']}" + (f" with {staff_name}" if staff_name else "") + payment_note,
         "read": False,
         "createdAt": datetime.now(timezone.utc).isoformat()
     }
@@ -1592,19 +1614,45 @@ async def complete_booking_after_payment(data: dict, background_tasks: Backgroun
             business_owner_phone=business_owner.get("mobile"),
             business_name=business["businessName"],
             customer_name=user["fullName"],
-            service_name=service["name"],
+            service_name=services_display,
             date=transaction["date"],
             time=transaction["time"]
         )
     
-    # Remove slot from availability
+    # Remove slots from availability for the total duration
+    # Calculate all time slots that need to be blocked
+    start_time = transaction["time"]
+    slots_to_remove = []
+    
+    # Parse start time and calculate all slots to block
+    try:
+        start_hour, start_min = map(int, start_time.split(":"))
+        current_minutes = start_hour * 60 + start_min
+        end_minutes = current_minutes + total_duration
+        
+        # Block in 30-minute increments
+        while current_minutes < end_minutes:
+            hour = current_minutes // 60
+            minute = current_minutes % 60
+            slot_time = f"{hour:02d}:{minute:02d}"
+            slots_to_remove.append(slot_time)
+            current_minutes += 30  # Assuming 30-minute slot intervals
+    except:
+        # Fallback: just remove the start time
+        slots_to_remove = [start_time]
+    
+    # Remove all slots
     avail_query = {"businessId": business["id"], "date": transaction["date"]}
     if transaction.get("staffId"):
         avail_query["staffId"] = transaction["staffId"]
-    await db.availability.update_one(
-        avail_query,
-        {"$pull": {"slots": transaction["time"]}}
-    )
+    
+    for slot in slots_to_remove:
+        await db.availability.update_one(
+            avail_query,
+            {"$pull": {"slots": slot}}
+        )
+    
+    logger.info(f"Blocked {len(slots_to_remove)} slots for booking: {slots_to_remove}")
     
     return {"success": True, "appointment": remove_mongo_id(appointment_doc)}
 
