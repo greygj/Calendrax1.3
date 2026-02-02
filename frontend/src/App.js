@@ -80,8 +80,12 @@ const PublicRoute = ({ children }) => {
 function AppRoutes() {
   return (
     <Routes>
+      {/* Public landing page - shows businesses */}
+      <Route path="/" element={<LandingPage />} />
+      
+      {/* Auth routes */}
       <Route 
-        path="/" 
+        path="/login" 
         element={
           <PublicRoute>
             <Login />
@@ -96,6 +100,8 @@ function AppRoutes() {
           </PublicRoute>
         } 
       />
+      
+      {/* Protected routes */}
       <Route 
         path="/dashboard" 
         element={
@@ -128,8 +134,12 @@ function AppRoutes() {
           </ProtectedRoute>
         } 
       />
+      
+      {/* Public pages */}
       <Route path="/terms" element={<Terms />} />
       <Route path="/privacy" element={<Privacy />} />
+      
+      {/* Catch all */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
