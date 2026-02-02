@@ -1934,37 +1934,74 @@ const BusinessOwnerDashboard = () => {
                   </div>
                 ) : payoutHistory ? (
                   <>
+                    {/* Fee Breakdown Info */}
+                    <div className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-4">
+                      <p className="text-gray-300 text-sm">
+                        <span className="text-lime-400 font-medium">Fee Structure:</span> A {payoutHistory.summary.platformFeePercent || 5}% platform fee is deducted from each customer deposit to cover payment processing costs.
+                      </p>
+                    </div>
+
                     {/* Payout Summary Cards */}
-                    <div className="grid md:grid-cols-4 gap-4">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-                        <p className="text-gray-400 text-sm mb-1">Total Received</p>
+                        <p className="text-gray-400 text-sm mb-1">Customer Deposits</p>
+                        <p className="text-white text-2xl font-bold">£{(payoutHistory.summary.totalDeposits || 0).toFixed(2)}</p>
+                        <p className="text-gray-500 text-sm">{payoutHistory.summary.transactionCount} transactions</p>
+                      </div>
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <p className="text-gray-400 text-sm mb-1">Platform Fees ({payoutHistory.summary.platformFeePercent || 5}%)</p>
+                        <p className="text-yellow-400 text-2xl font-bold">-£{(payoutHistory.summary.totalPlatformFees || 0).toFixed(2)}</p>
+                        <p className="text-gray-500 text-sm">Processing costs</p>
+                      </div>
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <p className="text-gray-400 text-sm mb-1">You Receive (95%)</p>
                         <p className="text-lime-400 text-2xl font-bold">£{payoutHistory.summary.totalReceived.toFixed(2)}</p>
-                        <p className="text-gray-500 text-sm">{payoutHistory.summary.transactionCount} deposits</p>
+                        <p className="text-gray-500 text-sm">After fees</p>
                       </div>
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-                        <p className="text-gray-400 text-sm mb-1">This Month</p>
-                        <p className="text-white text-2xl font-bold">£{payoutHistory.summary.currentMonth.toFixed(2)}</p>
-                        <p className={`text-sm flex items-center gap-1 ${
-                          payoutHistory.summary.currentMonth >= payoutHistory.summary.previousMonth ? 'text-lime-400' : 'text-red-400'
-                        }`}>
-                          {payoutHistory.summary.currentMonth >= payoutHistory.summary.previousMonth ? (
-                            <ArrowUpRight className="w-3 h-3" />
-                          ) : (
-                            <ArrowDownRight className="w-3 h-3" />
-                          )}
-                          vs £{payoutHistory.summary.previousMonth.toFixed(2)} last month
-                        </p>
-                      </div>
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-                        <p className="text-gray-400 text-sm mb-1">Year to Date</p>
-                        <p className="text-white text-2xl font-bold">£{payoutHistory.summary.yearToDate.toFixed(2)}</p>
-                      </div>
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-                        <p className="text-gray-400 text-sm mb-1">Net Received</p>
+                        <p className="text-gray-400 text-sm mb-1">Net (After Refunds)</p>
                         <p className="text-lime-400 text-2xl font-bold">£{payoutHistory.summary.netReceived.toFixed(2)}</p>
                         {payoutHistory.summary.totalRefunded > 0 && (
                           <p className="text-red-400 text-sm">-£{payoutHistory.summary.totalRefunded.toFixed(2)} refunded</p>
                         )}
+                      </div>
+                    </div>
+
+                    {/* Period Summary */}
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <p className="text-gray-400 text-sm mb-3">This Month</p>
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Deposits:</span>
+                            <span className="text-white">£{(payoutHistory.summary.currentMonthDeposits || 0).toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Fees:</span>
+                            <span className="text-yellow-400">-£{(payoutHistory.summary.currentMonthFees || 0).toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between border-t border-zinc-700 pt-2">
+                            <span className="text-gray-300 font-medium">You Receive:</span>
+                            <span className="text-lime-400 font-bold">£{payoutHistory.summary.currentMonth.toFixed(2)}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <p className="text-gray-400 text-sm mb-3">Year to Date</p>
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Deposits:</span>
+                            <span className="text-white">£{(payoutHistory.summary.yearToDateDeposits || 0).toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400">Fees:</span>
+                            <span className="text-yellow-400">-£{(payoutHistory.summary.yearToDateFees || 0).toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between border-t border-zinc-700 pt-2">
+                            <span className="text-gray-300 font-medium">You Receive:</span>
+                            <span className="text-lime-400 font-bold">£{payoutHistory.summary.yearToDate.toFixed(2)}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
@@ -1977,7 +2014,7 @@ const BusinessOwnerDashboard = () => {
                           <Check className="w-5 h-5 text-lime-400 flex-shrink-0 mt-0.5" />
                           <div>
                             <p className="text-lime-400 font-medium">Deposits going to: {payoutHistory.payoutDestination}</p>
-                            <p className="text-lime-200 text-sm">Customer deposits are routed directly to your connected bank account.</p>
+                            <p className="text-lime-200 text-sm">Customer deposits (minus 5% fee) are routed directly to your connected bank account.</p>
                           </div>
                         </>
                       ) : (
