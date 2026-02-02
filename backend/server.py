@@ -1250,14 +1250,28 @@ async def validate_offer_code(data: dict, user: dict = Depends(get_current_user)
 async def create_checkout_session(request: Request, data: PaymentRequest, user: dict = Depends(get_current_user)):
     """Create a Stripe checkout session for booking deposit based on business settings"""
     
-    # Validate business and service first to get deposit level
+    # Validate business first
     business = await db.businesses.find_one({"id": data.businessId})
     if not business or not business.get("approved"):
         raise HTTPException(status_code=400, detail="Business not available")
     
-    service = await db.services.find_one({"id": data.serviceId})
-    if not service:
-        raise HTTPException(status_code=404, detail="Service not found")
+    # Fetch all selected services
+    services = []
+    total_price = 0
+    total_duration = 0
+    service_names = []
+    
+    for sid in data.serviceIds:
+        service = await db.services.find_one({"id": sid})
+        if not service:
+            raise HTTPException(status_code=404, detail=f"Service {sid} not found")
+        services.append(service)
+        total_price += float(service["price"])
+        total_duration += int(service.get("duration", 30))
+        service_names.append(service["name"])
+    
+    if not services:
+        raise HTTPException(status_code=400, detail="No services selected")
     
     # Get deposit level from business settings (default to 20%)
     deposit_level = business.get("depositLevel", "20")
@@ -1272,12 +1286,15 @@ async def create_checkout_session(request: Request, data: PaymentRequest, user: 
             transaction_doc = {
                 "id": transaction_id,
                 "userId": user["id"],
-                "serviceId": data.serviceId,
+                "serviceIds": data.serviceIds,
+                "serviceId": data.serviceIds[0],  # For backward compatibility
                 "businessId": data.businessId,
                 "staffId": data.staffId,
                 "date": data.date,
                 "time": data.time,
+                "totalDuration": total_duration,
                 "amount": 0,
+                "fullPrice": total_price,
                 "currency": "gbp",
                 "status": "bypassed",
                 "paymentStatus": "bypassed",
@@ -1290,7 +1307,8 @@ async def create_checkout_session(request: Request, data: PaymentRequest, user: 
             return {
                 "bypassed": True,
                 "transactionId": transaction_id,
-                "message": "Payment bypassed with offer code"
+                "message": "Payment bypassed with offer code",
+                "totalDuration": total_duration
             }
     
     # If deposit is "none" (0%), bypass payment
@@ -1299,12 +1317,15 @@ async def create_checkout_session(request: Request, data: PaymentRequest, user: 
         transaction_doc = {
             "id": transaction_id,
             "userId": user["id"],
-            "serviceId": data.serviceId,
+            "serviceIds": data.serviceIds,
+            "serviceId": data.serviceIds[0],
             "businessId": data.businessId,
             "staffId": data.staffId,
             "date": data.date,
             "time": data.time,
+            "totalDuration": total_duration,
             "amount": 0,
+            "fullPrice": total_price,
             "currency": "gbp",
             "status": "bypassed",
             "paymentStatus": "no_deposit",
@@ -1316,12 +1337,12 @@ async def create_checkout_session(request: Request, data: PaymentRequest, user: 
         return {
             "bypassed": True,
             "transactionId": transaction_id,
-            "message": "No deposit required for this business"
+            "message": "No deposit required for this business",
+            "totalDuration": total_duration
         }
     
-    # Calculate deposit based on business setting
-    service_price = float(service["price"])
-    deposit_amount = round(service_price * (deposit_percentage / 100), 2)
+    # Calculate deposit based on total price
+    deposit_amount = round(total_price * (deposit_percentage / 100), 2)
     
     if deposit_amount < 0.50:
         deposit_amount = 0.50  # Stripe minimum is 50 cents/pence
