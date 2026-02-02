@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
+import { Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectUrl = searchParams.get('redirect');
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,7 +22,12 @@ const Login = () => {
     const result = await login(email, password);
     
     if (result.success) {
-      navigate('/dashboard');
+      // If there's a redirect URL, go there, otherwise go to dashboard
+      if (redirectUrl) {
+        navigate(redirectUrl);
+      } else {
+        navigate('/dashboard');
+      }
     } else {
       setError(result.error);
     }
@@ -30,6 +37,15 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-black flex flex-col items-center justify-center px-4">
+      {/* Back to Browse Button */}
+      <button
+        onClick={() => navigate('/')}
+        className="absolute top-6 left-6 flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+      >
+        <ArrowLeft className="w-5 h-5" />
+        Browse Businesses
+      </button>
+
       {/* Logo */}
       <div className="mb-8">
         <img 
@@ -42,7 +58,9 @@ const Login = () => {
       {/* Welcome Text */}
       <div className="text-center mb-8">
         <h2 className="text-white text-3xl font-semibold mb-2">Welcome Back</h2>
-        <p className="text-gray-500">Sign in to continue</p>
+        <p className="text-gray-500">
+          {redirectUrl ? 'Sign in to view this business' : 'Sign in to continue'}
+        </p>
       </div>
 
       {/* Login Form */}
