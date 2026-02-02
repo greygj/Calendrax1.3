@@ -68,6 +68,11 @@ const Signup = () => {
     setError('');
 
     // Validation
+    if (!formData.acceptTerms || !formData.acceptPrivacy) {
+      setError('You must accept the Terms and Conditions and Privacy Policy to continue');
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
