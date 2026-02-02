@@ -54,9 +54,12 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
-// Public Route Component (redirect to appropriate dashboard if logged in)
+// Public Route Component (redirect to appropriate dashboard if logged in, unless there's a redirect param)
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
+  const location = window.location;
+  const searchParams = new URLSearchParams(location.search);
+  const redirectUrl = searchParams.get('redirect');
   
   if (loading) {
     return (
@@ -67,6 +70,10 @@ const PublicRoute = ({ children }) => {
   }
   
   if (user) {
+    // If there's a redirect URL, go there instead of dashboard
+    if (redirectUrl) {
+      return <Navigate to={redirectUrl} replace />;
+    }
     // Redirect admins to admin dashboard
     if (user.role === 'platform_admin') {
       return <Navigate to="/admin" replace />;
