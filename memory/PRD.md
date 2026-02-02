@@ -259,6 +259,20 @@ STRIPE_API_KEY=sk_test_emergent
   - £12/month for 1 staff, +£8/month each additional
   - 5% platform fee on deposits
 - [x] **Terms and Privacy placeholder pages** - `/terms` and `/privacy` routes created
+- [x] **New Logo** - Updated Calendrax logo throughout app
+
+### Phase 10: Multi-Service Booking ✅ (February 2, 2026)
+- [x] **Multi-Service Selection** - Customers can select multiple treatments before booking:
+  - Checkbox-based selection with visual cart/basket
+  - Running total of selected services
+  - Combined duration calculation
+- [x] **Duration-Based Availability Blocking** - When booking is confirmed:
+  - Staff member's availability blocked for total combined duration
+  - Example: 60 min + 30 min services = 90 minutes blocked (3 x 30-min slots)
+- [x] **Updated Booking Flow**:
+  - Service summary shows all selected treatments
+  - Deposit calculated on total price
+  - Appointment record stores all service IDs
 
 ## Upcoming Tasks (P1)
 1. Enable Stripe Connect on your Stripe account to activate business payout functionality
