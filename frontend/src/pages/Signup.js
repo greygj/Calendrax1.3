@@ -112,7 +112,12 @@ const Signup = () => {
     const result = await signup(userData);
     
     if (result.success) {
-      navigate('/dashboard');
+      // If there's a redirect URL and user is a customer, go there
+      if (redirectUrl && activeTab === 'customer') {
+        navigate(redirectUrl);
+      } else {
+        navigate('/dashboard');
+      }
     } else {
       setError(result.error);
     }
