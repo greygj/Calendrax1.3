@@ -127,6 +127,8 @@ function AppRoutes() {
           </ProtectedRoute>
         } 
       />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/privacy" element={<Privacy />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
