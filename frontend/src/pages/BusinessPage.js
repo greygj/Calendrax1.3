@@ -263,7 +263,7 @@ const BusinessPage = () => {
   };
 
   const handleBooking = async () => {
-    if (!selectedService || !selectedDate || !selectedTime) return;
+    if (selectedServices.length === 0 || !selectedDate || !selectedTime) return;
     
     setBookingError('');
     setIsProcessingPayment(true);
@@ -273,7 +273,7 @@ const BusinessPage = () => {
     try {
       // Create checkout session (or bypass with offer code)
       const checkoutRes = await paymentAPI.createCheckout({
-        serviceId: selectedService.id,
+        serviceIds: selectedServices.map(s => s.id),
         businessId: business.id,
         staffId: staffId,
         date: selectedDate.date,
@@ -300,7 +300,7 @@ const BusinessPage = () => {
         
         setTimeout(() => {
           setBookingSuccess(false);
-          setSelectedService(null);
+          setSelectedServices([]);
           setSelectedStaff(null);
           setSelectedDate(null);
           setSelectedTime('');
