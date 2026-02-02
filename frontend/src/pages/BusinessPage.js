@@ -13,7 +13,7 @@ const BusinessPage = () => {
   const [businessServices, setBusinessServices] = useState([]);
   const [staffMembers, setStaffMembers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedService, setSelectedService] = useState(null);
+  const [selectedServices, setSelectedServices] = useState([]);  // Changed to array for multi-select
   const [selectedStaff, setSelectedStaff] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState('');
@@ -27,6 +27,10 @@ const BusinessPage = () => {
   const [offerCodeValid, setOfferCodeValid] = useState(null);
   const [offerCodeMessage, setOfferCodeMessage] = useState('');
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
+  // Calculate totals for selected services
+  const totalPrice = selectedServices.reduce((sum, s) => sum + parseFloat(s.price || 0), 0);
+  const totalDuration = selectedServices.reduce((sum, s) => sum + parseInt(s.duration || 30), 0);
 
   // Check for cancelled payment
   useEffect(() => {
