@@ -1221,13 +1221,18 @@ async def cancel_subscription(user: dict = Depends(require_business_owner)):
 # ==================== PAYMENT ROUTES ====================
 
 class PaymentRequest(BaseModel):
-    serviceId: str
+    serviceIds: List[str]  # Changed to list for multiple services
     businessId: str
     staffId: Optional[str] = None
     date: str
     time: str
     originUrl: str
     offerCode: Optional[str] = None
+    
+    # For backward compatibility
+    @property
+    def serviceId(self):
+        return self.serviceIds[0] if self.serviceIds else None
 
 @api_router.post("/payments/validate-offer-code")
 async def validate_offer_code(data: dict, user: dict = Depends(get_current_user)):
