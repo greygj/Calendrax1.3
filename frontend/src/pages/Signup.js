@@ -373,6 +373,74 @@ const Signup = () => {
           </div>
         </div>
 
+        {/* Subscription Fee Notice - Business Owner Only */}
+        {activeTab === 'business' && (
+          <div className="bg-lime-500/10 border border-lime-500/30 rounded-lg p-4">
+            <h4 className="text-lime-400 font-semibold mb-2">Subscription Information</h4>
+            <p className="text-gray-300 text-sm mb-2">
+              As a business owner, you'll have access to a <span className="text-lime-400 font-medium">30-day free trial</span>. After the trial, subscription fees apply:
+            </p>
+            <ul className="text-gray-400 text-sm space-y-1 ml-4 list-disc">
+              <li>1 Staff Member: <span className="text-white">£12/month</span></li>
+              <li>Each additional staff: <span className="text-white">+£8/month</span></li>
+              <li>Example: 3 staff = £28/month</li>
+            </ul>
+            <p className="text-gray-400 text-xs mt-2">
+              A 5% platform fee applies to customer deposits to cover payment processing.
+            </p>
+          </div>
+        )}
+
+        {/* Terms and Conditions Checkbox */}
+        <div className="space-y-3 pt-2">
+          <label className="flex items-start gap-3 cursor-pointer group">
+            <div className="relative mt-1">
+              <input
+                type="checkbox"
+                checked={formData.acceptTerms}
+                onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
+                className="sr-only peer"
+              />
+              <div className="w-5 h-5 border-2 border-zinc-600 rounded bg-zinc-900 peer-checked:bg-lime-500 peer-checked:border-lime-500 transition-all flex items-center justify-center">
+                {formData.acceptTerms && (
+                  <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </div>
+            </div>
+            <span className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors">
+              I have read and agree to the{' '}
+              <a href="/terms" target="_blank" className="text-lime-400 hover:underline">Terms and Conditions</a>
+              <span className="text-red-500 ml-1">*</span>
+            </span>
+          </label>
+
+          {/* Privacy Policy Checkbox */}
+          <label className="flex items-start gap-3 cursor-pointer group">
+            <div className="relative mt-1">
+              <input
+                type="checkbox"
+                checked={formData.acceptPrivacy}
+                onChange={(e) => setFormData({ ...formData, acceptPrivacy: e.target.checked })}
+                className="sr-only peer"
+              />
+              <div className="w-5 h-5 border-2 border-zinc-600 rounded bg-zinc-900 peer-checked:bg-lime-500 peer-checked:border-lime-500 transition-all flex items-center justify-center">
+                {formData.acceptPrivacy && (
+                  <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </div>
+            </div>
+            <span className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors">
+              I have read and agree to the{' '}
+              <a href="/privacy" target="_blank" className="text-lime-400 hover:underline">Privacy Policy</a>
+              <span className="text-red-500 ml-1">*</span>
+            </span>
+          </label>
+        </div>
+
         {/* Submit Button */}
         <button
           type="submit"
