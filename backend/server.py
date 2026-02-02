@@ -2285,31 +2285,37 @@ async def get_payout_history(user: dict = Depends(require_business_owner)):
     prev_month_start, prev_month_end = get_month_range(prev_month_date)
     current_year_start, current_year_end = get_year_range(now)
     
-    current_month_total = sum(
-        float(tx.get("amount", 0)) for tx in transactions 
-        if tx.get("createdAt", "")[:10] >= current_month_start and tx.get("createdAt", "")[:10] <= current_month_end and not tx.get("refundId")
-    )
-    prev_month_total = sum(
-        float(tx.get("amount", 0)) for tx in transactions 
-        if tx.get("createdAt", "")[:10] >= prev_month_start and tx.get("createdAt", "")[:10] <= prev_month_end and not tx.get("refundId")
-    )
-    year_total = sum(
-        float(tx.get("amount", 0)) for tx in transactions 
-        if tx.get("createdAt", "")[:10] >= current_year_start and tx.get("createdAt", "")[:10] <= current_year_end and not tx.get("refundId")
-    )
+    # Calculate period totals (using businessReceives, not deposit amount)
+    def get_period_totals(start, end):
+        period_txs = [tx for tx in transactions if tx.get("createdAt", "")[:10] >= start and tx.get("createdAt", "")[:10] <= end and not tx.get("refundId")]
+        deposits = sum(float(tx.get("amount", 0)) for tx in period_txs)
+        fees = sum(float(tx.get("applicationFee", 0)) for tx in period_txs)
+        received = sum(float(tx.get("businessReceives", tx.get("amount", 0))) for tx in period_txs)
+        return {"deposits": deposits, "fees": fees, "received": received}
+    
+    current_month_totals = get_period_totals(current_month_start, current_month_end)
+    prev_month_totals = get_period_totals(prev_month_start, prev_month_end)
+    year_totals = get_period_totals(current_year_start, current_year_end)
     
     stripe_connected = business.get("stripeConnectOnboarded", False)
     
     return {
         "payouts": payouts,
         "summary": {
+            "totalDeposits": round(total_deposits, 2),
+            "totalPlatformFees": round(total_fees, 2),
             "totalReceived": round(total_received, 2),
             "totalRefunded": round(total_refunded, 2),
             "netReceived": round(total_received - total_refunded, 2),
-            "currentMonth": round(current_month_total, 2),
-            "previousMonth": round(prev_month_total, 2),
-            "yearToDate": round(year_total, 2),
-            "transactionCount": len(payouts)
+            "currentMonth": round(current_month_totals["received"], 2),
+            "currentMonthDeposits": round(current_month_totals["deposits"], 2),
+            "currentMonthFees": round(current_month_totals["fees"], 2),
+            "previousMonth": round(prev_month_totals["received"], 2),
+            "yearToDate": round(year_totals["received"], 2),
+            "yearToDateDeposits": round(year_totals["deposits"], 2),
+            "yearToDateFees": round(year_totals["fees"], 2),
+            "transactionCount": len(payouts),
+            "platformFeePercent": 5
         },
         "stripeConnected": stripe_connected,
         "payoutDestination": "Your Bank Account" if stripe_connected else "Platform Account (Connect bank to receive directly)"
