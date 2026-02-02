@@ -321,7 +321,7 @@ const BusinessPage = () => {
 
   // Calculate deposit amount based on business settings
   const depositPercentage = business?.depositPercentage ?? 20;
-  const depositAmount = selectedService ? (selectedService.price * (depositPercentage / 100)).toFixed(2) : 0;
+  const depositAmount = selectedServices.length > 0 ? (totalPrice * (depositPercentage / 100)).toFixed(2) : 0;
   const isNoDeposit = depositPercentage === 0;
   const isFullPayment = depositPercentage === 100;
   
@@ -358,8 +358,8 @@ const BusinessPage = () => {
   }
 
   const calendarDays = generateCalendarDays();
-  const showStaffSelection = selectedService && availableStaff.length > 1;
-  const canShowCalendar = selectedService && (availableStaff.length <= 1 || selectedStaff);
+  const showStaffSelection = selectedServices.length > 0 && availableStaff.length > 1;
+  const canShowCalendar = selectedServices.length > 0 && (availableStaff.length <= 1 || selectedStaff);
 
   return (
     <div className="min-h-screen bg-black">
