@@ -240,8 +240,25 @@ STRIPE_API_KEY=sk_test_emergent
 - [x] **Analytics Tab Consolidation** - Combined Revenue, Payouts, and Insights into a single Analytics tab with sub-navigation:
   - **Overview**: Business insights (total bookings, avg. booking value, conversion rate, customer retention, popular services, peak hours, busiest days, status breakdown, 6-month trend)
   - **Revenue**: Weekly, monthly, and yearly revenue with comparisons and staff breakdown
-  - **Payouts**: Deposit history, bank account connection status, transaction list
+  - **Payouts**: Deposit history, bank account connection status, transaction list with fee breakdown
 - [x] Menu bar tidied from 10 tabs to 8 tabs
+
+### Phase 9: Platform Fees & Signup Improvements ✅ (February 2, 2026)
+- [x] **5% Platform Application Fee** - Platform takes 5% of customer deposits to cover Stripe processing costs
+  - Business owners receive 95% of each deposit
+  - Fee breakdown displayed in Payouts dashboard
+- [x] **Payout Dashboard Fee Breakdown** - Shows:
+  - Customer Deposits vs Platform Fees vs Business Receives
+  - Monthly and yearly breakdown with fees
+  - Per-transaction fee details
+- [x] **Terms & Privacy Checkboxes on Signup** - Both customers and business owners must accept:
+  - Terms and Conditions
+  - Privacy Policy
+- [x] **Subscription Fee Notice for Business Owners** - Shows during signup:
+  - 30-day free trial
+  - £12/month for 1 staff, +£8/month each additional
+  - 5% platform fee on deposits
+- [x] **Terms and Privacy placeholder pages** - `/terms` and `/privacy` routes created
 
 ## Upcoming Tasks (P1)
 1. Enable Stripe Connect on your Stripe account to activate business payout functionality
