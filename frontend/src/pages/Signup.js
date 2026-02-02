@@ -22,7 +22,9 @@ const Signup = () => {
     businessDescription: '',
     postcode: '',
     logo: null,
-    logoPreview: null
+    logoPreview: null,
+    acceptTerms: false,
+    acceptPrivacy: false
   });
 
   const handleChange = (e) => {
