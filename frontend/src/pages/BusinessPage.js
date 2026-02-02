@@ -654,7 +654,7 @@ const BusinessPage = () => {
             )}
 
             {/* Guidance Messages */}
-            {selectedService && showStaffSelection && !selectedStaff && (
+            {selectedServices.length > 0 && showStaffSelection && !selectedStaff && (
               <p className="text-gray-500 text-sm text-center py-4">
                 Please select a staff member to see available times
               </p>
