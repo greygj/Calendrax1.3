@@ -104,6 +104,46 @@ def send_sms(to_number: str, message: str) -> bool:
         return False
 
 
+# ==================== WHATSAPP SERVICE ====================
+
+def send_whatsapp(to_number: str, message: str) -> bool:
+    """
+    Send a WhatsApp message using Twilio
+    
+    Args:
+        to_number: Recipient phone number (E.164 format, e.g., +44123456789)
+        message: WhatsApp message content
+    
+    Returns:
+        bool: True if WhatsApp was sent successfully, False otherwise
+    
+    Note: For Twilio Sandbox, the recipient must have joined the sandbox by
+    sending 'join <sandbox-keyword>' to the Twilio WhatsApp number first.
+    """
+    if not WHATSAPP_ENABLED:
+        logger.warning("WhatsApp notifications disabled - Twilio credentials not configured")
+        return False
+    
+    try:
+        client = TwilioClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+        
+        # Format the 'to' number for WhatsApp
+        whatsapp_to = f"whatsapp:{to_number}" if not to_number.startswith("whatsapp:") else to_number
+        
+        wa_message = client.messages.create(
+            body=message,
+            from_=TWILIO_WHATSAPP_NUMBER,
+            to=whatsapp_to
+        )
+        
+        logger.info(f"WhatsApp sent successfully to {to_number}, SID: {wa_message.sid}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Failed to send WhatsApp to {to_number}: {str(e)}")
+        return False
+
+
 # ==================== EMAIL TEMPLATES ====================
 
 def get_booking_created_email(
