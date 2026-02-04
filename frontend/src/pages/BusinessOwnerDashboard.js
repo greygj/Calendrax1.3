@@ -2482,41 +2482,50 @@ const BusinessOwnerDashboard = () => {
                 <p className="text-gray-500 text-xs mb-3">These photos will be displayed on your public business page</p>
                 
                 <div className="grid grid-cols-3 gap-4 mb-4">
-                  {profileForm.photos.map((photo, index) => (
-                    <div key={index} className="relative aspect-square rounded-xl overflow-hidden bg-zinc-800 group">
-                      <img 
-                        src={photo} 
-                        alt={`Business photo ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handlePhotoRemove(index)}
-                        className="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center shadow-lg transition-colors"
-                        title="Remove photo"
-                      >
-                        <X className="w-4 h-4 text-white" />
-                      </button>
-                    </div>
-                  ))}
-                  
-                  {profileForm.photos.length < 3 && (
-                    <button
-                      type="button"
-                      onClick={() => photoInputRef.current?.click()}
-                      disabled={photoUploading}
-                      className="aspect-square rounded-xl border-2 border-dashed border-zinc-700 hover:border-lime-500 flex flex-col items-center justify-center gap-2 transition-colors"
-                    >
-                      {photoUploading ? (
-                        <Loader2 className="w-8 h-8 text-lime-400 animate-spin" />
-                      ) : (
-                        <>
-                          <Upload className="w-8 h-8 text-gray-500" />
-                          <span className="text-gray-500 text-sm">Add Photo</span>
-                        </>
-                      )}
-                    </button>
-                  )}
+                  {[0, 1, 2].map((index) => {
+                    const photo = profileForm.photos[index];
+                    return (
+                      <div key={index} className="relative aspect-square rounded-xl overflow-hidden bg-zinc-800">
+                        {photo ? (
+                          <>
+                            <img 
+                              src={photo} 
+                              alt={`Business photo ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handlePhotoRemove(index)}
+                              className="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center shadow-lg transition-colors"
+                              title="Remove photo"
+                            >
+                              <X className="w-4 h-4 text-white" />
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              // Store which slot we're uploading to
+                              photoInputRef.current.dataset.slot = index;
+                              photoInputRef.current?.click();
+                            }}
+                            disabled={photoUploading}
+                            className="w-full h-full border-2 border-dashed border-zinc-700 hover:border-lime-500 flex flex-col items-center justify-center gap-2 transition-colors rounded-xl"
+                          >
+                            {photoUploading ? (
+                              <Loader2 className="w-8 h-8 text-lime-400 animate-spin" />
+                            ) : (
+                              <>
+                                <Upload className="w-8 h-8 text-gray-500" />
+                                <span className="text-gray-500 text-sm">Add Photo</span>
+                              </>
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
                 
                 <input
