@@ -74,9 +74,10 @@ const BusinessOwnerDashboard = () => {
   
   // Profile state
   const [profileForm, setProfileForm] = useState({
-    businessName: '', description: '', postcode: '', address: '', phone: '', email: '', website: '', depositLevel: '20'
+    businessName: '', description: '', postcode: '', address: '', phone: '', email: '', website: '', depositLevel: '20', photos: []
   });
   const [profileSaving, setProfileSaving] = useState(false);
+  const [photoUploading, setPhotoUploading] = useState(false);
   
   const [showNotifications, setShowNotifications] = useState(false);
 
