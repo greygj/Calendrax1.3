@@ -36,12 +36,18 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 # JWT Configuration
-JWT_SECRET = os.environ.get('JWT_SECRET', 'booka-secret-key-change-in-production')
+JWT_SECRET = os.environ.get('JWT_SECRET')
+if not JWT_SECRET:
+    JWT_SECRET = 'dev-only-secret-key-change-in-production'
+    print("WARNING: Using default JWT_SECRET. Set JWT_SECRET environment variable in production!")
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 24
 
 # Stripe Configuration
-STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY', 'sk_test_emergent')
+STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY')
+if not STRIPE_API_KEY:
+    STRIPE_API_KEY = 'sk_test_placeholder'
+    print("WARNING: STRIPE_API_KEY not set. Payments will not work!")
 stripe.api_key = STRIPE_API_KEY
 
 # Offer codes for testing (bypass payment)
