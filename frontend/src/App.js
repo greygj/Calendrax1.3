@@ -67,16 +67,15 @@ const PublicRoute = ({ children }) => {
     );
   }
   
-  // Don't auto-redirect if user just logged in - let Login/Signup handle the redirect
-  // This prevents PublicRoute from overriding the redirect URL parameter
   if (user) {
-    // Check if we're on login/signup page with a redirect param - let the page handle it
+    // Check for redirect URL in URL params or sessionStorage
     const location = window.location;
     const searchParams = new URLSearchParams(location.search);
-    const redirectUrl = searchParams.get('redirect');
+    const redirectUrl = searchParams.get('redirect') || sessionStorage.getItem('calendrax_redirect');
     
     if (redirectUrl) {
-      // Let Login.js or Signup.js handle the redirect
+      // Clear sessionStorage and redirect
+      sessionStorage.removeItem('calendrax_redirect');
       return <Navigate to={redirectUrl} replace />;
     }
     
