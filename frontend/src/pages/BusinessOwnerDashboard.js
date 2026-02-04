@@ -514,6 +514,8 @@ const BusinessOwnerDashboard = () => {
   };
 
   // ========== PROFILE ==========
+  const photoInputRef = useRef(null);
+  
   const handleProfileSave = async (e) => {
     e.preventDefault();
     setProfileSaving(true);
@@ -530,6 +532,60 @@ const BusinessOwnerDashboard = () => {
       alert('Failed to update profile. Please try again.');
     } finally {
       setProfileSaving(false);
+    }
+  };
+
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Photo must be less than 5MB');
+      return;
+    }
+
+    // Check if already have 3 photos
+    if (profileForm.photos.length >= 3) {
+      alert('Maximum 3 photos allowed. Please remove a photo first.');
+      return;
+    }
+
+    setPhotoUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await businessAPI.uploadPhoto(formData);
+      const photoUrl = response.data.url;
+
+      // Add to photos array
+      const newPhotos = [...profileForm.photos, photoUrl];
+      setProfileForm({ ...profileForm, photos: newPhotos });
+
+      // Save to backend
+      await businessAPI.updateMine({ ...profileForm, photos: newPhotos });
+      alert('Photo uploaded successfully!');
+    } catch (error) {
+      console.error('Failed to upload photo:', error);
+      alert('Failed to upload photo. Please try again.');
+    } finally {
+      setPhotoUploading(false);
+      // Reset input
+      if (photoInputRef.current) {
+        photoInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handlePhotoRemove = async (indexToRemove) => {
+    const newPhotos = profileForm.photos.filter((_, index) => index !== indexToRemove);
+    setProfileForm({ ...profileForm, photos: newPhotos });
+
+    try {
+      await businessAPI.updateMine({ ...profileForm, photos: newPhotos });
+    } catch (error) {
+      console.error('Failed to remove photo:', error);
     }
   };
 
