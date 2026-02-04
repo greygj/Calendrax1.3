@@ -48,7 +48,10 @@ export const businessAPI = {
   getServices: (id) => apiClient.get(`/businesses/${id}/services`),
   getStaff: (id) => apiClient.get(`/businesses/${id}/staff`),
   getMine: () => apiClient.get('/my-business'),
-  updateMine: (data) => apiClient.put('/my-business', data)
+  updateMine: (data) => apiClient.put('/my-business', data),
+  uploadPhoto: (formData) => apiClient.post('/upload-business-photo', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
 };
 
 // Services
