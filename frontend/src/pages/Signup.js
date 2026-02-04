@@ -109,11 +109,22 @@ const Signup = () => {
       })
     };
 
+    // Store redirect URL in sessionStorage before signup
+    if (redirectUrl && activeTab === 'customer') {
+      sessionStorage.setItem('calendrax_redirect', redirectUrl);
+    }
+
     const result = await signup(userData);
     
     if (result.success) {
+      // Get redirect URL from sessionStorage (in case state was lost)
+      const storedRedirect = sessionStorage.getItem('calendrax_redirect');
+      sessionStorage.removeItem('calendrax_redirect');
+      
       // If there's a redirect URL and user is a customer, go there
-      if (redirectUrl && activeTab === 'customer') {
+      if (storedRedirect) {
+        navigate(storedRedirect);
+      } else if (redirectUrl && activeTab === 'customer') {
         navigate(redirectUrl);
       } else {
         navigate('/dashboard');
