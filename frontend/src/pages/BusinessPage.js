@@ -288,25 +288,8 @@ const BusinessPage = () => {
           transactionId: checkoutRes.data.transactionId
         });
         
-        setBookingSuccess(true);
-        
-        // Clear cache for this date
-        const key = getAvailabilityKey(selectedDate.date, staffId);
-        setAvailabilityCache(prev => {
-          const newCache = { ...prev };
-          delete newCache[key];
-          return newCache;
-        });
-        
-        setTimeout(() => {
-          setBookingSuccess(false);
-          setSelectedServices([]);
-          setSelectedStaff(null);
-          setSelectedDate(null);
-          setSelectedTime('');
-          setOfferCode('');
-          setOfferCodeValid(null);
-        }, 4000);
+        // Redirect to dashboard after successful booking
+        navigate('/dashboard');
       } else {
         // Redirect to Stripe checkout
         window.location.href = checkoutRes.data.url;
