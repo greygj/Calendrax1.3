@@ -1016,32 +1016,41 @@ const BusinessOwnerDashboard = () => {
                   <p className="text-lime-400 text-sm font-medium">Complete these steps to start receiving bookings:</p>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <button
+                    onClick={() => setActiveView('profile')}
+                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-lime-500 px-4 py-4 rounded-xl transition-all group"
+                  >
+                    <User className="w-8 h-8 text-lime-400 group-hover:scale-110 transition-transform" />
+                    <span className="text-white font-medium text-sm">Complete Profile</span>
+                    <span className="text-gray-500 text-xs text-center">Add photos & details</span>
+                  </button>
+                  
                   <button
                     onClick={() => setActiveView('services')}
-                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-lime-500 px-6 py-4 rounded-xl transition-all group"
+                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-lime-500 px-4 py-4 rounded-xl transition-all group"
                   >
                     <Settings className="w-8 h-8 text-lime-400 group-hover:scale-110 transition-transform" />
-                    <span className="text-white font-medium">Add / Edit Your Menu</span>
-                    <span className="text-gray-500 text-xs">Set up your services & prices</span>
+                    <span className="text-white font-medium text-sm">Add Your Menu</span>
+                    <span className="text-gray-500 text-xs text-center">Set up services & prices</span>
                   </button>
                   
                   <button
                     onClick={() => setActiveView('staff')}
-                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-lime-500 px-6 py-4 rounded-xl transition-all group"
+                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-lime-500 px-4 py-4 rounded-xl transition-all group"
                   >
                     <Users className="w-8 h-8 text-lime-400 group-hover:scale-110 transition-transform" />
-                    <span className="text-white font-medium">Set Staff Services</span>
-                    <span className="text-gray-500 text-xs">Assign services to staff</span>
+                    <span className="text-white font-medium text-sm">Set Staff Services</span>
+                    <span className="text-gray-500 text-xs text-center">Assign services to staff</span>
                   </button>
                   
                   <button
                     onClick={() => setActiveView('availability')}
-                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-lime-500 px-6 py-4 rounded-xl transition-all group"
+                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-lime-500 px-4 py-4 rounded-xl transition-all group"
                   >
                     <Clock className="w-8 h-8 text-lime-400 group-hover:scale-110 transition-transform" />
-                    <span className="text-white font-medium">Set Your Availability</span>
-                    <span className="text-gray-500 text-xs">Choose your working hours</span>
+                    <span className="text-white font-medium text-sm">Set Availability</span>
+                    <span className="text-gray-500 text-xs text-center">Choose working hours</span>
                   </button>
                 </div>
               </div>
