@@ -2447,6 +2447,60 @@ const BusinessOwnerDashboard = () => {
                 </div>
               </div>
 
+              {/* Business Photos */}
+              <div className="mt-6">
+                <label className="text-gray-400 text-sm block mb-3 flex items-center gap-2">
+                  <Image className="w-4 h-4" />
+                  Business Photos (Max 3)
+                </label>
+                <p className="text-gray-500 text-xs mb-3">These photos will be displayed on your public business page</p>
+                
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                  {profileForm.photos.map((photo, index) => (
+                    <div key={index} className="relative aspect-square rounded-xl overflow-hidden bg-zinc-800 group">
+                      <img 
+                        src={photo} 
+                        alt={`Business photo ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handlePhotoRemove(index)}
+                        className="absolute top-2 right-2 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-4 h-4 text-white" />
+                      </button>
+                    </div>
+                  ))}
+                  
+                  {profileForm.photos.length < 3 && (
+                    <button
+                      type="button"
+                      onClick={() => photoInputRef.current?.click()}
+                      disabled={photoUploading}
+                      className="aspect-square rounded-xl border-2 border-dashed border-zinc-700 hover:border-lime-500 flex flex-col items-center justify-center gap-2 transition-colors"
+                    >
+                      {photoUploading ? (
+                        <Loader2 className="w-8 h-8 text-lime-400 animate-spin" />
+                      ) : (
+                        <>
+                          <Upload className="w-8 h-8 text-gray-500" />
+                          <span className="text-gray-500 text-sm">Add Photo</span>
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+                
+                <input
+                  ref={photoInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                />
+              </div>
+
               <div className="flex justify-end">
                 <button
                   type="submit"
