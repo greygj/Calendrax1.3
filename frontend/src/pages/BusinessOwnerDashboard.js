@@ -992,17 +992,43 @@ const BusinessOwnerDashboard = () => {
               </div>
             )}
 
-            {/* Quick Actions */}
+            {/* Quick Actions - Getting Started Checklist */}
             {pendingAppointments.length === 0 && (
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 text-center">
-                <Calendar className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                <p className="text-gray-500 mb-4">No appointments yet</p>
-                <button
-                  onClick={() => setActiveView('availability')}
-                  className="bg-lime-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-lime-400 transition-colors"
-                >
-                  Set Your Availability
-                </button>
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                <div className="text-center mb-6">
+                  <Calendar className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                  <p className="text-gray-500 mb-2">No appointments yet</p>
+                  <p className="text-lime-400 text-sm font-medium">Complete these steps to start receiving bookings:</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <button
+                    onClick={() => setActiveView('services')}
+                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-lime-500 px-6 py-4 rounded-xl transition-all group"
+                  >
+                    <Settings className="w-8 h-8 text-lime-400 group-hover:scale-110 transition-transform" />
+                    <span className="text-white font-medium">Add / Edit Your Menu</span>
+                    <span className="text-gray-500 text-xs">Set up your services & prices</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => setActiveView('staff')}
+                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-lime-500 px-6 py-4 rounded-xl transition-all group"
+                  >
+                    <Users className="w-8 h-8 text-lime-400 group-hover:scale-110 transition-transform" />
+                    <span className="text-white font-medium">Set Staff Services</span>
+                    <span className="text-gray-500 text-xs">Assign services to staff</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => setActiveView('availability')}
+                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-lime-500 px-6 py-4 rounded-xl transition-all group"
+                  >
+                    <Clock className="w-8 h-8 text-lime-400 group-hover:scale-110 transition-transform" />
+                    <span className="text-white font-medium">Set Your Availability</span>
+                    <span className="text-gray-500 text-xs">Choose your working hours</span>
+                  </button>
+                </div>
               </div>
             )}
           </div>
