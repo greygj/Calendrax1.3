@@ -814,8 +814,8 @@ async def update_my_business(updates: dict, user: dict = Depends(require_busines
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
     
-    # Only allow updating certain fields (including depositLevel)
-    allowed_fields = ["businessName", "description", "postcode", "address", "logo", "phone", "email", "website", "depositLevel"]
+    # Only allow updating certain fields (including depositLevel and photos)
+    allowed_fields = ["businessName", "description", "postcode", "address", "logo", "phone", "email", "website", "depositLevel", "photos"]
     update_data = {k: v for k, v in updates.items() if k in allowed_fields and v is not None}
     
     # Validate depositLevel if provided
@@ -823,11 +823,47 @@ async def update_my_business(updates: dict, user: dict = Depends(require_busines
         if update_data["depositLevel"] not in DEPOSIT_LEVELS:
             raise HTTPException(status_code=400, detail="Invalid deposit level. Must be: none, 10, 20, 50, or full")
     
+    # Validate photos array - max 3
+    if "photos" in update_data:
+        if not isinstance(update_data["photos"], list):
+            raise HTTPException(status_code=400, detail="Photos must be an array")
+        if len(update_data["photos"]) > 3:
+            raise HTTPException(status_code=400, detail="Maximum 3 photos allowed")
+    
     if update_data:
         await db.businesses.update_one({"id": business["id"]}, {"$set": update_data})
     
     updated_business = await db.businesses.find_one({"id": business["id"]})
     return remove_mongo_id(updated_business)
+
+@api_router.post("/upload-business-photo")
+async def upload_business_photo(file: UploadFile = File(...), user: dict = Depends(require_business_owner)):
+    """Upload a business photo - stores as base64 data URL"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    # Check current photo count
+    current_photos = business.get("photos", [])
+    if len(current_photos) >= 3:
+        raise HTTPException(status_code=400, detail="Maximum 3 photos allowed")
+    
+    # Validate file type
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="File must be an image")
+    
+    # Read file and convert to base64 data URL
+    contents = await file.read()
+    
+    # Check file size (max 5MB)
+    if len(contents) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="File size must be less than 5MB")
+    
+    # Create data URL
+    base64_encoded = base64.b64encode(contents).decode("utf-8")
+    data_url = f"data:{file.content_type};base64,{base64_encoded}"
+    
+    return {"url": data_url}
 
 # ==================== STRIPE CONNECT ROUTES ====================
 
