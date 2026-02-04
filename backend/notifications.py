@@ -113,6 +113,35 @@ def send_sms(to_number: str, message: str) -> bool:
 
 # ==================== WHATSAPP SERVICE ====================
 
+def format_phone_number(phone: str) -> str:
+    """
+    Format phone number to E.164 format for Twilio
+    
+    Args:
+        phone: Phone number in various formats
+    
+    Returns:
+        str: Phone number in E.164 format (e.g., +447531848298)
+    """
+    # Remove any spaces, dashes, or parentheses
+    phone = ''.join(c for c in phone if c.isdigit() or c == '+')
+    
+    # If already starts with +, return as is
+    if phone.startswith('+'):
+        return phone
+    
+    # If starts with 00, replace with +
+    if phone.startswith('00'):
+        return '+' + phone[2:]
+    
+    # UK specific: if starts with 0, assume UK and convert to +44
+    if phone.startswith('0'):
+        return '+44' + phone[1:]
+    
+    # Otherwise, assume it's already without country code, default to UK
+    return '+44' + phone
+
+
 def send_whatsapp(to_number: str, message: str) -> bool:
     """
     Send a WhatsApp message using Twilio
@@ -134,8 +163,11 @@ def send_whatsapp(to_number: str, message: str) -> bool:
     try:
         client = TwilioClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
         
+        # Format the phone number to E.164
+        formatted_number = format_phone_number(to_number)
+        
         # Format the 'to' number for WhatsApp
-        whatsapp_to = f"whatsapp:{to_number}" if not to_number.startswith("whatsapp:") else to_number
+        whatsapp_to = f"whatsapp:{formatted_number}" if not formatted_number.startswith("whatsapp:") else formatted_number
         
         wa_message = client.messages.create(
             body=message,
@@ -143,7 +175,7 @@ def send_whatsapp(to_number: str, message: str) -> bool:
             to=whatsapp_to
         )
         
-        logger.info(f"WhatsApp sent successfully to {to_number}, SID: {wa_message.sid}")
+        logger.info(f"WhatsApp sent successfully to {formatted_number}, SID: {wa_message.sid}")
         return True
         
     except Exception as e:
