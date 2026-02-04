@@ -20,7 +20,8 @@ from notifications import (
     notify_booking_approved, 
     notify_booking_declined, 
     notify_booking_cancelled,
-    get_notification_status
+    get_notification_status,
+    send_trial_reminder
 )
 
 # Stripe SDK - using native stripe for Connect support
