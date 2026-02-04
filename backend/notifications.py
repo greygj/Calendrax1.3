@@ -77,6 +77,37 @@ def send_email(to_email: str, subject: str, html_content: str) -> bool:
         return False
 
 
+# ==================== PHONE NUMBER UTILITIES ====================
+
+def format_phone_number(phone: str) -> str:
+    """
+    Format phone number to E.164 format for Twilio
+    
+    Args:
+        phone: Phone number in various formats
+    
+    Returns:
+        str: Phone number in E.164 format (e.g., +447531848298)
+    """
+    # Remove any spaces, dashes, or parentheses
+    phone = ''.join(c for c in phone if c.isdigit() or c == '+')
+    
+    # If already starts with +, return as is
+    if phone.startswith('+'):
+        return phone
+    
+    # If starts with 00, replace with +
+    if phone.startswith('00'):
+        return '+' + phone[2:]
+    
+    # UK specific: if starts with 0, assume UK and convert to +44
+    if phone.startswith('0'):
+        return '+44' + phone[1:]
+    
+    # Otherwise, assume it's already without country code, default to UK
+    return '+44' + phone
+
+
 # ==================== SMS SERVICE ====================
 
 def send_sms(to_number: str, message: str) -> bool:
