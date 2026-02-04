@@ -1256,6 +1256,132 @@ async def cancel_subscription(user: dict = Depends(require_business_owner)):
     
     return {"success": True, "message": "Subscription will be cancelled at the end of the billing period"}
 
+# ==================== TRIAL REMINDER ROUTES ====================
+
+@api_router.post("/admin/send-trial-reminders")
+async def send_trial_reminders(admin: dict = Depends(require_admin)):
+    """
+    Send trial expiration reminders to business owners.
+    Sends reminders on days 25, 28, and 30 of the trial period.
+    This should be called by a cron job daily.
+    """
+    reminder_days = [5, 2, 0]  # Days remaining: 5 days, 2 days, 0 days (last day)
+    
+    results = {
+        "checked": 0,
+        "reminders_sent": 0,
+        "errors": 0,
+        "details": []
+    }
+    
+    # Find all subscriptions in trial status
+    subscriptions = await db.subscriptions.find({"status": "trial"}).to_list(1000)
+    results["checked"] = len(subscriptions)
+    
+    for sub in subscriptions:
+        try:
+            # Calculate days remaining
+            trial_end = sub.get("trialEndDate")
+            if not trial_end:
+                continue
+                
+            if isinstance(trial_end, str):
+                trial_end_dt = datetime.fromisoformat(trial_end.replace('Z', '+00:00'))
+            else:
+                trial_end_dt = trial_end
+            
+            days_remaining = (trial_end_dt - datetime.now(timezone.utc)).days
+            
+            # Check if we should send a reminder today
+            if days_remaining not in reminder_days:
+                continue
+            
+            # Get business and owner details
+            business = await db.businesses.find_one({"id": sub["businessId"]})
+            if not business:
+                continue
+                
+            owner = await db.users.find_one({"id": sub["ownerId"]})
+            if not owner:
+                continue
+            
+            # Check if reminder was already sent today for this milestone
+            reminder_key = f"trial_reminder_{days_remaining}_{sub['id']}"
+            existing_reminder = await db.trial_reminders.find_one({"key": reminder_key})
+            if existing_reminder:
+                continue
+            
+            # Send the reminder
+            reminder_result = await send_trial_reminder(
+                owner_email=owner["email"],
+                owner_phone=owner.get("mobile"),
+                owner_name=owner["fullName"],
+                business_name=business["businessName"],
+                days_remaining=days_remaining,
+                monthly_price=sub.get("priceMonthly", 12.00)
+            )
+            
+            # Record that we sent this reminder
+            await db.trial_reminders.insert_one({
+                "key": reminder_key,
+                "subscriptionId": sub["id"],
+                "businessId": sub["businessId"],
+                "ownerId": sub["ownerId"],
+                "daysRemaining": days_remaining,
+                "sentAt": datetime.now(timezone.utc).isoformat(),
+                "result": reminder_result
+            })
+            
+            results["reminders_sent"] += 1
+            results["details"].append({
+                "business": business["businessName"],
+                "owner_email": owner["email"],
+                "days_remaining": days_remaining,
+                "result": reminder_result
+            })
+            
+        except Exception as e:
+            logger.error(f"Error sending trial reminder for subscription {sub.get('id')}: {str(e)}")
+            results["errors"] += 1
+    
+    return results
+
+
+@api_router.post("/admin/test-trial-reminder/{business_id}")
+async def test_trial_reminder(business_id: str, admin: dict = Depends(require_admin)):
+    """
+    Test trial reminder by sending one to a specific business owner.
+    For testing purposes only - sends a reminder immediately regardless of trial status.
+    """
+    business = await db.businesses.find_one({"id": business_id})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    owner = await db.users.find_one({"id": business["ownerId"]})
+    if not owner:
+        raise HTTPException(status_code=404, detail="Business owner not found")
+    
+    subscription = await db.subscriptions.find_one({"businessId": business_id})
+    monthly_price = subscription.get("priceMonthly", 12.00) if subscription else 12.00
+    
+    # Send test reminder with 5 days remaining
+    result = await send_trial_reminder(
+        owner_email=owner["email"],
+        owner_phone=owner.get("mobile"),
+        owner_name=owner["fullName"],
+        business_name=business["businessName"],
+        days_remaining=5,
+        monthly_price=monthly_price
+    )
+    
+    return {
+        "success": True,
+        "business": business["businessName"],
+        "owner_email": owner["email"],
+        "owner_phone": owner.get("mobile"),
+        "result": result
+    }
+
 # ==================== PAYMENT ROUTES ====================
 
 class PaymentRequest(BaseModel):
