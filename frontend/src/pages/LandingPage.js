@@ -29,13 +29,8 @@ const LandingPage = () => {
   };
 
   const handleViewBusiness = (businessId) => {
-    if (user) {
-      // User is logged in, go directly to business page
-      navigate(`/business/${businessId}`);
-    } else {
-      // Not logged in, redirect to login with return URL
-      navigate(`/login?redirect=/business/${businessId}`);
-    }
+    // Always go to public business page first
+    navigate(`/business/${businessId}`);
   };
 
   const filteredBusinesses = businesses.filter(business =>
