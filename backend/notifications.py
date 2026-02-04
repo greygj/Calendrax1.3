@@ -1,5 +1,5 @@
 # Notification Service for Calendrax
-# Supports Email (SendGrid) and SMS (Twilio) notifications
+# Supports Email (SendGrid), SMS (Twilio), and WhatsApp (Twilio) notifications
 
 import os
 import logging
@@ -20,10 +20,13 @@ SENDGRID_FROM_EMAIL = os.environ.get('SENDGRID_FROM_EMAIL', 'noreply@bookle.app'
 TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
 TWILIO_FROM_NUMBER = os.environ.get('TWILIO_FROM_NUMBER')
+# WhatsApp Sandbox number - use 'whatsapp:+14155238886' for Twilio Sandbox
+TWILIO_WHATSAPP_NUMBER = os.environ.get('TWILIO_WHATSAPP_NUMBER', 'whatsapp:+14155238886')
 
 # Feature flags - enable/disable notifications
 EMAIL_ENABLED = bool(SENDGRID_API_KEY)
 SMS_ENABLED = bool(TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN and TWILIO_FROM_NUMBER)
+WHATSAPP_ENABLED = bool(TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN)
 
 
 # ==================== EMAIL SERVICE ====================
