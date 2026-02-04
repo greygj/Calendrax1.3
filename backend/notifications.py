@@ -97,13 +97,16 @@ def send_sms(to_number: str, message: str) -> bool:
     try:
         client = TwilioClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
         
+        # Format the phone number to E.164
+        formatted_number = format_phone_number(to_number)
+        
         sms = client.messages.create(
             body=message,
             from_=TWILIO_FROM_NUMBER,
-            to=to_number
+            to=formatted_number
         )
         
-        logger.info(f"SMS sent successfully to {to_number}, SID: {sms.sid}")
+        logger.info(f"SMS sent successfully to {formatted_number}, SID: {sms.sid}")
         return True
         
     except Exception as e:
