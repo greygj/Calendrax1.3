@@ -2492,7 +2492,8 @@ const BusinessOwnerDashboard = () => {
                       <button
                         type="button"
                         onClick={() => handlePhotoRemove(index)}
-                        className="absolute top-2 right-2 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center shadow-lg transition-colors"
+                        title="Remove photo"
                       >
                         <X className="w-4 h-4 text-white" />
                       </button>
