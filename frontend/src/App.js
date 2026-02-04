@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import BusinessPage from "./pages/BusinessPage";
+import PublicBusinessPage from "./pages/PublicBusinessPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import BookingSuccess from "./pages/BookingSuccess";
 import Terms from "./pages/Terms";
