@@ -132,7 +132,8 @@ const BusinessOwnerDashboard = () => {
           phone: businessRes.data.phone || '',
           email: businessRes.data.email || '',
           website: businessRes.data.website || '',
-          depositLevel: businessRes.data.depositLevel || '20'
+          depositLevel: businessRes.data.depositLevel || '20',
+          photos: businessRes.data.photos || []
         });
       }
       
