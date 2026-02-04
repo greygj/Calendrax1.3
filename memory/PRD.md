@@ -304,10 +304,23 @@ STRIPE_API_KEY=sk_test_emergent
   - `POST /api/upload-business-photo` - Converts image to base64 data URL
   - `PUT /api/my-business` - Updates photos array (max 3 enforced)
 
+### Phase 13: Trial Expiration Reminders ✅ (February 4, 2026)
+- [x] **WhatsApp Notifications** - Integrated Twilio WhatsApp Sandbox for trial reminders
+- [x] **Trial Reminder System**:
+  - Sends reminders on days 5, 2, and 0 (last day) of trial
+  - Email template (pending SendGrid API key)
+  - SMS template (pending TWILIO_FROM_NUMBER)
+  - WhatsApp template (working with Twilio Sandbox)
+- [x] **Admin Endpoints**:
+  - `POST /api/admin/send-trial-reminders` - Cron job endpoint to check and send reminders
+  - `POST /api/admin/test-trial-reminder/{business_id}` - Test endpoint for sending reminders
+- [x] **Phone Number Formatting** - Automatic E.164 formatting for UK numbers (07xxx → +447xxx)
+
 ## Upcoming Tasks (P1)
 1. Enable Stripe Connect on your Stripe account to activate business payout functionality
 2. Add Google Maps API for accurate business location display
-3. Provide SendGrid/Twilio API keys to enable email/SMS notifications
+3. Provide SendGrid API key for email notifications
+4. Set up Twilio production WhatsApp number (or configure sandbox)
 
 ## Future/Backlog (P2)
 1. Customer reviews and ratings
