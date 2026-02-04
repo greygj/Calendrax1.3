@@ -1,93 +1,93 @@
 <analysis>**original_problem_statement:**
-The user's goal is to create Calendrax, a comprehensive booking application. The app was initially a clone of another service and has been rebranded twice.
+The user's goal is to create Calendrax, a comprehensive booking application.
 
 **PRODUCT REQUIREMENTS:**
-1.  **Business Owner Features:** Sign up, manage a dashboard with calendar availability for multiple staff, perform CRUD operations on services, manage up to five staff members, view booking history, manage customers, edit a business profile, book on behalf of customers, and receive notifications.
-2.  **Customer Features:** Browse businesses, book appointments via a dedicated business page (showing services, staff, and a map), select staff members, manage their own bookings, edit their profile, and receive notifications.
-3.  **Platform Admin System:** A secure  dashboard for a  to manage all users and businesses (view, edit, suspend, delete) and approve new business sign-ups.
+1.  **Business Owner Features:** Sign up, manage a dashboard with calendar availability for multiple staff, perform CRUD operations on services, manage up to five staff members, view booking history, manage customers, edit a business profile (including uploading photos), book on behalf of customers, and receive notifications.
+2.  **Customer Features:** Browse businesses on a public page, view business details (services, location, photos, reviews) without logging in, book appointments (including multiple services at once), manage their own bookings, edit their profile, and receive notifications. A login is required to finalize a booking.
+3.  **Platform Admin System:** A secure  dashboard for a  to manage all users and businesses.
 4.  **Payments & Subscriptions:**
-    *   **Customer Deposits:** Business owners can set a configurable deposit amount (0%, 10%, 20%, 50%, or 100%) required from customers at the time of booking.
-    *   **Business Subscriptions:** Business owners pay a monthly subscription fee to the platform. The pricing is dynamic based on the number of staff members (£12/month for 1 staff, +£8/month for each additional staff). New businesses receive a 30-day free trial.
-5.  **UI/UX:** A responsive, mobile-friendly dark theme with lime green accents, featuring the Calendrax logo.
+    *   **Customer Deposits:** Business owners can require a deposit. The platform takes a 5% application fee from each deposit to cover Stripe costs.
+    *   **Business Subscriptions:** Business owners pay a monthly subscription based on the number of staff members (£12/month for 1 staff, +£8/month for each additional staff) after a 30-day free trial.
+5.  **Legal & Onboarding:** Users must agree to Terms & Conditions and a Privacy Policy on signup. Business owners must be informed of the subscription fees during signup.
+6.  **UI/UX:** A responsive, mobile-friendly dark theme with lime green accents, featuring the Calendrax logo. A public-facing landing page should allow browsing of businesses.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A full-stack application named Calendrax has been developed with a React frontend, a monolithic FastAPI backend, and a MongoDB database. The app supports three user roles (Customer, Business Owner, Admin) with JWT authentication and dedicated dashboards. A business approval system, comprehensive staff management, a revenue dashboard for business owners, and an auto-refund mechanism are implemented.
+A full-stack application (React frontend, FastAPI backend, MongoDB) with JWT authentication for Customer, Business Owner, and Admin roles.
 
-The payment system has two components:
-1.  **Customer Deposits:** A previously implemented system allows customers to pay deposits.
-2.  **Business Subscriptions:** The agent was in the middle of implementing a system for the platform to collect subscription fees from business owners via Stripe. This involved removing the previous Stripe Connect implementation. A LIVE Stripe key has been added to the environment.
+The core features are implemented, including:
+*   A dual Stripe payment system: **Stripe Connect Express** for customer deposits (routing 95% to the business owner and taking a 5% platform fee) and a standard Stripe integration for platform subscription fees.
+*   A public landing page where unauthenticated users can browse businesses.
+*   Public-facing business detail pages that show services, location, and a placeholder for photos/reviews, requiring login only to book.
+*   Multi-service booking, allowing customers to select several services in one transaction, with the system correctly calculating the total duration and price.
+*   A Payouts dashboard for business owners that shows a breakdown of deposits, platform fees, and net earnings.
+*   Terms & Conditions/Privacy Policy checkboxes on the signup page.
+*   A backend and frontend foundation for business owners to upload photos to their profile.
 
 **Last working item**:
-- **Last item agent was working:** Refactoring the payment system to support platform-collected subscription fees from business owners. The user clarified that Calendrax should collect subscription fees, which prompted the agent to remove the Stripe Connect code (used for paying out deposits to businesses) and start implementing a direct Stripe Checkout flow for subscriptions.
+- **Last item agent was working:** Implementing a public business profile page that shows services, location, and photos, and adding a feature for business owners to upload up to three photos from their dashboard. The agent created the necessary backend endpoints, frontend UI components, and API functions.
 - **Status:** IN PROGRESS
 - **Agent Testing Done:** N
-- **Which testing method agent to use?** Both. The backend endpoint  needs  testing, and the frontend flow (Business Owner clicking Setup Payment Method on their profile) requires screenshot verification.
+- **Which testing method agent to use?** both
+    1.  **Backend Testing:** Use  to test the new  endpoint.
+    2.  **Frontend Testing:** Use the  to:
+        a. Log in as a business owner, go to the Profile tab, and verify the photo upload UI is present and functional.
+        b. Upload an image.
+        c. Navigate to the corresponding  and verify the uploaded image is displayed correctly.
 - **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-- **Issue 1: (P0)** The business subscription payment flow is incomplete and untested. Business owners currently have no way to add their payment method to pay for the service.
-- **Issue 2: (P0) Critical Logic Conflict:** The agent removed Stripe Connect, which was the mechanism for routing customer deposits to business owners. The user's requirement was The platform will not be taking a commission on the payments to the business, implying deposits should still go to the business. The current setup will likely route all customer deposits to the platform's main Stripe account, conflicting with the user's business model.
+- **Issue 1: (P0)** The photo upload feature is incomplete and has not been tested end-to-end.
 
   **Issues Detail:**
-  - **Issue 1: Incomplete Subscription Flow**
-     - **Attempted fixes:** The agent added a  endpoint to the backend and a Setup Payment Method button on the  frontend.
+  - **Issue 1: Incomplete Photo Upload Feature**
+     - **Attempted fixes:** A  endpoint was added to , and the UI for uploading/displaying photos was added to  and .
      - **Next debug checklist:**
-        1. Test the new  endpoint to ensure it generates a valid Stripe Checkout URL.
-        2. Test the frontend Setup Payment Method button to confirm it triggers the correct API call and redirects the user.
-        3. Review the backend webhook handler ( in ) to ensure it correctly updates a business's subscription status after a successful payment.
-     - **Why fix this issue and what will be achieved with the fix?** This is the core monetization feature for the Calendrax platform.
+        1. Log in as the Business Owner ().
+        2. Navigate to the Profile tab on the dashboard.
+        3. Verify the Manage Photos section appears with an upload button.
+        4. Test uploading an image file and confirm the API call succeeds.
+        5. Verify the photo URL is saved in the  collection in MongoDB for the correct business.
+        6. Navigate to the public page for that business (e.g., ).
+        7. Confirm the uploaded photo is displayed in the gallery.
+     - **Why fix this issue and what will be achieved with the fix?** To complete the user's requirement for businesses to have public-facing photos, enhancing the appeal of their listings.
      - **Status:** IN PROGRESS
      - **Is recurring issue?** N
      - **Should Test frontend/backend/both after fix?** Both
      - **Blocked on other issue:** None.
 
-  - **Issue 2: Deposit Routing Conflict**
-     - **Attempted fixes:** None. This issue was introduced by the last refactoring.
-     - **Next debug checklist:**
-        1.  Before writing any code, **clarify the intended payment flow with the user**. Propose a solution that accommodates both requirements:
-            *   **Option A (Stripe Connect):** Re-implement Stripe Connect so business owners can link their bank accounts to receive customer deposits directly. Use a separate standard Stripe integration for collecting platform subscription fees.
-            *   **Option B (Platform as Intermediary):** Keep the current setup where all funds (deposits and subscriptions) go to the platform's Stripe account. This would require the platform to manually pay out deposit amounts to businesses, which is complex and not what the user likely wants.
-        2.  Based on user confirmation, implement the chosen solution. This will likely involve re-introducing Stripe Connect alongside the new subscription logic.
-     - **Why fix this issue and what will be achieved with the fix?** To align the application's payment logic with the user's business model, ensuring business owners receive their funds correctly.
-     - **Status:** NOT STARTED
-     - **Is recurring issue?** N
-     - **Should Test frontend/backend/both after fix?** Both.
-     - **Blocked on other issue:** Blocked on user clarification.
-
 **In progress Task List**:
-- **Task 1: Implement a dual Stripe payment system**
-    - **Where to resume:** Address the Deposit Routing Conflict (Issue 2) by seeking clarification from the user. Once the path is clear, begin implementation.
-    - **What will be achieved with this?** A fully functional payment system that correctly handles both customer-to-business deposits and business-to-platform subscription fees.
-    - **Status:** BLOCKED (awaiting user clarification)
+- **Task 1: Finalize Public Business Pages with Photo Uploads**
+    - **Where to resume:** Continue by testing the photo upload feature from the Business Owner Dashboard.
+    - **What will be achieved with this?** A complete, verified flow where business owners can upload photos that are then displayed on their public profile page.
+    - **Status:** IN PROGRESS
     - **Should Test frontend/backend/both after fix?** Both
-    - **Blocked on something:** User decision on the payment flow.
+    - **Blocked on something:** None.
 
 **Upcoming and Future Tasks**
 **Upcoming Tasks:**
-- **(P1) Enable Notifications:** The backend is ready for SendGrid (email) and Twilio (SMS). The agent needs to prompt the user to provide the necessary API keys.
+- **(P0) Implement Trial Expiration Reminders:** The user has requested automated reminders via Email (SendGrid) and WhatsApp (Twilio) to be sent to business owners on days 25, 28, and 30 of their free trial.
+    - **Status:** BLOCKED, awaiting user to provide SendGrid and Twilio API keys.
 
 **Future Tasks:**
-- **(P2)** Integrate Google Maps with a proper API key to replace the basic embed.
-- **(P2)** Implement a customer review and rating system for businesses.
-- **(P2)** Add advanced data visualization charts to the Revenue dashboard.
-- **(P2) Refactor Backend:** Propose breaking down the monolithic  into a modular structure (e.g., , , ) for better maintainability.
+- **(P1)** Populate the placeholder content for the  and  pages.
+- **(P1)** Implement a full customer review and rating system.
+- **(P2)** Integrate Google Maps with a proper API key to replace the basic map embed.
+- **(P2) Refactor Backend:** The monolithic  file is becoming unmanageable and should be broken into a modular structure (e.g., , , ).
+- **(P2) Refactor Frontend:** The  file is overly large and should be broken into smaller, reusable components.
+- **(P2) Export Analytics:** Add functionality for business owners to download their analytics data as CSV or PDF reports.
 
 **Completed work in this session**
-- **Feature - Stripe & Subscription System:**
-    - Implemented a staff-based subscription model with a 30-day free trial.
-    - Added configurable deposit levels for business owners.
-    - Implemented an admin override for free access.
-    - Updated subscription pricing based on user feedback.
-- **Rebranding:** Updated the app from Bookle to Calendrax, including the logo and all text references.
-- **Feature - Staff Management Updates:**
-    - Added confirmation modals for adding/deleting staff, showing the impact on the monthly subscription cost.
-    - Fixed the staff deletion bug and updated the logic to cancel the staff member's future bookings automatically.
-- **Feature - Revenue Dashboard:** Created a comprehensive revenue dashboard for business owners with weekly, monthly, and yearly stats, plus a breakdown by staff member.
-- **Feature - Auto-Refund:** Implemented automatic deposit refunds when a business declines a booking.
-- **Feature - Booking History:** Created History tabs on both the Customer and Business Owner dashboards to separate past appointments from upcoming ones.
-- **Configuration:** Updated the environment with the user's LIVE Stripe API key.
+- **Feature - Multi-Service Booking:** Customers can now select multiple services in a single booking, and the system correctly calculates the total duration/price and blocks the corresponding time on the staff's calendar.
+- **Feature - Public Landing & Business Pages:**
+    - Created a public landing page () for browsing businesses without logging in.
+    - Implemented a login gate: viewing business details is public, but booking requires login/signup, with a seamless redirect back to the booking page after authentication.
+- **Feature - 5% Platform Fee:** Implemented a 5% application fee on customer deposits, collected by the platform. The Payouts dashboard was updated to show business owners a clear breakdown of the gross deposit, platform fee, and their net earnings.
+- **UI/UX - Signup Flow:** Added mandatory Terms and Conditions / Privacy Policy checkboxes and a notice about subscription fees to the business owner signup form.
+- **UI/UX - Dashboard Cleanup:** Consolidated the Revenue and Payouts tabs into a unified Analytics tab with sub-navigation to simplify the dashboard menu.
+- **Branding - Logo Update:** Replaced the application logo in 6 key locations with a new user-provided image and adjusted its size on the login screen for better aesthetics.
+- **Bugfix - Stripe Connect Flow:** Corrected the payment implementation to use Stripe Connect destination charges properly, ensuring customer deposits are correctly routed to business owners.
 
 **Earlier issues found/mentioned but not fixed**
 - None.
@@ -101,43 +101,49 @@ The payment system has two components:
 
 
 **Key Technical Concepts**
-- **Frontend:** React, React Router, Tailwind CSS, shadcn/ui, Axios
-- **Backend:** FastAPI, Python, MongoDB (via )
+- **Frontend:** React, React Router, Tailwind CSS, shadcn/ui, Axios.
+- **Backend:** FastAPI, Python, Motor (async MongoDB driver),  for file uploads.
 - **Authentication:** JWT with role-based access control.
-- **Payments:** Stripe (currently configured for subscriptions, deposit flow is ambiguous).
-- **Notifications:** SendGrid, Twilio (backend ready, keys pending).
+- **Payments:** Dual system using Stripe Connect Express for deposits (with ) and standard Stripe Checkout for subscriptions.
+- **File Handling:** Storing user-uploaded images in  and serving them as static files.
 
 **key DB schema**
-- **users:** 
-- **businesses:** 
-- **bookings:** 
-- **staff:** 
-- **services:** 
+- **businesses:**  (Stores an array of URLs for uploaded images).
+- **appointments:**  (Updated to support multiple services per appointment).
+- **payment_transactions:**  (Updated to track the platform's fee and the net amount for the business).
 
 **changes in tech stack**
-- The user's **LIVE** Stripe key has been added to .
+-  was added to  to handle file uploads.
 
 **All files of reference**
-- : Heavily modified with logic for subscriptions, revenue, and payment handling.
-- : The main hub for recent features, including the Revenue tab, updated staff modals, and the (now incomplete) Profile/Subscription section.
-- : Updated with booking history logic.
-- : Contains new API functions for revenue and subscription management.
-- : Contains the LIVE Stripe API key.
+*   **New Files:**
+    *   : The public homepage for browsing businesses.
+    *   : The public detail page for a single business.
+    *    & : Placeholder pages for legal documents.
+*   **Heavily Modified Files:**
+    *   : Updated with file upload endpoints, multi-service booking logic, and payment fee calculations.
+    *   : Routing logic was significantly changed to support the new public-facing pages and login gate.
+    *   : Reworked to support multi-service selection with a cart-like summary.
+    *   : Updated with the photo upload UI and consolidated analytics tabs.
+    *   : Modified to include T&C checkboxes and subscription info.
+    *   : New API functions for photo uploads.
 
 **Areas that need refactoring**:
--  is critically oversized and complex. It urgently needs to be broken into a modular project structure to reduce risk and improve maintainability.
+- : This file has grown critically large and complex. It is the highest priority for a refactor into a modular structure to improve maintainability.
+- : This component is over 2,500 lines long and manages too much state. It should be broken down into smaller, more focused components.
 
 **key api endpoints**
-- : **(New)** Creates a Stripe Checkout session for a business owner to pay for their subscription.
-- : **(Updated)** Handles webhooks from Stripe, intended to confirm subscription payments.
-- : **(New)** Provides data for the business owner's revenue dashboard.
-- : **(Updated)** Triggers an auto-refund if a booking is declined.
+- : **(New)** For a business owner to upload a profile photo.
+- : **(New)** Fetches all businesses for the public landing page.
+- : **(Updated)** Now accepts an array of  and calculates a 5% .
+- : **(Updated)** Now associates an array of  with a single appointment.
+- : **(Updated)** The response now includes , , and  for detailed financial reporting.
 
 **Critical Info for New Agent**
-- **Your immediate priority is to resolve the payment logic conflict.** The current implementation likely directs all customer deposits to the platform owner, which contradicts the user's requirements. You **must** clarify this with the user before proceeding. Propose a solution that uses Stripe Connect for business payouts and a separate standard integration for platform subscriptions.
-- **A LIVE Stripe key is in use.** Be extremely cautious with any payment-related code. All transactions are real.
-- After resolving the payment logic, your next task is to complete and test the business subscription flow, allowing business owners to add their payment method.
-- The  file is a significant maintenance risk. Plan to propose a refactoring task to the user once the critical payment features are stable.
+- Your immediate priority is to **complete and test the business photo upload feature**. This involves verifying the UI on the Business Owner Dashboard, ensuring the upload works, and confirming the photo appears on the public business page.
+- The next major task is to implement **trial expiration reminders**. This is blocked until the user provides API keys for SendGrid (email) and Twilio (WhatsApp). Be prepared to start this as soon as the keys are available.
+- The codebase contains significant technical debt, especially in  and . Once the immediate tasks are complete, you should propose a refactoring plan to the user.
+- The application is using a **LIVE Stripe key**. Exercise extreme caution when modifying any payment-related code.
 
 **documents and test reports created in this job**
 - 
@@ -145,33 +151,39 @@ The payment system has two components:
 - 
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Requested auto-refunds, a booking deletion warning for staff, and a Revenue dashboard. -> **Status: DONE**
-2.  **User:** Reported the Business Profile page was missing. -> **Status: DONE** (Agent found it was visible but on the far right of the navigation bar).
-3.  **User:** Requested booking history features. -> **Status: DONE**
-4.  **User:** Asked how to complete Stripe Connect onboarding. -> **Status: Superseded** (The implementation was changed).
-5.  **User:** Provided a LIVE Stripe secret key. -> **Status: DONE** (Agent updated the  file).
-6.  **User:** Clarified that the Stripe account is for Calendrax to collect subscription fees from businesses, not for businesses to receive customer payments. -> **Status: IN PROGRESS** (This clarification triggered the current incomplete refactor and the payment logic conflict).
-7.  **(Older messages summarized)**
+1.  **User:** I think the user should be able to click on the business page...and see...services, location, reviews, photos... -> **Status: IN PROGRESS** (This is the last working item).
+2.  **User:** When a user visits the page they should be able to browse the businesses... -> **Status: DONE** (Public landing page was created).
+3.  **User:** Can you make the logo slightly smaller on the login screen please. -> **Status: DONE**.
+4.  **User:** ...replace the logo on the sign in screen... -> **Status: DONE**.
+5.  **User:** ...add reminders. Also include WhatsApp reminders. -> **Status: BLOCKED**, awaiting API keys.
+6.  **User:** If the business Owner agrees...does the first subscription fee automatically get paid...? -> **Status: Clarified**. Led to the reminder task.
+7.  **User:** Yes please display the fee breakdown in the Payouts Dashboard. and two other related requests. -> **Status: DONE**.
+8.  **User:** Yes implement the 5% application fee now please. -> **Status: DONE**.
+9.  **User:** Requested clarification on how the 5% fee would work. -> **Status: DONE**.
+10. **User:** Asked about who pays Stripe fees and chose the Platform takes application fee model. -> **Status: DONE**.
 
 **Project Health Check:**
-- **Broken:** The core payment logic is in a conflicting and incomplete state. Business owners cannot set up their subscription payments, and customer deposits are likely being misdirected.
-- **Mocked:** None.
+- **Broken:** None.
+- **Mocked:**
+    - The content of  and  pages are placeholders.
+    - The Reviews section on the public business page is a UI placeholder with no backend functionality.
 
 **3rd Party Integrations**
-- **Google Maps:** Basic embed, no API key used.
-- **SendGrid:** Backend structure is ready. Requires a user-provided API key.
-- **Twilio:** Backend structure is ready. Requires user-provided credentials.
-- **Stripe:** Integration is **IN PROGRESS** and in a conflicted state. Uses a **LIVE API KEY**.
+- **Stripe:** Fully integrated with a **LIVE API KEY** for both business subscriptions and Stripe Connect Express deposits (with a 5% platform fee).
+- **SendGrid:** Backend is ready for integration. **Awaiting user-provided API key** for trial expiration reminders.
+- **Twilio (WhatsApp):** Planned for trial expiration reminders. **Awaiting user setup and credentials**.
+- **Google Maps:** A basic, keyless map embed is used. A full API integration is a future task.
 
 **Testing status**
 - **Testing agent used after significant changes:** YES
+- **Troubleshoot agent used after agent stuck in loop:** NO
 - **Test files created:** []
-- **Known regressions:** The recent refactor has likely introduced a major regression in how customer deposits are handled.
+- **Known regressions:** None.
 
 **Credentials to test flow:**
 - **Admin:**  / 
 - **Business Owner:**  / 
-- **Customer:**  (password was used by the previous agent but is not documented; creating a new test customer is recommended).
+- **Customer:**  /  (or create a new customer).
 
 **What agent forgot to execute**
-- The previous agent did not recognize the critical conflict created by removing Stripe Connect. The system now lacks a mechanism to pay business owners their deposits, which goes against the user's stated business model. This must be addressed immediately.</analysis>
+- The agent was in the middle of verifying the public business page via screenshots and had not yet tested the new photo upload UI on the  or the complete end-to-end flow of uploading a photo and seeing it appear on the public page.</analysis>

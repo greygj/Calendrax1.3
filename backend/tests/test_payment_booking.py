@@ -195,7 +195,7 @@ class TestPaymentCheckout:
             "staffId": data["staff"]["id"] if data["staff"] else None,
             "date": "2026-01-30",
             "time": "10:00",
-            "originUrl": "https://calendrax-app.preview.emergentagent.com"
+            "originUrl": "https://scheduler-app-28.preview.emergentagent.com"
         }
         
         response = requests.post(
@@ -233,7 +233,7 @@ class TestPaymentCheckout:
             "staffId": data["staff"]["id"] if data["staff"] else None,
             "date": "2026-01-30",
             "time": "11:00",
-            "originUrl": "https://calendrax-app.preview.emergentagent.com",
+            "originUrl": "https://scheduler-app-28.preview.emergentagent.com",
             "offerCode": "TESTFREE"
         }
         
@@ -264,7 +264,7 @@ class TestPaymentCheckout:
             "staffId": data["staff"]["id"] if data["staff"] else None,
             "date": "2026-01-30",
             "time": "12:00",
-            "originUrl": "https://calendrax-app.preview.emergentagent.com",
+            "originUrl": "https://scheduler-app-28.preview.emergentagent.com",
             "offerCode": "INVALID123"
         }
         
@@ -352,7 +352,7 @@ class TestCompleteBookingWithOfferCode:
             "staffId": data["staff"]["id"] if data["staff"] else None,
             "date": "2026-01-31",
             "time": "14:00",
-            "originUrl": "https://calendrax-app.preview.emergentagent.com",
+            "originUrl": "https://scheduler-app-28.preview.emergentagent.com",
             "offerCode": "TESTFREE"
         }
         
