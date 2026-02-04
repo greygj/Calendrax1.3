@@ -68,14 +68,19 @@ const PublicRoute = ({ children }) => {
   }
   
   if (user) {
-    // Check for redirect URL in URL params or sessionStorage
+    // Check for redirect URL in URL params or localStorage
     const location = window.location;
     const searchParams = new URLSearchParams(location.search);
-    const redirectUrl = searchParams.get('redirect') || sessionStorage.getItem('calendrax_redirect');
+    const urlRedirect = searchParams.get('redirect');
+    const storedRedirect = localStorage.getItem('calendrax_redirect');
+    const redirectUrl = urlRedirect || storedRedirect;
+    
+    // Clear the stored redirect
+    if (storedRedirect) {
+      localStorage.removeItem('calendrax_redirect');
+    }
     
     if (redirectUrl) {
-      // Clear sessionStorage and redirect
-      sessionStorage.removeItem('calendrax_redirect');
       return <Navigate to={redirectUrl} replace />;
     }
     
