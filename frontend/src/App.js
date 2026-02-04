@@ -118,8 +118,11 @@ function AppRoutes() {
           </ProtectedRoute>
         } 
       />
+      {/* Public business preview page */}
+      <Route path="/business/:businessId" element={<PublicBusinessPage />} />
+      {/* Protected booking page */}
       <Route 
-        path="/business/:businessId" 
+        path="/book/:businessId" 
         element={
           <ProtectedRoute>
             <BusinessPage />
