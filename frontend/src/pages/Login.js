@@ -19,29 +19,19 @@ const Login = () => {
     setError('');
     setLoading(true);
 
-    // Store redirect URL in sessionStorage before login
-    // This prevents race conditions with PublicRoute
+    // Store redirect URL in localStorage (persists better than sessionStorage during re-renders)
     if (redirectUrl) {
-      sessionStorage.setItem('calendrax_redirect', redirectUrl);
+      localStorage.setItem('calendrax_redirect', redirectUrl);
     }
 
     const result = await login(email, password);
     
     if (result.success) {
-      // Get redirect URL from sessionStorage (in case state was lost)
-      const storedRedirect = sessionStorage.getItem('calendrax_redirect');
-      sessionStorage.removeItem('calendrax_redirect');
-      
-      // If there's a redirect URL, go there, otherwise go to dashboard
-      if (storedRedirect) {
-        navigate(storedRedirect);
-      } else if (redirectUrl) {
-        navigate(redirectUrl);
-      } else {
-        navigate('/dashboard');
-      }
+      // The PublicRoute will handle the redirect using localStorage
+      // No need to navigate here - React will re-render and PublicRoute will redirect
     } else {
       setError(result.error);
+      localStorage.removeItem('calendrax_redirect');
     }
     
     setLoading(false);
