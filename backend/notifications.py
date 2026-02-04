@@ -396,5 +396,121 @@ def get_notification_status() -> dict:
             "enabled": SMS_ENABLED,
             "provider": "Twilio" if SMS_ENABLED else None,
             "from_number": TWILIO_FROM_NUMBER if SMS_ENABLED else None
+        },
+        "whatsapp": {
+            "enabled": WHATSAPP_ENABLED,
+            "provider": "Twilio" if WHATSAPP_ENABLED else None,
+            "from_number": TWILIO_WHATSAPP_NUMBER if WHATSAPP_ENABLED else None
         }
     }
+
+
+# ==================== TRIAL REMINDER TEMPLATES ====================
+
+def get_trial_reminder_email(
+    business_name: str,
+    owner_name: str,
+    days_remaining: int,
+    monthly_price: float
+) -> tuple[str, str]:
+    """Returns (subject, html_content) for trial expiration reminder"""
+    
+    urgency = "⚠️ " if days_remaining <= 2 else ""
+    subject = f"{urgency}Your Calendrax Trial Ends in {days_remaining} Day{'s' if days_remaining != 1 else ''}"
+    
+    html_content = f"""
+    <html>
+    <body style="font-family: Arial, sans-serif; background-color: #1a1a1a; color: #ffffff; padding: 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #2a2a2a; border-radius: 10px; padding: 30px;">
+            <h1 style="color: #a3e635; margin-bottom: 20px;">Trial Ending Soon</h1>
+            <p>Hello {owner_name},</p>
+            <p>Your free trial for <strong>{business_name}</strong> on Calendrax will expire in <strong style="color: #f59e0b;">{days_remaining} day{'s' if days_remaining != 1 else ''}</strong>.</p>
+            
+            <div style="background-color: #333; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <p><strong style="color: #a3e635;">What happens next?</strong></p>
+                <p>To continue using Calendrax without interruption, please add a payment method to your account.</p>
+                <p><strong style="color: #a3e635;">Your subscription:</strong> £{monthly_price:.2f}/month</p>
+            </div>
+            
+            <p>Log in to your dashboard and navigate to <strong>Profile → Subscription & Payment</strong> to set up your payment method.</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="#" style="display: inline-block; background-color: #a3e635; color: #000000; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">Set Up Payment</a>
+            </div>
+            
+            <p style="color: #888;">If you have any questions, please contact our support team.</p>
+            <p style="color: #888; margin-top: 30px; font-size: 12px;">This is an automated message from Calendrax.</p>
+        </div>
+    </body>
+    </html>
+    """
+    return subject, html_content
+
+
+def get_trial_reminder_sms(business_name: str, days_remaining: int, monthly_price: float) -> str:
+    """Returns SMS message for trial expiration reminder"""
+    return f"Calendrax: Your trial for {business_name} ends in {days_remaining} day{'s' if days_remaining != 1 else ''}. Add a payment method to continue (£{monthly_price:.2f}/month). Log in to your dashboard."
+
+
+def get_trial_reminder_whatsapp(business_name: str, days_remaining: int, monthly_price: float) -> str:
+    """Returns WhatsApp message for trial expiration reminder"""
+    emoji = "⚠️" if days_remaining <= 2 else "📅"
+    return f"""{emoji} *Calendrax Trial Reminder*
+
+Hi! Your free trial for *{business_name}* ends in *{days_remaining} day{'s' if days_remaining != 1 else ''}*.
+
+💳 Subscription: £{monthly_price:.2f}/month
+
+To continue using Calendrax without interruption, please add a payment method in your dashboard.
+
+Go to: Profile → Subscription & Payment
+
+Questions? Reply to this message for help."""
+
+
+# ==================== TRIAL REMINDER DISPATCHER ====================
+
+async def send_trial_reminder(
+    owner_email: str,
+    owner_phone: Optional[str],
+    owner_name: str,
+    business_name: str,
+    days_remaining: int,
+    monthly_price: float
+) -> dict:
+    """
+    Send trial expiration reminders via all available channels
+    
+    Args:
+        owner_email: Business owner's email address
+        owner_phone: Business owner's phone number (E.164 format)
+        owner_name: Business owner's name
+        business_name: Name of the business
+        days_remaining: Days until trial expires
+        monthly_price: Monthly subscription price
+    
+    Returns:
+        dict: Status of each notification channel
+    """
+    results = {
+        "email": False,
+        "sms": False,
+        "whatsapp": False
+    }
+    
+    # Send email reminder
+    subject, html_content = get_trial_reminder_email(
+        business_name, owner_name, days_remaining, monthly_price
+    )
+    results["email"] = send_email(owner_email, subject, html_content)
+    
+    # Send SMS and WhatsApp if phone number is available
+    if owner_phone:
+        sms_message = get_trial_reminder_sms(business_name, days_remaining, monthly_price)
+        results["sms"] = send_sms(owner_phone, sms_message)
+        
+        whatsapp_message = get_trial_reminder_whatsapp(business_name, days_remaining, monthly_price)
+        results["whatsapp"] = send_whatsapp(owner_phone, whatsapp_message)
+    
+    logger.info(f"Trial reminder sent to {owner_email} (days_remaining={days_remaining}): {results}")
+    return results
