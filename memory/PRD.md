@@ -69,13 +69,14 @@ Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-prod
 
 ## Database Schema
 - **users**: `{id, fullName, email, mobile, password, role, suspended, createdAt}`
-- **businesses**: `{id, ownerId, businessName, description, logo, postcode, address, phone, email, website, approved, rejected}`
+- **businesses**: `{id, ownerId, businessName, description, logo, postcode, address, phone, email, website, photos[], approved, rejected, stripeConnectAccountId, stripeConnectOnboarded, depositLevel}`
 - **services**: `{id, businessId, name, description, duration, price, active}`
 - **staff**: `{id, businessId, name, serviceIds[], isOwner, active}`
-- **appointments**: `{id, userId, businessId, serviceId, staffId, staffName, date, time, status, paymentStatus, bookedByOwner}`
+- **appointments**: `{id, userId, businessId, serviceId, serviceIds[], staffId, staffName, date, time, status, paymentStatus, bookedByOwner, totalPrice, totalDuration}`
 - **availability**: `{businessId, staffId, date, slots[]}`
 - **notifications**: `{id, userId, type, title, message, read}`
-- **subscriptions**: `{id, businessId, ownerId, plan, status}`
+- **subscriptions**: `{id, businessId, ownerId, staffCount, status, priceMonthly, trialStartDate, trialEndDate, freeAccessOverride}`
+- **payment_transactions**: `{id, userId, serviceIds[], businessId, amount, fullPrice, applicationFee, businessReceives, status, paymentStatus}`
 
 ## Credentials
 - **Admin**: admin@booka.com / admin123
