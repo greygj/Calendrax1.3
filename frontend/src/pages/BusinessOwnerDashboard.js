@@ -545,8 +545,9 @@ const BusinessOwnerDashboard = () => {
       return;
     }
 
-    // Get the slot index from the input element
+    // Get the slot index and whether this is a replace operation
     const slotIndex = parseInt(photoInputRef.current?.dataset?.slot || '0', 10);
+    const isReplace = photoInputRef.current?.dataset?.replace === 'true';
 
     setPhotoUploading(true);
     try {
@@ -556,21 +557,27 @@ const BusinessOwnerDashboard = () => {
       const response = await businessAPI.uploadPhoto(formData);
       const photoUrl = response.data.url;
 
-      // Create new photos array, inserting at the correct slot
-      const newPhotos = [...profileForm.photos];
-      // Ensure array is at least as long as the slot index
-      while (newPhotos.length <= slotIndex) {
-        newPhotos.push(null);
+      let newPhotos;
+      if (isReplace && slotIndex < profileForm.photos.length) {
+        // Replace existing photo at the slot
+        newPhotos = [...profileForm.photos];
+        newPhotos[slotIndex] = photoUrl;
+      } else {
+        // Add new photo
+        newPhotos = [...profileForm.photos];
+        // Ensure array is at least as long as the slot index
+        while (newPhotos.length <= slotIndex) {
+          newPhotos.push(null);
+        }
+        newPhotos[slotIndex] = photoUrl;
+        // Filter out null values for storage (keep array compact)
+        newPhotos = newPhotos.filter(p => p !== null);
       }
-      newPhotos[slotIndex] = photoUrl;
       
-      // Filter out null values for storage (keep array compact)
-      const cleanPhotos = newPhotos.filter(p => p !== null);
-      
-      setProfileForm({ ...profileForm, photos: cleanPhotos });
+      setProfileForm({ ...profileForm, photos: newPhotos });
 
       // Save to backend
-      await businessAPI.updateMine({ ...profileForm, photos: cleanPhotos });
+      await businessAPI.updateMine({ ...profileForm, photos: newPhotos });
       alert('Photo uploaded successfully!');
     } catch (error) {
       console.error('Failed to upload photo:', error);
@@ -581,6 +588,7 @@ const BusinessOwnerDashboard = () => {
       if (photoInputRef.current) {
         photoInputRef.current.value = '';
         delete photoInputRef.current.dataset.slot;
+        delete photoInputRef.current.dataset.replace;
       }
     }
   };
