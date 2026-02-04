@@ -2486,13 +2486,21 @@ const BusinessOwnerDashboard = () => {
                   <Image className="w-4 h-4" />
                   Business Photos (Max 3)
                 </label>
-                <p className="text-gray-500 text-xs mb-3">These photos will be displayed on your public business page</p>
+                <p className="text-gray-500 text-xs mb-3">
+                  These photos will be displayed on your public business page. 
+                  <span className="text-lime-400 ml-1">The first photo becomes your hero/background image.</span>
+                </p>
                 
                 <div className="grid grid-cols-3 gap-4 mb-4">
                   {[0, 1, 2].map((index) => {
                     const photo = profileForm.photos[index];
                     return (
                       <div key={index} className="relative aspect-square rounded-xl overflow-hidden bg-zinc-800">
+                        {index === 0 && (
+                          <span className="absolute top-2 left-2 bg-lime-500 text-black text-xs px-2 py-1 rounded-full z-10 font-medium">
+                            Hero
+                          </span>
+                        )}
                         {photo ? (
                           <>
                             <img 
@@ -2500,20 +2508,34 @@ const BusinessOwnerDashboard = () => {
                               alt={`Business photo ${index + 1}`}
                               className="w-full h-full object-cover"
                             />
-                            <button
-                              type="button"
-                              onClick={() => handlePhotoRemove(index)}
-                              className="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center shadow-lg transition-colors"
-                              title="Remove photo"
-                            >
-                              <X className="w-4 h-4 text-white" />
-                            </button>
+                            {/* Overlay with replace and delete options */}
+                            <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  photoInputRef.current.dataset.slot = index;
+                                  photoInputRef.current.dataset.replace = 'true';
+                                  photoInputRef.current?.click();
+                                }}
+                                className="bg-lime-500 hover:bg-lime-400 text-black px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2"
+                              >
+                                <Upload className="w-4 h-4" />
+                                Replace
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handlePhotoRemove(index)}
+                                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2"
+                              >
+                                <X className="w-4 h-4" />
+                                Delete
+                              </button>
+                            </div>
                           </>
                         ) : (
                           <button
                             type="button"
                             onClick={() => {
-                              // Store which slot we're uploading to
                               photoInputRef.current.dataset.slot = index;
                               photoInputRef.current?.click();
                             }}
