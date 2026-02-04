@@ -289,6 +289,20 @@ STRIPE_API_KEY=sk_test_emergent
 - [x] **CTA Section** for business owners to sign up
 - [x] **Footer** with Terms & Privacy links
 
+### Phase 12: Business Photo Upload ✅ (February 4, 2026)
+- [x] **Business Photo Upload** - Business owners can upload up to 3 photos from their Profile tab:
+  - Photos stored as base64 data URLs in MongoDB
+  - Photo grid UI in Profile tab with upload/remove functionality
+  - File size validation (max 5MB)
+  - Image type validation
+- [x] **Public Business Page Photos**:
+  - First photo displayed as hero/cover image
+  - Photo gallery section (visible when multiple photos)
+  - Business logo overlay on hero when photos exist
+- [x] **Backend API**:
+  - `POST /api/upload-business-photo` - Converts image to base64 data URL
+  - `PUT /api/my-business` - Updates photos array (max 3 enforced)
+
 ## Upcoming Tasks (P1)
 1. Enable Stripe Connect on your Stripe account to activate business payout functionality
 2. Add Google Maps API for accurate business location display
