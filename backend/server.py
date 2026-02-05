@@ -73,6 +73,17 @@ TRIAL_PERIOD_DAYS = 30
 
 # Create the main app
 app = FastAPI(title="Booka API")
+
+# CORS Middleware - must be added early
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+)
+
 api_router = APIRouter(prefix="/api")
 security = HTTPBearer()
 
