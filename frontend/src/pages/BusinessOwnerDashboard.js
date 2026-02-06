@@ -147,7 +147,8 @@ const BusinessOwnerDashboard = () => {
           email: businessRes.data.email || '',
           website: businessRes.data.website || '',
           depositLevel: businessRes.data.depositLevel || '20',
-          photos: businessRes.data.photos || []
+          photos: businessRes.data.photos || [],
+          logo: businessRes.data.logo || ''
         });
       }
       
