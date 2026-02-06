@@ -372,6 +372,15 @@ STRIPE_API_KEY=sk_test_emergent
   - `GET /api/revenue/monthly` - Monthly revenue for multiple years
   - `DELETE /api/business-customers/{customer_id}` - Delete customer record
 
+### Phase 17: Business Logo Management ✅ (December 2025)
+- [x] **Logo Upload/Edit in Business Profile**:
+  - Business Logo section in Business Details form
+  - Upload new logo or change existing logo
+  - Remove logo with red X button
+  - Max 2MB file size, recommends 200x200px square image
+  - Logo appears on business profile page and dashboard header
+  - Works for businesses that didn't upload logo during registration
+
 ## Upcoming Tasks (P1)
 1. Enable Stripe Connect on your Stripe account to activate business payout functionality
 2. Add Google Maps API for accurate business location display
