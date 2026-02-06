@@ -355,6 +355,23 @@ STRIPE_API_KEY=sk_test_emergent
   - Customer footer message added to invoices
   - Invoice settings applied during checkout session creation
 
+### Phase 16: Enhanced Revenue Analytics & Customers ✅ (December 2025)
+- [x] **Revenue Tab Enhancements**:
+  - Added note: "The figures below take into account all past and future bookings on your system"
+  - Revenue by Treatment breakdown (includes deleted services marked in red)
+  - Revenue by Staff Member (only shows if more than 1 staff)
+  - Monthly Revenue Breakdown table (current year + 2027-2030)
+  - Year Total row for each year
+- [x] **Customers Tab Redesign**:
+  - Alphabetically sorted customer list
+  - Click-to-expand for customer details
+  - Shows Email, Phone, and full Booking History
+  - Delete Customer Record functionality with confirmation modal
+- [x] **New Backend Endpoints**:
+  - `GET /api/revenue/by-service` - Revenue breakdown by treatment
+  - `GET /api/revenue/monthly` - Monthly revenue for multiple years
+  - `DELETE /api/business-customers/{customer_id}` - Delete customer record
+
 ## Upcoming Tasks (P1)
 1. Enable Stripe Connect on your Stripe account to activate business payout functionality
 2. Add Google Maps API for accurate business location display
