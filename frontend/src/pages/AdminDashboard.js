@@ -5,7 +5,7 @@ import { adminAPI } from '../services/api';
 import { 
   LogOut, Users, Building2, Calendar, CreditCard, BarChart3, 
   ChevronRight, Check, X, Edit2, Trash2, Eye, AlertTriangle,
-  DollarSign, RefreshCw, Shield, Clock
+  PoundSterling, RefreshCw, Shield, Clock
 } from 'lucide-react';
 
 const AdminDashboard = () => {
