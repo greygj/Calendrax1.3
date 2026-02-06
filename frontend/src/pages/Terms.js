@@ -33,7 +33,7 @@ const Terms = () => {
       {/* Back Button */}
       <button
         onClick={handleBack}
-        className="w-10 h-10 rounded-full bg-card flex items-center justify-center text-white hover:bg-zinc-800 transition-colors mb-6"
+        className="w-10 h-10 rounded-full bg-cardBg flex items-center justify-center text-white hover:bg-zinc-800 transition-colors mb-6"
         data-testid="back-button"
       >
         <ArrowLeft className="w-5 h-5" />
@@ -51,7 +51,7 @@ const Terms = () => {
       <div className="max-w-3xl mx-auto" data-testid="terms-page">
         <h1 className="text-white text-3xl font-bold mb-6">Terms and Conditions</h1>
         
-        <div className="bg-card border border-zinc-800 rounded-xl p-6">
+        <div className="bg-cardBg border border-zinc-800 rounded-xl p-6">
           
           <Section title="1. Introduction">
             <p>Welcome to Calendrax. These Terms and Conditions govern your use of the Calendrax platform and services operated by Gareth Grey (Sole Trader) trading as Calendrax ("we", "us", "our").</p>

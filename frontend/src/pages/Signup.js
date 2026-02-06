@@ -132,7 +132,7 @@ const Signup = () => {
       {/* Back Button */}
       <button
         onClick={() => navigate('/')}
-        className="w-10 h-10 rounded-full bg-card flex items-center justify-center text-white hover:bg-zinc-800 transition-colors mb-6"
+        className="w-10 h-10 rounded-full bg-cardBg flex items-center justify-center text-white hover:bg-zinc-800 transition-colors mb-6"
       >
         <ArrowLeft className="w-5 h-5" />
       </button>
@@ -198,7 +198,7 @@ const Signup = () => {
                 value={formData.businessName}
                 onChange={handleChange}
                 placeholder="Enter your business name"
-                className="w-full bg-card border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
+                className="w-full bg-cardBg border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
                 required={activeTab === 'business'}
               />
             </div>
@@ -265,7 +265,7 @@ const Signup = () => {
               onChange={handleChange}
               placeholder="Describe what your business offers..."
               rows={3}
-              className="w-full bg-card border border-zinc-800 rounded-lg py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors resize-none"
+              className="w-full bg-cardBg border border-zinc-800 rounded-lg py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors resize-none"
               required={activeTab === 'business'}
             />
           </div>
@@ -283,7 +283,7 @@ const Signup = () => {
                 value={formData.postcode}
                 onChange={handleChange}
                 placeholder="Enter your business postcode"
-                className="w-full bg-card border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
+                className="w-full bg-cardBg border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
                 required={activeTab === 'business'}
               />
             </div>
@@ -301,7 +301,7 @@ const Signup = () => {
               value={formData.fullName}
               onChange={handleChange}
               placeholder="Enter your full name"
-              className="w-full bg-card border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
+              className="w-full bg-cardBg border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
               required
             />
           </div>
@@ -318,7 +318,7 @@ const Signup = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
-              className="w-full bg-card border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
+              className="w-full bg-cardBg border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
               required
             />
           </div>
@@ -335,7 +335,7 @@ const Signup = () => {
               value={formData.mobile}
               onChange={handleChange}
               placeholder="Enter your mobile number"
-              className="w-full bg-card border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
+              className="w-full bg-cardBg border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
               required
             />
           </div>
@@ -352,7 +352,7 @@ const Signup = () => {
               value={formData.password}
               onChange={handleChange}
               placeholder="Create a password"
-              className="w-full bg-card border border-zinc-800 rounded-lg py-4 pl-12 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
+              className="w-full bg-cardBg border border-zinc-800 rounded-lg py-4 pl-12 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
               required
             />
             <button
@@ -376,7 +376,7 @@ const Signup = () => {
               value={formData.confirmPassword}
               onChange={handleChange}
               placeholder="Confirm your password"
-              className="w-full bg-card border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
+              className="w-full bg-cardBg border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
               required
             />
           </div>
@@ -410,7 +410,7 @@ const Signup = () => {
                 onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
                 className="sr-only peer"
               />
-              <div className="w-5 h-5 border-2 border-zinc-600 rounded bg-card peer-checked:bg-brand-500 peer-checked:border-brand-500 transition-all flex items-center justify-center">
+              <div className="w-5 h-5 border-2 border-zinc-600 rounded bg-cardBg peer-checked:bg-brand-500 peer-checked:border-brand-500 transition-all flex items-center justify-center">
                 {formData.acceptTerms && (
                   <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
@@ -434,7 +434,7 @@ const Signup = () => {
                 onChange={(e) => setFormData({ ...formData, acceptPrivacy: e.target.checked })}
                 className="sr-only peer"
               />
-              <div className="w-5 h-5 border-2 border-zinc-600 rounded bg-card peer-checked:bg-brand-500 peer-checked:border-brand-500 transition-all flex items-center justify-center">
+              <div className="w-5 h-5 border-2 border-zinc-600 rounded bg-cardBg peer-checked:bg-brand-500 peer-checked:border-brand-500 transition-all flex items-center justify-center">
                 {formData.acceptPrivacy && (
                   <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />

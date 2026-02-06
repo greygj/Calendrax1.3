@@ -168,7 +168,7 @@ const AdminDashboard = () => {
 
             <div className="space-y-3">
               {users.map(u => (
-                <div key={u.id} className={`bg-card border rounded-xl p-4 ${u.suspended ? 'border-red-500/50' : 'border-zinc-800'}`}>
+                <div key={u.id} className={`bg-cardBg border rounded-xl p-4 ${u.suspended ? 'border-red-500/50' : 'border-zinc-800'}`}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
@@ -266,7 +266,7 @@ const AdminDashboard = () => {
             <h3 className="text-white text-lg font-semibold mb-4">All Businesses</h3>
             <div className="space-y-3">
               {businesses.map(b => (
-                <div key={b.id} className={`bg-card border rounded-xl p-4 ${
+                <div key={b.id} className={`bg-cardBg border rounded-xl p-4 ${
                   b.rejected ? 'border-red-500/50' : b.approved ? 'border-zinc-800' : 'border-yellow-500/50'
                 }`}>
                   <div className="flex items-center justify-between">
@@ -337,7 +337,7 @@ const AdminDashboard = () => {
 
             <div className="space-y-3">
               {subscriptions.map(sub => (
-                <div key={sub.id} className={`bg-card border rounded-xl p-4 ${
+                <div key={sub.id} className={`bg-cardBg border rounded-xl p-4 ${
                   sub.lastPaymentStatus === 'failed' ? 'border-red-500/50' 
                   : sub.freeAccessOverride ? 'border-brand-500/50'
                   : sub.status === 'active' ? 'border-zinc-800' 
@@ -395,7 +395,7 @@ const AdminDashboard = () => {
                 </div>
               ))}
               {subscriptions.length === 0 && (
-                <div className="bg-card border border-zinc-800 rounded-xl p-8 text-center">
+                <div className="bg-cardBg border border-zinc-800 rounded-xl p-8 text-center">
                   <CreditCard className="w-12 h-12 text-gray-600 mx-auto mb-3" />
                   <p className="text-gray-500">No subscriptions yet</p>
                 </div>
@@ -411,7 +411,7 @@ const AdminDashboard = () => {
             
             <div className="space-y-3">
               {appointments.map(apt => (
-                <div key={apt.id} className="bg-card border border-zinc-800 rounded-xl p-4">
+                <div key={apt.id} className="bg-cardBg border border-zinc-800 rounded-xl p-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="text-white font-medium">{apt.serviceName}</h4>
@@ -455,7 +455,7 @@ const AdminDashboard = () => {
                 </div>
               ))}
               {appointments.length === 0 && (
-                <div className="bg-card border border-zinc-800 rounded-xl p-8 text-center">
+                <div className="bg-cardBg border border-zinc-800 rounded-xl p-8 text-center">
                   <Calendar className="w-12 h-12 text-gray-600 mx-auto mb-3" />
                   <p className="text-gray-500">No bookings yet</p>
                 </div>
@@ -469,7 +469,7 @@ const AdminDashboard = () => {
           <>
             {/* Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <div className="bg-card border border-zinc-800 rounded-xl p-4">
+              <div className="bg-cardBg border border-zinc-800 rounded-xl p-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
                     <Users className="w-5 h-5 text-blue-400" />
@@ -480,7 +480,7 @@ const AdminDashboard = () => {
                   </div>
                 </div>
               </div>
-              <div className="bg-card border border-zinc-800 rounded-xl p-4">
+              <div className="bg-cardBg border border-zinc-800 rounded-xl p-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
                     <Building2 className="w-5 h-5 text-purple-400" />
@@ -491,7 +491,7 @@ const AdminDashboard = () => {
                   </div>
                 </div>
               </div>
-              <div className="bg-card border border-zinc-800 rounded-xl p-4">
+              <div className="bg-cardBg border border-zinc-800 rounded-xl p-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-brand-500/20 rounded-lg flex items-center justify-center">
                     <Calendar className="w-5 h-5 text-brand-400" />
@@ -502,7 +502,7 @@ const AdminDashboard = () => {
                   </div>
                 </div>
               </div>
-              <div className="bg-card border border-zinc-800 rounded-xl p-4">
+              <div className="bg-cardBg border border-zinc-800 rounded-xl p-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
                     <CreditCard className="w-5 h-5 text-green-400" />
@@ -552,7 +552,7 @@ const AdminDashboard = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <button 
                 onClick={() => setActiveView('users')}
-                className="bg-card border border-zinc-800 rounded-xl p-4 text-center hover:bg-zinc-800 hover:border-brand-500/50 transition-all group"
+                className="bg-cardBg border border-zinc-800 rounded-xl p-4 text-center hover:bg-zinc-800 hover:border-brand-500/50 transition-all group"
               >
                 <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-500/30">
                   <Users className="w-6 h-6 text-blue-400" />
@@ -561,7 +561,7 @@ const AdminDashboard = () => {
               </button>
               <button 
                 onClick={() => setActiveView('businesses')}
-                className="bg-card border border-zinc-800 rounded-xl p-4 text-center hover:bg-zinc-800 hover:border-brand-500/50 transition-all group"
+                className="bg-cardBg border border-zinc-800 rounded-xl p-4 text-center hover:bg-zinc-800 hover:border-brand-500/50 transition-all group"
               >
                 <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-purple-500/30">
                   <Building2 className="w-6 h-6 text-purple-400" />
@@ -570,7 +570,7 @@ const AdminDashboard = () => {
               </button>
               <button 
                 onClick={() => setActiveView('subscriptions')}
-                className="bg-card border border-zinc-800 rounded-xl p-4 text-center hover:bg-zinc-800 hover:border-brand-500/50 transition-all group"
+                className="bg-cardBg border border-zinc-800 rounded-xl p-4 text-center hover:bg-zinc-800 hover:border-brand-500/50 transition-all group"
               >
                 <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-green-500/30">
                   <CreditCard className="w-6 h-6 text-green-400" />
@@ -579,7 +579,7 @@ const AdminDashboard = () => {
               </button>
               <button 
                 onClick={() => setActiveView('bookings')}
-                className="bg-card border border-zinc-800 rounded-xl p-4 text-center hover:bg-zinc-800 hover:border-brand-500/50 transition-all group"
+                className="bg-cardBg border border-zinc-800 rounded-xl p-4 text-center hover:bg-zinc-800 hover:border-brand-500/50 transition-all group"
               >
                 <div className="w-12 h-12 bg-brand-500/20 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-500/30">
                   <Calendar className="w-6 h-6 text-brand-400" />
@@ -613,7 +613,7 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-appbg">
       {/* Header */}
-      <header className="bg-card border-b border-zinc-800 px-4 py-4">
+      <header className="bg-cardBg border-b border-zinc-800 px-4 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img 
@@ -648,7 +648,7 @@ const AdminDashboard = () => {
       </header>
 
       {/* Navigation */}
-      <div className="bg-card/50 border-b border-zinc-800">
+      <div className="bg-cardBg/50 border-b border-zinc-800">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex gap-1 overflow-x-auto">
             {['overview', 'users', 'businesses', 'subscriptions', 'bookings'].map(view => (
