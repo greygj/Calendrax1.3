@@ -1273,6 +1273,146 @@ async def cancel_subscription(user: dict = Depends(require_business_owner)):
     
     return {"success": True, "message": "Subscription will be cancelled at the end of the billing period"}
 
+# ==================== BILLING HISTORY ROUTES ====================
+
+@api_router.get("/billing/invoices")
+async def get_billing_invoices(user: dict = Depends(require_business_owner)):
+    """Get all invoices for the business owner's subscription"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    subscription = await db.subscriptions.find_one({"businessId": business["id"]})
+    if not subscription:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    
+    invoices = []
+    
+    # Get Stripe customer ID
+    customer_id = subscription.get("stripeCustomerId")
+    if customer_id:
+        try:
+            # Fetch invoices from Stripe
+            stripe_invoices = stripe.Invoice.list(
+                customer=customer_id,
+                limit=50
+            )
+            
+            for inv in stripe_invoices.data:
+                invoices.append({
+                    "id": inv.id,
+                    "number": inv.number,
+                    "status": inv.status,
+                    "amount": inv.amount_paid / 100,  # Convert from pence to pounds
+                    "currency": inv.currency.upper(),
+                    "date": datetime.fromtimestamp(inv.created, tz=timezone.utc).isoformat(),
+                    "periodStart": datetime.fromtimestamp(inv.period_start, tz=timezone.utc).isoformat() if inv.period_start else None,
+                    "periodEnd": datetime.fromtimestamp(inv.period_end, tz=timezone.utc).isoformat() if inv.period_end else None,
+                    "pdfUrl": inv.invoice_pdf,
+                    "hostedUrl": inv.hosted_invoice_url,
+                    "description": inv.description or f"Calendrax Subscription",
+                    "paid": inv.paid
+                })
+        except Exception as e:
+            logger.error(f"Error fetching Stripe invoices: {e}")
+    
+    return {
+        "invoices": invoices,
+        "customerId": customer_id,
+        "totalInvoices": len(invoices)
+    }
+
+@api_router.get("/billing/upcoming")
+async def get_upcoming_invoice(user: dict = Depends(require_business_owner)):
+    """Get the upcoming invoice for the subscription"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    subscription = await db.subscriptions.find_one({"businessId": business["id"]})
+    if not subscription:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    
+    customer_id = subscription.get("stripeCustomerId")
+    stripe_sub_id = subscription.get("stripeSubscriptionId")
+    
+    if not customer_id or not stripe_sub_id:
+        # Calculate what the next invoice would be
+        staff_count = await db.staff.count_documents({"businessId": business["id"]})
+        if staff_count == 0:
+            staff_count = 1
+        price = calculate_subscription_price(staff_count)
+        
+        return {
+            "upcoming": {
+                "amount": price,
+                "currency": "GBP",
+                "staffCount": staff_count,
+                "description": f"Calendrax Subscription ({staff_count} staff)",
+                "status": "pending_payment_setup"
+            }
+        }
+    
+    try:
+        # Fetch upcoming invoice from Stripe
+        upcoming = stripe.Invoice.upcoming(customer=customer_id)
+        
+        return {
+            "upcoming": {
+                "amount": upcoming.amount_due / 100,
+                "currency": upcoming.currency.upper(),
+                "date": datetime.fromtimestamp(upcoming.next_payment_attempt, tz=timezone.utc).isoformat() if upcoming.next_payment_attempt else None,
+                "description": "Calendrax Subscription",
+                "status": "scheduled"
+            }
+        }
+    except stripe.error.InvalidRequestError as e:
+        # No upcoming invoice (e.g., subscription cancelled)
+        return {"upcoming": None}
+    except Exception as e:
+        logger.error(f"Error fetching upcoming invoice: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch upcoming invoice")
+
+@api_router.post("/billing/enable-invoice-emails")
+async def enable_invoice_emails(user: dict = Depends(require_business_owner)):
+    """Enable automatic invoice emails for the customer"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    subscription = await db.subscriptions.find_one({"businessId": business["id"]})
+    if not subscription:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    
+    customer_id = subscription.get("stripeCustomerId")
+    if not customer_id:
+        raise HTTPException(status_code=400, detail="No Stripe customer found. Please set up payment first.")
+    
+    try:
+        # Update customer to enable invoice emails
+        stripe.Customer.modify(
+            customer_id,
+            invoice_settings={
+                "custom_fields": None,
+                "default_payment_method": None,
+                "footer": "Thank you for using Calendrax!",
+                "rendering_options": None
+            }
+        )
+        
+        # Also update the subscription to send invoice emails
+        stripe_sub_id = subscription.get("stripeSubscriptionId")
+        if stripe_sub_id:
+            stripe.Subscription.modify(
+                stripe_sub_id,
+                collection_method="charge_automatically"
+            )
+        
+        return {"success": True, "message": "Invoice emails enabled"}
+    except Exception as e:
+        logger.error(f"Error enabling invoice emails: {e}")
+        raise HTTPException(status_code=500, detail="Failed to enable invoice emails")
+
 # ==================== TRIAL REMINDER ROUTES ====================
 
 @api_router.post("/admin/send-trial-reminders")
