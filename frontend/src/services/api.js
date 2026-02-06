@@ -75,7 +75,9 @@ export const staffAPI = {
 // Revenue
 export const revenueAPI = {
   getSummary: () => apiClient.get('/revenue'),
-  getByStaff: () => apiClient.get('/revenue/by-staff')
+  getByStaff: () => apiClient.get('/revenue/by-staff'),
+  getByService: () => apiClient.get('/revenue/by-service'),
+  getMonthly: () => apiClient.get('/revenue/monthly')
 };
 
 // Payouts
@@ -112,6 +114,7 @@ export const appointmentAPI = {
   getMine: () => apiClient.get('/my-appointments'),
   getBusinessAppointments: () => apiClient.get('/business-appointments'),
   getBusinessCustomers: () => apiClient.get('/business-customers'),
+  deleteCustomer: (customerId) => apiClient.delete(`/business-customers/${customerId}`),
   updateStatus: (id, status) => apiClient.put(`/appointments/${id}/status?status=${status}`),
   cancel: (id) => apiClient.put(`/appointments/${id}/cancel`)
 };
