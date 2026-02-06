@@ -402,16 +402,35 @@ const BusinessOwnerDashboard = () => {
   const loadRevenue = async () => {
     setRevenueLoading(true);
     try {
-      const [summaryRes, staffRes] = await Promise.all([
+      const [summaryRes, staffRes, serviceRes, monthlyRes] = await Promise.all([
         revenueAPI.getSummary(),
-        revenueAPI.getByStaff()
+        revenueAPI.getByStaff(),
+        revenueAPI.getByService(),
+        revenueAPI.getMonthly()
       ]);
       setRevenueSummary(summaryRes.data);
       setStaffRevenue(staffRes.data);
+      setServiceRevenue(serviceRes.data);
+      setMonthlyRevenue(monthlyRes.data);
     } catch (error) {
       console.error('Failed to load revenue data:', error);
     } finally {
       setRevenueLoading(false);
+    }
+  };
+
+  // ========== CUSTOMER MANAGEMENT ==========
+  const handleDeleteCustomer = async () => {
+    if (!customerToDelete) return;
+    try {
+      await appointmentAPI.deleteCustomer(customerToDelete.id);
+      setShowDeleteCustomerModal(false);
+      setCustomerToDelete(null);
+      setSelectedCustomer(null);
+      loadData(); // Refresh data
+    } catch (error) {
+      console.error('Failed to delete customer:', error);
+      alert('Failed to delete customer. Please try again.');
     }
   };
 
