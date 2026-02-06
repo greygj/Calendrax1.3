@@ -20,7 +20,7 @@ const ProtectedRoute = ({ children }) => {
   
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-appbg flex items-center justify-center">
         <div className="text-white">Loading...</div>
       </div>
     );
@@ -39,7 +39,7 @@ const AdminRoute = ({ children }) => {
   
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-appbg flex items-center justify-center">
         <div className="text-white">Loading...</div>
       </div>
     );
@@ -62,7 +62,7 @@ const PublicRoute = ({ children }) => {
   
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-appbg flex items-center justify-center">
         <div className="text-white">Loading...</div>
       </div>
     );
