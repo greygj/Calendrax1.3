@@ -2232,6 +2232,201 @@ const BusinessOwnerDashboard = () => {
                 )}
               </>
             )}
+
+            {/* Billing Sub-tab */}
+            {analyticsSubTab === 'billing' && (
+              <>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-white text-xl font-semibold">Billing History</h2>
+                  <button 
+                    onClick={loadBilling}
+                    disabled={billingLoading}
+                    className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+                    data-testid="refresh-billing-btn"
+                  >
+                    <RefreshCw className={`w-4 h-4 ${billingLoading ? 'animate-spin' : ''}`} />
+                    {billingLoading ? 'Loading...' : 'Refresh'}
+                  </button>
+                </div>
+
+                {billingLoading && billingInvoices.length === 0 ? (
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                    <Loader2 className="w-8 h-8 text-lime-400 animate-spin mx-auto mb-3" />
+                    <p className="text-gray-400">Loading billing history...</p>
+                  </div>
+                ) : (
+                  <>
+                    {/* Upcoming Invoice */}
+                    {billingUpcoming && (
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                          <Clock className="w-5 h-5 text-lime-400" />
+                          Next Invoice
+                        </h3>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-gray-400 text-sm">{billingUpcoming.description || 'Calendrax Subscription'}</p>
+                            {billingUpcoming.date && (
+                              <p className="text-gray-500 text-xs mt-1">
+                                Due: {new Date(billingUpcoming.date).toLocaleDateString('en-GB', { 
+                                  day: 'numeric', month: 'long', year: 'numeric' 
+                                })}
+                              </p>
+                            )}
+                            {billingUpcoming.status === 'pending_payment_setup' && (
+                              <p className="text-yellow-400 text-xs mt-1">Payment method required</p>
+                            )}
+                          </div>
+                          <p className="text-lime-400 text-2xl font-bold">£{billingUpcoming.amount?.toFixed(2) || '0.00'}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Invoice Info */}
+                    <div className="bg-lime-500/10 border border-lime-500/20 rounded-xl p-4 flex items-start gap-3">
+                      <FileText className="w-5 h-5 text-lime-400 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-lime-400 font-medium">Automatic Invoice Emails</p>
+                        <p className="text-lime-200 text-sm">
+                          Stripe automatically sends you an invoice email each time your subscription payment is processed.
+                          You can download PDF invoices below for your records.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Invoice List */}
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden" data-testid="invoice-list">
+                      <div className="p-4 border-b border-zinc-800">
+                        <h3 className="text-white font-medium flex items-center gap-2">
+                          <Receipt className="w-5 h-5 text-lime-400" />
+                          Invoice History
+                        </h3>
+                      </div>
+                      {billingInvoices.length > 0 ? (
+                        <div className="divide-y divide-zinc-800">
+                          {billingInvoices.map((invoice) => (
+                            <div key={invoice.id} className="p-4 hover:bg-zinc-800/50 transition-colors">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                                    invoice.paid ? 'bg-lime-500/20 text-lime-400' : 'bg-yellow-500/20 text-yellow-400'
+                                  }`}>
+                                    {invoice.paid ? <Check className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
+                                  </div>
+                                  <div>
+                                    <p className="text-white font-medium">
+                                      {invoice.number || 'Invoice'}
+                                    </p>
+                                    <p className="text-gray-500 text-sm">
+                                      {invoice.description || 'Calendrax Subscription'}
+                                    </p>
+                                    <p className="text-gray-600 text-xs">
+                                      {new Date(invoice.date).toLocaleDateString('en-GB', {
+                                        day: 'numeric', month: 'short', year: 'numeric'
+                                      })}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                  <div className="text-right">
+                                    <p className={`font-semibold ${invoice.paid ? 'text-lime-400' : 'text-yellow-400'}`}>
+                                      £{invoice.amount?.toFixed(2) || '0.00'}
+                                    </p>
+                                    <p className={`text-xs ${invoice.paid ? 'text-lime-400' : 'text-yellow-400'}`}>
+                                      {invoice.paid ? 'Paid' : invoice.status}
+                                    </p>
+                                  </div>
+                                  <div className="flex gap-2">
+                                    {invoice.pdfUrl && (
+                                      <a
+                                        href={invoice.pdfUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="p-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg transition-colors"
+                                        title="Download PDF"
+                                        data-testid={`download-invoice-${invoice.id}`}
+                                      >
+                                        <Download className="w-4 h-4 text-gray-400" />
+                                      </a>
+                                    )}
+                                    {invoice.hostedUrl && (
+                                      <a
+                                        href={invoice.hostedUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="p-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg transition-colors"
+                                        title="View Invoice"
+                                        data-testid={`view-invoice-${invoice.id}`}
+                                      >
+                                        <ExternalLink className="w-4 h-4 text-gray-400" />
+                                      </a>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="p-8 text-center">
+                          <Receipt className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                          <p className="text-gray-400 font-medium">No invoices yet</p>
+                          <p className="text-gray-500 text-sm mt-1">
+                            {subscription?.status === 'trial' 
+                              ? 'Invoices will appear here once your trial ends and subscription payments begin.'
+                              : 'Invoices will appear here once you set up your subscription payment.'}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Subscription Summary */}
+                    {subscription && (
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                          <CreditCard className="w-5 h-5 text-lime-400" />
+                          Subscription Summary
+                        </h3>
+                        <div className="grid md:grid-cols-3 gap-4">
+                          <div className="bg-zinc-800 rounded-lg p-4">
+                            <p className="text-gray-400 text-sm">Status</p>
+                            <p className={`font-semibold ${
+                              subscription.status === 'active' ? 'text-lime-400' : 
+                              subscription.status === 'trial' ? 'text-blue-400' : 'text-yellow-400'
+                            }`}>
+                              {subscription.status === 'trial' ? 'Free Trial' : 
+                               subscription.status === 'active' ? 'Active' : subscription.status}
+                            </p>
+                          </div>
+                          <div className="bg-zinc-800 rounded-lg p-4">
+                            <p className="text-gray-400 text-sm">Monthly Cost</p>
+                            <p className="text-lime-400 font-semibold">
+                              £{subscription.priceMonthly?.toFixed(2) || '10.00'}
+                            </p>
+                          </div>
+                          <div className="bg-zinc-800 rounded-lg p-4">
+                            <p className="text-gray-400 text-sm">
+                              {subscription.status === 'trial' ? 'Trial Ends' : 'Next Payment'}
+                            </p>
+                            <p className="text-white font-semibold">
+                              {subscription.trialEndDate 
+                                ? new Date(subscription.trialEndDate).toLocaleDateString('en-GB', {
+                                    day: 'numeric', month: 'short', year: 'numeric'
+                                  })
+                                : subscription.nextPaymentDate 
+                                  ? new Date(subscription.nextPaymentDate).toLocaleDateString('en-GB', {
+                                      day: 'numeric', month: 'short', year: 'numeric'
+                                    })
+                                  : 'N/A'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </>
+            )}
           </div>
         )}
         {/* Profile View */}
