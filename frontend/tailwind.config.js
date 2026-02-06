@@ -27,7 +27,7 @@ module.exports = {
                                 900: '#25211D'
                         },
                         appbg: '#313D4A',
-                        cardBg: '#2D3845',
+                        cardBg: '#202830',
                         background: 'hsl(var(--background))',
                         foreground: 'hsl(var(--foreground))',
                         card: {
