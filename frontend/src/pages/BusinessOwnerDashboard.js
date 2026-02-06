@@ -2885,6 +2885,77 @@ const BusinessOwnerDashboard = () => {
                 Business Details
               </h3>
               
+              {/* Logo Upload Section */}
+              <div>
+                <label className="text-gray-400 text-sm block mb-3">Business Logo</label>
+                <div className="flex items-start gap-6">
+                  {/* Logo Preview */}
+                  <div className="relative">
+                    <div className="w-24 h-24 bg-zinc-800 border-2 border-dashed border-zinc-600 rounded-xl overflow-hidden flex items-center justify-center">
+                      {profileForm.logo ? (
+                        <img 
+                          src={profileForm.logo} 
+                          alt="Business Logo" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="text-center">
+                          <Image className="w-8 h-8 text-gray-500 mx-auto mb-1" />
+                          <p className="text-gray-500 text-xs">No logo</p>
+                        </div>
+                      )}
+                    </div>
+                    {profileForm.logo && (
+                      <button
+                        type="button"
+                        onClick={handleLogoRemove}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-400 transition-colors"
+                        title="Remove logo"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                  
+                  {/* Upload Button & Info */}
+                  <div className="flex-1">
+                    <input
+                      ref={logoInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      className="hidden"
+                      data-testid="logo-upload-input"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => logoInputRef.current?.click()}
+                      disabled={logoUploading}
+                      className="flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                      data-testid="upload-logo-btn"
+                    >
+                      {logoUploading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Uploading...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-4 h-4" />
+                          {profileForm.logo ? 'Change Logo' : 'Upload Logo'}
+                        </>
+                      )}
+                    </button>
+                    <p className="text-gray-500 text-xs mt-2">
+                      Recommended: Square image, at least 200x200px. Max 2MB.
+                    </p>
+                    <p className="text-gray-600 text-xs mt-1">
+                      Your logo appears on your business profile page and in the header.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="text-gray-400 text-sm block mb-2">Business Name</label>
