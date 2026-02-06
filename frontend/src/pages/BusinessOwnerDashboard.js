@@ -426,10 +426,19 @@ const BusinessOwnerDashboard = () => {
   const handleDeleteCustomer = async () => {
     if (!customerToDelete) return;
     try {
-      await appointmentAPI.deleteCustomer(customerToDelete.id);
+      const response = await appointmentAPI.deleteCustomer(customerToDelete.id);
       setShowDeleteCustomerModal(false);
       setCustomerToDelete(null);
       setSelectedCustomer(null);
+      
+      // Show detailed success message
+      const data = response.data;
+      let message = `${customerToDelete.name}'s future bookings have been deleted.`;
+      if (data.preservedAppointments > 0) {
+        message += `\n\n${data.preservedAppointments} past booking(s) preserved for revenue tracking (£${data.preservedRevenue?.toFixed(2) || '0.00'}).`;
+      }
+      alert(message);
+      
       loadData(); // Refresh data
     } catch (error) {
       console.error('Failed to delete customer:', error);
