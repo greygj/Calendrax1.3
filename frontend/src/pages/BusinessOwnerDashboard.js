@@ -3235,6 +3235,58 @@ const BusinessOwnerDashboard = () => {
         </div>
       )}
 
+      {/* Delete Customer Modal */}
+      {showDeleteCustomerModal && customerToDelete && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-md">
+            <div className="p-6">
+              <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="w-8 h-8 text-red-400" />
+              </div>
+              
+              <h3 className="text-white text-xl font-semibold text-center mb-2">
+                Delete Customer Record
+              </h3>
+              
+              <p className="text-gray-400 text-center mb-4">
+                Are you sure you want to delete <span className="text-white font-medium">{customerToDelete.name}</span>'s record?
+              </p>
+              
+              <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-6">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-red-400 font-medium">Warning</p>
+                    <p className="text-red-300/80 text-sm mt-1">
+                      This will permanently delete all booking records for this customer from your system. This action cannot be undone.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowDeleteCustomerModal(false);
+                    setCustomerToDelete(null);
+                  }}
+                  className="flex-1 bg-zinc-800 text-white font-semibold py-3 rounded-lg hover:bg-zinc-700 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteCustomer}
+                  className="flex-1 bg-red-500 text-white font-semibold py-3 rounded-lg hover:bg-red-400 transition-colors"
+                  data-testid="confirm-delete-customer"
+                >
+                  Delete Customer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Book for Customer Modal */}
       {showBookingModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
