@@ -434,12 +434,31 @@ const BusinessOwnerDashboard = () => {
     }
   };
 
+  // ========== BILLING FUNCTIONS ==========
+  const loadBilling = async () => {
+    setBillingLoading(true);
+    try {
+      const [invoicesRes, upcomingRes] = await Promise.all([
+        billingAPI.getInvoices(),
+        billingAPI.getUpcoming()
+      ]);
+      setBillingInvoices(invoicesRes.data.invoices || []);
+      setBillingUpcoming(upcomingRes.data.upcoming);
+    } catch (error) {
+      console.error('Failed to load billing:', error);
+    } finally {
+      setBillingLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (activeView === 'analytics') {
       if (analyticsSubTab === 'revenue') {
         loadRevenue();
       } else if (analyticsSubTab === 'payouts') {
         loadPayouts();
+      } else if (analyticsSubTab === 'billing') {
+        loadBilling();
       } else {
         loadAnalytics();
       }
