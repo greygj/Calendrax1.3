@@ -390,9 +390,9 @@ const Signup = () => {
               As a business owner, you'll have access to a <span className="text-lime-400 font-medium">30-day free trial</span>. After the trial, subscription fees apply:
             </p>
             <ul className="text-gray-400 text-sm space-y-1 ml-4 list-disc">
-              <li>1 Staff Member: <span className="text-white">£12/month</span></li>
-              <li>Each additional staff: <span className="text-white">+£8/month</span></li>
-              <li>Example: 3 staff = £28/month</li>
+              <li>1 Staff Member: <span className="text-white">£10/month</span></li>
+              <li>Each additional staff: <span className="text-white">+£5/month</span></li>
+              <li>Example: 3 staff = £20/month</li>
             </ul>
             <p className="text-gray-400 text-xs mt-2">
               A 5% platform fee applies to customer deposits to cover payment processing.
