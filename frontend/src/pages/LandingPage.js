@@ -47,7 +47,7 @@ const LandingPage = () => {
           <img 
             src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/syzj4nzu_1770417348108.png" 
             alt="Calendrax" 
-            className="h-12 mix-blend-multiply"
+            className="h-12 mix-blend-multiply brightness-150"
           />
           <div className="flex items-center gap-3">
             {user ? (
