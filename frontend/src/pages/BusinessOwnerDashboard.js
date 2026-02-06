@@ -657,6 +657,63 @@ const BusinessOwnerDashboard = () => {
     }
   };
 
+  // ========== LOGO UPLOAD ==========
+  const handleLogoUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload an image file');
+      return;
+    }
+
+    // Check file size (max 2MB for logos)
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Logo must be less than 2MB');
+      return;
+    }
+
+    setLogoUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await businessAPI.uploadPhoto(formData);
+      const logoUrl = response.data.url;
+
+      setProfileForm({ ...profileForm, logo: logoUrl });
+
+      // Save to backend
+      await businessAPI.updateMine({ ...profileForm, logo: logoUrl });
+      
+      // Update local business data
+      setBusinessData(prev => ({ ...prev, logo: logoUrl }));
+      
+      alert('Logo uploaded successfully!');
+    } catch (error) {
+      console.error('Failed to upload logo:', error);
+      alert('Failed to upload logo. Please try again.');
+    } finally {
+      setLogoUploading(false);
+      // Reset input
+      if (logoInputRef.current) {
+        logoInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleLogoRemove = async () => {
+    setProfileForm({ ...profileForm, logo: '' });
+    setBusinessData(prev => ({ ...prev, logo: '' }));
+
+    try {
+      await businessAPI.updateMine({ ...profileForm, logo: '' });
+    } catch (error) {
+      console.error('Failed to remove logo:', error);
+    }
+  };
+
   // ========== NOTIFICATIONS ==========
   const handleNotificationClick = async (notification) => {
     try {
