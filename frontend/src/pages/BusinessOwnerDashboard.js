@@ -1629,45 +1629,110 @@ const BusinessOwnerDashboard = () => {
             <h2 className="text-white text-xl font-semibold mb-6">Customers</h2>
             
             {customers.length > 0 ? (
-              <div className="space-y-3">
-                {customers.map(customer => {
-                  const customerAppointments = allAppointments.filter(a => a.userId === customer.id);
-                  return (
-                    <div key={customer.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="text-white font-medium">{customer.name}</h4>
-                          <p className="text-gray-400 text-sm">{customer.email}</p>
-                          {customer.phone && <p className="text-gray-500 text-sm">{customer.phone}</p>}
-                          <p className="text-lime-400 text-sm mt-2">
-                            {customerAppointments.length} booking{customerAppointments.length !== 1 ? 's' : ''}
-                          </p>
-                        </div>
-                      </div>
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+                {/* Customer List - Alphabetically sorted */}
+                <div className="divide-y divide-zinc-800">
+                  {[...customers]
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map(customer => {
+                      const customerAppointments = allAppointments.filter(a => a.userId === customer.id);
+                      const isSelected = selectedCustomer?.id === customer.id;
                       
-                      {customerAppointments.length > 0 && (
-                        <div className="mt-4 pt-4 border-t border-zinc-800">
-                          <p className="text-gray-500 text-sm mb-2">Recent bookings:</p>
-                          <div className="space-y-2">
-                            {customerAppointments.slice(0, 3).map(apt => (
-                              <div key={apt.id} className="flex items-center justify-between text-sm">
-                                <span className="text-gray-400">{apt.serviceName}</span>
-                                <span className="text-gray-500">{apt.date}</span>
-                                <span className={`px-2 py-0.5 rounded text-xs ${
-                                  apt.status === 'confirmed' ? 'bg-lime-500/20 text-lime-400'
-                                  : apt.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400'
-                                  : 'bg-gray-500/20 text-gray-400'
-                                }`}>
-                                  {apt.status}
-                                </span>
+                      return (
+                        <div key={customer.id}>
+                          {/* Customer Row - Click to expand */}
+                          <div 
+                            onClick={() => setSelectedCustomer(isSelected ? null : customer)}
+                            className={`p-4 cursor-pointer hover:bg-zinc-800/50 transition-colors flex items-center justify-between ${
+                              isSelected ? 'bg-zinc-800/50' : ''
+                            }`}
+                            data-testid={`customer-row-${customer.id}`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-lime-500/20 rounded-full flex items-center justify-center">
+                                <User className="w-5 h-5 text-lime-400" />
                               </div>
-                            ))}
+                              <div>
+                                <h4 className="text-white font-medium">{customer.name}</h4>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <span className="text-lime-400 font-semibold">
+                                {customerAppointments.length} booking{customerAppointments.length !== 1 ? 's' : ''}
+                              </span>
+                              <ChevronRight className={`w-5 h-5 text-gray-500 transition-transform ${isSelected ? 'rotate-90' : ''}`} />
+                            </div>
                           </div>
+                          
+                          {/* Expanded Customer Details */}
+                          {isSelected && (
+                            <div className="bg-zinc-800/30 p-4 border-t border-zinc-700">
+                              <div className="grid md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                  <p className="text-gray-500 text-sm">Email</p>
+                                  <p className="text-white">{customer.email}</p>
+                                </div>
+                                <div>
+                                  <p className="text-gray-500 text-sm">Phone</p>
+                                  <p className="text-white">{customer.phone || 'Not provided'}</p>
+                                </div>
+                              </div>
+                              
+                              {/* Booking History */}
+                              {customerAppointments.length > 0 && (
+                                <div className="mt-4">
+                                  <p className="text-gray-400 font-medium mb-3">Booking History</p>
+                                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                                    {customerAppointments
+                                      .sort((a, b) => new Date(b.date) - new Date(a.date))
+                                      .map(apt => (
+                                        <div key={apt.id} className="flex items-center justify-between bg-zinc-800 rounded-lg p-3 text-sm">
+                                          <div>
+                                            <span className="text-white">{apt.serviceName}</span>
+                                            {apt.staffName && <span className="text-gray-500 ml-2">with {apt.staffName}</span>}
+                                          </div>
+                                          <div className="flex items-center gap-3">
+                                            <span className="text-gray-400">{apt.date} at {apt.time}</span>
+                                            <span className={`px-2 py-0.5 rounded text-xs ${
+                                              apt.status === 'confirmed' ? 'bg-lime-500/20 text-lime-400'
+                                              : apt.status === 'completed' ? 'bg-blue-500/20 text-blue-400'
+                                              : apt.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400'
+                                              : apt.status === 'cancelled' ? 'bg-gray-500/20 text-gray-400'
+                                              : 'bg-red-500/20 text-red-400'
+                                            }`}>
+                                              {apt.status}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      ))}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {/* Delete Customer Button */}
+                              <div className="mt-4 pt-4 border-t border-zinc-700">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setCustomerToDelete(customer);
+                                    setShowDeleteCustomerModal(true);
+                                  }}
+                                  className="flex items-center gap-2 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors"
+                                  data-testid={`delete-customer-${customer.id}`}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                  Delete Customer Record
+                                </button>
+                                <p className="text-gray-500 text-xs mt-2">
+                                  This will remove all booking records for this customer from your system.
+                                </p>
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  );
-                })}
+                      );
+                    })}
+                </div>
               </div>
             ) : (
               <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
