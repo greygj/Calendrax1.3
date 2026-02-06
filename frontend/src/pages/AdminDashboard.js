@@ -619,7 +619,7 @@ const AdminDashboard = () => {
             <img 
               src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/syzj4nzu_1770417348108.png" 
               alt="Calendrax" 
-              className="h-10"
+              className="h-10 mix-blend-multiply"
             />
             <div>
               <h1 className="text-white text-xl font-bold">Calendrax Admin</h1>
