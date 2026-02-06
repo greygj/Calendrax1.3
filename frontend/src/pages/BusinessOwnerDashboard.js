@@ -1659,7 +1659,7 @@ const BusinessOwnerDashboard = () => {
             <div className="flex items-center gap-1 bg-zinc-900 border border-zinc-800 rounded-xl p-1 overflow-x-auto">
               {[
                 { id: 'overview', label: 'Overview', icon: PieChart },
-                { id: 'revenue', label: 'Revenue', icon: DollarSign },
+                { id: 'revenue', label: 'Revenue', icon: PoundSterling },
                 { id: 'payouts', label: 'Payouts', icon: Banknote },
                 { id: 'billing', label: 'Billing', icon: Receipt }
               ].map(tab => (
