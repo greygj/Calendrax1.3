@@ -139,6 +139,13 @@ export const subscriptionAPI = {
   cancel: () => apiClient.post('/subscription/cancel')
 };
 
+// Billing
+export const billingAPI = {
+  getInvoices: () => apiClient.get('/billing/invoices'),
+  getUpcoming: () => apiClient.get('/billing/upcoming'),
+  enableInvoiceEmails: () => apiClient.post('/billing/enable-invoice-emails')
+};
+
 // Notifications
 export const notificationAPI = {
   getAll: () => apiClient.get('/notifications'),
