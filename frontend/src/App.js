@@ -12,6 +12,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import BookingSuccess from "./pages/BookingSuccess";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import CookieConsent from "./components/CookieConsent";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -171,6 +172,7 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <AppRoutes />
+          <CookieConsent />
         </AuthProvider>
       </BrowserRouter>
     </div>
