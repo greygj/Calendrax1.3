@@ -148,7 +148,7 @@ const AdminDashboard = () => {
     if (loading) {
       return (
         <div className="flex items-center justify-center py-20">
-          <RefreshCw className="w-8 h-8 text-lime-400 animate-spin" />
+          <RefreshCw className="w-8 h-8 text-brand-400 animate-spin" />
         </div>
       );
     }
@@ -161,7 +161,7 @@ const AdminDashboard = () => {
             
             {/* Filters */}
             <div className="flex gap-2 mb-6">
-              <button className="px-4 py-2 bg-lime-500 text-black rounded-lg font-medium">All Users</button>
+              <button className="px-4 py-2 bg-brand-500 text-black rounded-lg font-medium">All Users</button>
               <button className="px-4 py-2 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700">Customers ({users.filter(u => u.role === 'customer').length})</button>
               <button className="px-4 py-2 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700">Business Owners ({users.filter(u => u.role === 'business_owner').length})</button>
             </div>
@@ -190,7 +190,7 @@ const AdminDashboard = () => {
                         onClick={() => handleSuspendUser(u.id, !u.suspended)}
                         className={`px-3 py-1.5 rounded-lg text-sm ${
                           u.suspended 
-                            ? 'bg-lime-500/20 text-lime-400 hover:bg-lime-500/30'
+                            ? 'bg-brand-500/20 text-brand-400 hover:bg-brand-500/30'
                             : 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30'
                         }`}
                       >
@@ -218,12 +218,12 @@ const AdminDashboard = () => {
             {/* Pending Approvals */}
             {pendingBusinesses.length > 0 && (
               <div className="mb-8">
-                <h3 className="text-lime-400 text-lg font-semibold mb-4 flex items-center gap-2">
+                <h3 className="text-brand-400 text-lg font-semibold mb-4 flex items-center gap-2">
                   <AlertTriangle className="w-5 h-5" /> Pending Approval ({pendingBusinesses.length})
                 </h3>
                 <div className="space-y-3">
                   {pendingBusinesses.map(b => (
-                    <div key={b.id} className="bg-lime-500/10 border border-lime-500/30 rounded-xl p-4">
+                    <div key={b.id} className="bg-brand-500/10 border border-brand-500/30 rounded-xl p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 rounded-lg bg-zinc-800 overflow-hidden">
@@ -244,7 +244,7 @@ const AdminDashboard = () => {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => handleApproveBusiness(b.id)}
-                            className="px-4 py-2 bg-lime-500 text-black rounded-lg font-medium hover:bg-lime-400 flex items-center gap-2"
+                            className="px-4 py-2 bg-brand-500 text-black rounded-lg font-medium hover:bg-brand-400 flex items-center gap-2"
                           >
                             <Check className="w-4 h-4" /> Approve
                           </button>
@@ -285,7 +285,7 @@ const AdminDashboard = () => {
                           <h4 className="text-white font-medium">{b.businessName}</h4>
                           <span className={`text-xs px-2 py-0.5 rounded ${
                             b.rejected ? 'bg-red-500/20 text-red-400' 
-                            : b.approved ? 'bg-lime-500/20 text-lime-400'
+                            : b.approved ? 'bg-brand-500/20 text-brand-400'
                             : 'bg-yellow-500/20 text-yellow-400'
                           }`}>
                             {b.rejected ? 'Rejected' : b.approved ? 'Approved' : 'Pending'}
@@ -298,7 +298,7 @@ const AdminDashboard = () => {
                       {!b.approved && !b.rejected && (
                         <button
                           onClick={() => handleApproveBusiness(b.id)}
-                          className="p-1.5 bg-lime-500/20 text-lime-400 rounded-lg hover:bg-lime-500/30"
+                          className="p-1.5 bg-brand-500/20 text-brand-400 rounded-lg hover:bg-brand-500/30"
                         >
                           <Check className="w-4 h-4" />
                         </button>
@@ -339,7 +339,7 @@ const AdminDashboard = () => {
               {subscriptions.map(sub => (
                 <div key={sub.id} className={`bg-zinc-900 border rounded-xl p-4 ${
                   sub.lastPaymentStatus === 'failed' ? 'border-red-500/50' 
-                  : sub.freeAccessOverride ? 'border-lime-500/50'
+                  : sub.freeAccessOverride ? 'border-brand-500/50'
                   : sub.status === 'active' ? 'border-zinc-800' 
                   : sub.status === 'trial' ? 'border-yellow-500/50'
                   : 'border-yellow-500/50'
@@ -349,8 +349,8 @@ const AdminDashboard = () => {
                       <div className="flex items-center gap-2">
                         <h4 className="text-white font-medium">{sub.business?.businessName || 'Unknown Business'}</h4>
                         <span className={`text-xs px-2 py-0.5 rounded uppercase ${
-                          sub.freeAccessOverride ? 'bg-lime-500/20 text-lime-400'
-                          : sub.status === 'active' ? 'bg-lime-500/20 text-lime-400'
+                          sub.freeAccessOverride ? 'bg-brand-500/20 text-brand-400'
+                          : sub.status === 'active' ? 'bg-brand-500/20 text-brand-400'
                           : sub.status === 'trial' ? 'bg-yellow-500/20 text-yellow-400'
                           : sub.status === 'past_due' ? 'bg-yellow-500/20 text-yellow-400'
                           : 'bg-red-500/20 text-red-400'
@@ -374,7 +374,7 @@ const AdminDashboard = () => {
                         className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                           sub.freeAccessOverride 
                             ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
-                            : 'bg-lime-500/20 text-lime-400 hover:bg-lime-500/30'
+                            : 'bg-brand-500/20 text-brand-400 hover:bg-brand-500/30'
                         }`}
                       >
                         {sub.freeAccessOverride ? 'Revoke Free' : 'Grant Free'}
@@ -422,7 +422,7 @@ const AdminDashboard = () => {
                     <div className="text-right">
                       <div className="flex items-center gap-2 mb-2">
                         <span className={`text-xs px-2 py-0.5 rounded ${
-                          apt.status === 'confirmed' ? 'bg-lime-500/20 text-lime-400'
+                          apt.status === 'confirmed' ? 'bg-brand-500/20 text-brand-400'
                           : apt.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400'
                           : apt.status === 'cancelled' ? 'bg-gray-500/20 text-gray-400'
                           : 'bg-red-500/20 text-red-400'
@@ -430,7 +430,7 @@ const AdminDashboard = () => {
                           {apt.status}
                         </span>
                         <span className={`text-xs px-2 py-0.5 rounded ${
-                          apt.paymentStatus === 'full_paid' ? 'bg-lime-500/20 text-lime-400'
+                          apt.paymentStatus === 'full_paid' ? 'bg-brand-500/20 text-brand-400'
                           : apt.paymentStatus === 'deposit_paid' ? 'bg-blue-500/20 text-blue-400'
                           : apt.paymentStatus === 'refunded' ? 'bg-purple-500/20 text-purple-400'
                           : 'bg-gray-500/20 text-gray-400'
@@ -493,8 +493,8 @@ const AdminDashboard = () => {
               </div>
               <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-lime-500/20 rounded-lg flex items-center justify-center">
-                    <Calendar className="w-5 h-5 text-lime-400" />
+                  <div className="w-10 h-10 bg-brand-500/20 rounded-lg flex items-center justify-center">
+                    <Calendar className="w-5 h-5 text-brand-400" />
                   </div>
                   <div>
                     <p className="text-gray-500 text-sm">Bookings</p>
@@ -552,7 +552,7 @@ const AdminDashboard = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <button 
                 onClick={() => setActiveView('users')}
-                className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center hover:bg-zinc-800 hover:border-lime-500/50 transition-all group"
+                className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center hover:bg-zinc-800 hover:border-brand-500/50 transition-all group"
               >
                 <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-500/30">
                   <Users className="w-6 h-6 text-blue-400" />
@@ -561,7 +561,7 @@ const AdminDashboard = () => {
               </button>
               <button 
                 onClick={() => setActiveView('businesses')}
-                className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center hover:bg-zinc-800 hover:border-lime-500/50 transition-all group"
+                className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center hover:bg-zinc-800 hover:border-brand-500/50 transition-all group"
               >
                 <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-purple-500/30">
                   <Building2 className="w-6 h-6 text-purple-400" />
@@ -570,7 +570,7 @@ const AdminDashboard = () => {
               </button>
               <button 
                 onClick={() => setActiveView('subscriptions')}
-                className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center hover:bg-zinc-800 hover:border-lime-500/50 transition-all group"
+                className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center hover:bg-zinc-800 hover:border-brand-500/50 transition-all group"
               >
                 <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-green-500/30">
                   <CreditCard className="w-6 h-6 text-green-400" />
@@ -579,10 +579,10 @@ const AdminDashboard = () => {
               </button>
               <button 
                 onClick={() => setActiveView('bookings')}
-                className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center hover:bg-zinc-800 hover:border-lime-500/50 transition-all group"
+                className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center hover:bg-zinc-800 hover:border-brand-500/50 transition-all group"
               >
-                <div className="w-12 h-12 bg-lime-500/20 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-lime-500/30">
-                  <Calendar className="w-6 h-6 text-lime-400" />
+                <div className="w-12 h-12 bg-brand-500/20 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-500/30">
+                  <Calendar className="w-6 h-6 text-brand-400" />
                 </div>
                 <span className="text-white font-medium">Bookings</span>
               </button>
@@ -601,7 +601,7 @@ const AdminDashboard = () => {
           <p className="text-gray-500 mb-4">You don't have permission to access this page.</p>
           <button 
             onClick={() => navigate('/')}
-            className="bg-lime-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-lime-400"
+            className="bg-brand-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-brand-400"
           >
             Go Back
           </button>
@@ -623,7 +623,7 @@ const AdminDashboard = () => {
             />
             <div>
               <h1 className="text-white text-xl font-bold">Calendrax Admin</h1>
-              <p className="text-lime-400 text-xs tracking-[0.2em]">PLATFORM ADMIN</p>
+              <p className="text-brand-400 text-xs tracking-[0.2em]">PLATFORM ADMIN</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -657,7 +657,7 @@ const AdminDashboard = () => {
                 onClick={() => setActiveView(view)}
                 className={`px-4 py-3 font-medium whitespace-nowrap transition-colors ${
                   activeView === view
-                    ? 'text-lime-400 border-b-2 border-lime-400'
+                    ? 'text-brand-400 border-b-2 border-brand-400'
                     : 'text-gray-400 hover:text-white'
                 }`}
               >

@@ -95,14 +95,14 @@ const BookingSuccess = () => {
         {/* Checking Payment Status */}
         {status === 'checking' && (
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center">
-            <Loader2 className="w-16 h-16 text-lime-500 mx-auto mb-4 animate-spin" />
+            <Loader2 className="w-16 h-16 text-brand-500 mx-auto mb-4 animate-spin" />
             <h1 className="text-white text-2xl font-bold mb-2">Confirming Your Booking</h1>
             <p className="text-gray-400 mb-4">Please wait while we verify your payment...</p>
             <div className="flex justify-center gap-1">
               {[...Array(5)].map((_, i) => (
                 <div
                   key={i}
-                  className={`w-2 h-2 rounded-full ${i < pollCount ? 'bg-lime-500' : 'bg-zinc-700'}`}
+                  className={`w-2 h-2 rounded-full ${i < pollCount ? 'bg-brand-500' : 'bg-zinc-700'}`}
                 />
               ))}
             </div>
@@ -112,7 +112,7 @@ const BookingSuccess = () => {
         {/* Success */}
         {status === 'success' && (
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center">
-            <div className="w-20 h-20 bg-lime-500 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-20 h-20 bg-brand-500 rounded-full flex items-center justify-center mx-auto mb-6">
               <Check className="w-10 h-10 text-black" />
             </div>
             <h1 className="text-white text-2xl font-bold mb-2">Booking Confirmed!</h1>
@@ -122,18 +122,18 @@ const BookingSuccess = () => {
               <div className="bg-zinc-800 rounded-xl p-4 mb-6 text-left">
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 text-white">
-                    <Building2 className="w-5 h-5 text-lime-400" />
+                    <Building2 className="w-5 h-5 text-brand-400" />
                     <span>{appointment.businessName}</span>
                   </div>
                   <div className="flex items-center gap-3 text-white">
                     <span className="text-gray-400 text-sm ml-8">{appointment.serviceName}</span>
                   </div>
                   <div className="flex items-center gap-3 text-white">
-                    <Calendar className="w-5 h-5 text-lime-400" />
+                    <Calendar className="w-5 h-5 text-brand-400" />
                     <span>{appointment.date}</span>
                   </div>
                   <div className="flex items-center gap-3 text-white">
-                    <Clock className="w-5 h-5 text-lime-400" />
+                    <Clock className="w-5 h-5 text-brand-400" />
                     <span>{appointment.time}</span>
                   </div>
                   {appointment.staffName && (
@@ -145,7 +145,7 @@ const BookingSuccess = () => {
                 <div className="border-t border-zinc-700 mt-4 pt-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Deposit Paid</span>
-                    <span className="text-lime-400">
+                    <span className="text-brand-400">
                       {appointment.depositPaid ? `£${appointment.depositAmount?.toFixed(2)}` : 'Free (Code Applied)'}
                     </span>
                   </div>
@@ -166,7 +166,7 @@ const BookingSuccess = () => {
 
             <button
               onClick={() => navigate('/dashboard')}
-              className="w-full bg-lime-500 text-black font-semibold py-3 rounded-lg hover:bg-lime-400 transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-brand-500 text-black font-semibold py-3 rounded-lg hover:bg-brand-400 transition-colors flex items-center justify-center gap-2"
             >
               <Home className="w-5 h-5" />
               Go to Dashboard
@@ -186,7 +186,7 @@ const BookingSuccess = () => {
             <div className="space-y-3">
               <button
                 onClick={() => navigate('/dashboard')}
-                className="w-full bg-lime-500 text-black font-semibold py-3 rounded-lg hover:bg-lime-400 transition-colors"
+                className="w-full bg-brand-500 text-black font-semibold py-3 rounded-lg hover:bg-brand-400 transition-colors"
               >
                 Go to Dashboard
               </button>

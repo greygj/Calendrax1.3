@@ -935,7 +935,7 @@ const BusinessOwnerDashboard = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-lime-500"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
       </div>
     );
   }
@@ -970,7 +970,7 @@ const BusinessOwnerDashboard = () => {
               >
                 <Bell className="w-5 h-5" />
                 {unreadNotifications.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-lime-500 text-black text-xs font-bold rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-brand-500 text-black text-xs font-bold rounded-full flex items-center justify-center">
                     {unreadNotifications.length}
                   </span>
                 )}
@@ -981,7 +981,7 @@ const BusinessOwnerDashboard = () => {
                   <div className="p-3 border-b border-zinc-800 flex items-center justify-between">
                     <h3 className="text-white font-semibold">Notifications</h3>
                     {unreadNotifications.length > 0 && (
-                      <button onClick={handleMarkAllRead} className="text-lime-400 text-sm hover:text-lime-300">
+                      <button onClick={handleMarkAllRead} className="text-brand-400 text-sm hover:text-brand-300">
                         Mark all read
                       </button>
                     )}
@@ -992,7 +992,7 @@ const BusinessOwnerDashboard = () => {
                         key={notif.id}
                         onClick={() => handleNotificationClick(notif)}
                         className={`w-full text-left p-3 border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors ${
-                          !notif.read ? 'bg-lime-500/5' : ''
+                          !notif.read ? 'bg-brand-500/5' : ''
                         }`}
                       >
                         <p className={`text-sm ${!notif.read ? 'text-white font-medium' : 'text-gray-400'}`}>
@@ -1034,14 +1034,14 @@ const BusinessOwnerDashboard = () => {
                 onClick={() => setActiveView(tab.id)}
                 className={`flex items-center gap-2 px-4 py-3 font-medium transition-colors whitespace-nowrap ${
                   activeView === tab.id
-                    ? 'text-lime-400 border-b-2 border-lime-400'
+                    ? 'text-brand-400 border-b-2 border-brand-400'
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
                 <tab.icon className="w-4 h-4" />
                 {tab.label}
                 {tab.badge > 0 && (
-                  <span className="w-5 h-5 bg-lime-500 text-black text-xs font-bold rounded-full flex items-center justify-center">
+                  <span className="w-5 h-5 bg-brand-500 text-black text-xs font-bold rounded-full flex items-center justify-center">
                     {tab.badge}
                   </span>
                 )}
@@ -1073,7 +1073,7 @@ const BusinessOwnerDashboard = () => {
                   <p className="text-gray-400 mt-1">{business?.description}</p>
                   {business?.postcode && (
                     <div className="flex items-center gap-1 mt-2">
-                      <MapPin className="w-4 h-4 text-lime-400" />
+                      <MapPin className="w-4 h-4 text-brand-400" />
                       <span className="text-gray-500">{business.postcode}</span>
                     </div>
                   )}
@@ -1089,7 +1089,7 @@ const BusinessOwnerDashboard = () => {
               </div>
               <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
                 <p className="text-gray-500 text-sm">Confirmed</p>
-                <p className="text-lime-400 text-2xl font-bold mt-1">{confirmedAppointments.length}</p>
+                <p className="text-brand-400 text-2xl font-bold mt-1">{confirmedAppointments.length}</p>
               </div>
               <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
                 <p className="text-gray-500 text-sm">Services</p>
@@ -1132,42 +1132,42 @@ const BusinessOwnerDashboard = () => {
                 <div className="text-center mb-6">
                   <Calendar className="w-12 h-12 text-gray-600 mx-auto mb-3" />
                   <p className="text-gray-500 mb-2">No appointments yet</p>
-                  <p className="text-lime-400 text-sm font-medium">Complete these steps to start receiving bookings:</p>
+                  <p className="text-brand-400 text-sm font-medium">Complete these steps to start receiving bookings:</p>
                 </div>
                 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <button
                     onClick={() => setActiveView('profile')}
-                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-lime-500 px-4 py-4 rounded-xl transition-all group"
+                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-brand-500 px-4 py-4 rounded-xl transition-all group"
                   >
-                    <User className="w-8 h-8 text-lime-400 group-hover:scale-110 transition-transform" />
+                    <User className="w-8 h-8 text-brand-400 group-hover:scale-110 transition-transform" />
                     <span className="text-white font-medium text-sm">Complete Profile</span>
                     <span className="text-gray-500 text-xs text-center">Add photos & details</span>
                   </button>
                   
                   <button
                     onClick={() => setActiveView('services')}
-                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-lime-500 px-4 py-4 rounded-xl transition-all group"
+                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-brand-500 px-4 py-4 rounded-xl transition-all group"
                   >
-                    <Settings className="w-8 h-8 text-lime-400 group-hover:scale-110 transition-transform" />
+                    <Settings className="w-8 h-8 text-brand-400 group-hover:scale-110 transition-transform" />
                     <span className="text-white font-medium text-sm">Add Your Menu</span>
                     <span className="text-gray-500 text-xs text-center">Set up services & prices</span>
                   </button>
                   
                   <button
                     onClick={() => setActiveView('staff')}
-                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-lime-500 px-4 py-4 rounded-xl transition-all group"
+                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-brand-500 px-4 py-4 rounded-xl transition-all group"
                   >
-                    <Users className="w-8 h-8 text-lime-400 group-hover:scale-110 transition-transform" />
+                    <Users className="w-8 h-8 text-brand-400 group-hover:scale-110 transition-transform" />
                     <span className="text-white font-medium text-sm">Set Staff Services</span>
                     <span className="text-gray-500 text-xs text-center">Assign services to staff</span>
                   </button>
                   
                   <button
                     onClick={() => setActiveView('availability')}
-                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-lime-500 px-4 py-4 rounded-xl transition-all group"
+                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-brand-500 px-4 py-4 rounded-xl transition-all group"
                   >
-                    <Clock className="w-8 h-8 text-lime-400 group-hover:scale-110 transition-transform" />
+                    <Clock className="w-8 h-8 text-brand-400 group-hover:scale-110 transition-transform" />
                     <span className="text-white font-medium text-sm">Set Availability</span>
                     <span className="text-gray-500 text-xs text-center">Choose working hours</span>
                   </button>
@@ -1195,7 +1195,7 @@ const BusinessOwnerDashboard = () => {
                       }}
                       className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${
                         selectedStaff?.id === staff.id
-                          ? 'bg-lime-500 text-black'
+                          ? 'bg-brand-500 text-black'
                           : 'bg-zinc-800 text-white hover:bg-zinc-700'
                       }`}
                     >
@@ -1254,15 +1254,15 @@ const BusinessOwnerDashboard = () => {
                           : dayInfo.isPast || dayInfo.isTooFar
                           ? 'bg-zinc-800/50 text-gray-600 cursor-not-allowed'
                           : selectedDate === dayInfo.date
-                          ? 'bg-lime-500 text-black font-bold'
+                          ? 'bg-brand-500 text-black font-bold'
                           : dayInfo.isToday
-                          ? 'bg-lime-500/30 text-lime-400 font-bold hover:bg-lime-500/40'
+                          ? 'bg-brand-500/30 text-brand-400 font-bold hover:bg-brand-500/40'
                           : 'bg-zinc-800 text-white hover:bg-zinc-700'
                       }`}
                     >
                       {dayInfo?.day}
                       {dayInfo?.hasSlots && selectedDate !== dayInfo.date && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-lime-400 mt-0.5"></span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-brand-400 mt-0.5"></span>
                       )}
                     </button>
                   ))}
@@ -1312,7 +1312,7 @@ const BusinessOwnerDashboard = () => {
                         onClick={() => toggleSlot(slot)}
                         className={`py-2 px-3 rounded-lg text-sm font-medium transition-all ${
                           selectedSlots.includes(slot)
-                            ? 'bg-lime-500 text-black'
+                            ? 'bg-brand-500 text-black'
                             : 'bg-zinc-800 text-white hover:bg-zinc-700'
                         }`}
                       >
@@ -1324,7 +1324,7 @@ const BusinessOwnerDashboard = () => {
                   {/* Save Button */}
                   <button
                     onClick={saveAvailability}
-                    className="w-full bg-lime-500 text-black font-semibold py-3 rounded-lg hover:bg-lime-400 transition-colors"
+                    className="w-full bg-brand-500 text-black font-semibold py-3 rounded-lg hover:bg-brand-400 transition-colors"
                   >
                     Save Availability ({selectedSlots.length} slots)
                   </button>
@@ -1353,7 +1353,7 @@ const BusinessOwnerDashboard = () => {
                   onClick={() => setAppointmentTab('current')}
                   className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                     appointmentTab === 'current'
-                      ? 'bg-lime-500 text-black'
+                      ? 'bg-brand-500 text-black'
                       : 'bg-zinc-800 text-gray-400 hover:text-white'
                   }`}
                 >
@@ -1363,7 +1363,7 @@ const BusinessOwnerDashboard = () => {
                   onClick={() => setAppointmentTab('history')}
                   className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                     appointmentTab === 'history'
-                      ? 'bg-lime-500 text-black'
+                      ? 'bg-brand-500 text-black'
                       : 'bg-zinc-800 text-gray-400 hover:text-white'
                   }`}
                 >
@@ -1375,7 +1375,7 @@ const BusinessOwnerDashboard = () => {
               {appointmentTab === 'current' && (
                 <button
                   onClick={openBookForCustomer}
-                  className="flex items-center gap-2 bg-lime-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-lime-400 transition-colors"
+                  className="flex items-center gap-2 bg-brand-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
                 >
                   <UserPlus className="w-4 h-4" /> Book for Customer
                 </button>
@@ -1399,7 +1399,7 @@ const BusinessOwnerDashboard = () => {
                             <div>
                               <h4 className="text-white font-medium">{apt.customerName}</h4>
                               <p className="text-gray-400 text-sm">{apt.customerEmail}</p>
-                              <p className="text-lime-400 mt-2">{apt.serviceName}</p>
+                              <p className="text-brand-400 mt-2">{apt.serviceName}</p>
                               {apt.staffName && <p className="text-gray-500 text-sm">with {apt.staffName}</p>}
                               <p className="text-gray-500 text-sm mt-1">
                                 {apt.date} at {apt.time}
@@ -1408,7 +1408,7 @@ const BusinessOwnerDashboard = () => {
                             <div className="flex gap-2">
                               <button
                                 onClick={() => handleApproveBooking(apt)}
-                                className="p-2 bg-lime-500 text-black rounded-lg hover:bg-lime-400 transition-colors"
+                                className="p-2 bg-brand-500 text-black rounded-lg hover:bg-brand-400 transition-colors"
                               >
                                 <Check className="w-5 h-5" />
                               </button>
@@ -1429,7 +1429,7 @@ const BusinessOwnerDashboard = () => {
                 {/* Confirmed Appointments */}
                 <div>
                   <h2 className="text-white text-xl font-semibold mb-4 flex items-center gap-2">
-                    <Check className="w-5 h-5 text-lime-400" />
+                    <Check className="w-5 h-5 text-brand-400" />
                     Confirmed ({confirmedAppointments.length})
                   </h2>
                   {confirmedAppointments.length > 0 ? (
@@ -1439,13 +1439,13 @@ const BusinessOwnerDashboard = () => {
                           <div className="flex items-start justify-between">
                             <div>
                               <h4 className="text-white font-medium">{apt.customerName}</h4>
-                              <p className="text-lime-400">{apt.serviceName}</p>
+                              <p className="text-brand-400">{apt.serviceName}</p>
                               {apt.staffName && <p className="text-gray-500 text-sm">with {apt.staffName}</p>}
                               <p className="text-gray-500 text-sm mt-1">
                                 {apt.date} at {apt.time}
                               </p>
                             </div>
-                            <span className="px-3 py-1 bg-lime-500/20 text-lime-400 text-sm rounded-full">
+                            <span className="px-3 py-1 bg-brand-500/20 text-brand-400 text-sm rounded-full">
                               Confirmed
                             </span>
                           </div>
@@ -1498,7 +1498,7 @@ const BusinessOwnerDashboard = () => {
                           </div>
                           <span className={`px-3 py-1 text-sm rounded-full ${
                             apt.status === 'completed' || (apt.status === 'confirmed' && isDatePassed(apt.date))
-                              ? 'bg-lime-500/20 text-lime-400'
+                              ? 'bg-brand-500/20 text-brand-400'
                               : apt.status === 'cancelled'
                               ? 'bg-gray-500/20 text-gray-400'
                               : apt.status === 'declined'
@@ -1531,7 +1531,7 @@ const BusinessOwnerDashboard = () => {
               <h2 className="text-white text-xl font-semibold">Manage Services</h2>
               <button
                 onClick={openAddService}
-                className="flex items-center gap-2 bg-lime-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-lime-400 transition-colors"
+                className="flex items-center gap-2 bg-brand-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
               >
                 <Plus className="w-4 h-4" /> Add Service
               </button>
@@ -1547,7 +1547,7 @@ const BusinessOwnerDashboard = () => {
                           <h4 className="text-white font-medium">{service.name}</h4>
                           <span className={`px-2 py-0.5 rounded text-xs ${
                             service.active !== false
-                              ? 'bg-lime-500/20 text-lime-400'
+                              ? 'bg-brand-500/20 text-brand-400'
                               : 'bg-gray-500/20 text-gray-400'
                           }`}>
                             {service.active !== false ? 'Active' : 'Inactive'}
@@ -1555,7 +1555,7 @@ const BusinessOwnerDashboard = () => {
                         </div>
                         <p className="text-gray-400 text-sm mt-1">{service.description}</p>
                         <div className="flex items-center gap-4 mt-2">
-                          <span className="text-lime-400 font-semibold">£{service.price}</span>
+                          <span className="text-brand-400 font-semibold">£{service.price}</span>
                           <span className="text-gray-500 text-sm flex items-center gap-1">
                             <Clock className="w-4 h-4" /> {service.duration} min
                           </span>
@@ -1567,7 +1567,7 @@ const BusinessOwnerDashboard = () => {
                           className={`px-3 py-1 rounded-lg text-sm transition-colors ${
                             service.active !== false
                               ? 'bg-gray-500/20 text-gray-400 hover:bg-gray-500/30'
-                              : 'bg-lime-500/20 text-lime-400 hover:bg-lime-500/30'
+                              : 'bg-brand-500/20 text-brand-400 hover:bg-brand-500/30'
                           }`}
                         >
                           {service.active !== false ? 'Deactivate' : 'Activate'}
@@ -1596,7 +1596,7 @@ const BusinessOwnerDashboard = () => {
                 <p className="text-gray-500 mb-4">No services yet</p>
                 <button
                   onClick={openAddService}
-                  className="bg-lime-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-lime-400 transition-colors"
+                  className="bg-brand-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
                 >
                   Add Your First Service
                 </button>
@@ -1616,7 +1616,7 @@ const BusinessOwnerDashboard = () => {
               {staffMembers.length < 5 && (
                 <button
                   onClick={openAddStaff}
-                  className="flex items-center gap-2 bg-lime-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-lime-400 transition-colors"
+                  className="flex items-center gap-2 bg-brand-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
                 >
                   <UserPlus className="w-4 h-4" /> Add Staff
                 </button>
@@ -1630,13 +1630,13 @@ const BusinessOwnerDashboard = () => {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <div className="w-10 h-10 rounded-full bg-lime-500/20 flex items-center justify-center">
-                            <User className="w-5 h-5 text-lime-400" />
+                          <div className="w-10 h-10 rounded-full bg-brand-500/20 flex items-center justify-center">
+                            <User className="w-5 h-5 text-brand-400" />
                           </div>
                           <div>
                             <h4 className="text-white font-medium">{staff.name}</h4>
                             {staff.isOwner && (
-                              <span className="text-lime-400 text-xs">Business Owner</span>
+                              <span className="text-brand-400 text-xs">Business Owner</span>
                             )}
                           </div>
                         </div>
@@ -1683,7 +1683,7 @@ const BusinessOwnerDashboard = () => {
                 <p className="text-gray-500 mb-4">No staff members yet</p>
                 <button
                   onClick={openAddStaff}
-                  className="bg-lime-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-lime-400 transition-colors"
+                  className="bg-brand-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
                 >
                   Add Your First Staff Member
                 </button>
@@ -1718,15 +1718,15 @@ const BusinessOwnerDashboard = () => {
                             data-testid={`customer-row-${customer.id}`}
                           >
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-lime-500/20 rounded-full flex items-center justify-center">
-                                <User className="w-5 h-5 text-lime-400" />
+                              <div className="w-10 h-10 bg-brand-500/20 rounded-full flex items-center justify-center">
+                                <User className="w-5 h-5 text-brand-400" />
                               </div>
                               <div>
                                 <h4 className="text-white font-medium">{customer.name}</h4>
                               </div>
                             </div>
                             <div className="flex items-center gap-4">
-                              <span className="text-lime-400 font-semibold">
+                              <span className="text-brand-400 font-semibold">
                                 {customerAppointments.length} booking{customerAppointments.length !== 1 ? 's' : ''}
                               </span>
                               <ChevronRight className={`w-5 h-5 text-gray-500 transition-transform ${isSelected ? 'rotate-90' : ''}`} />
@@ -1763,7 +1763,7 @@ const BusinessOwnerDashboard = () => {
                                           <div className="flex items-center gap-3">
                                             <span className="text-gray-400">{apt.date} at {apt.time}</span>
                                             <span className={`px-2 py-0.5 rounded text-xs ${
-                                              apt.status === 'confirmed' ? 'bg-lime-500/20 text-lime-400'
+                                              apt.status === 'confirmed' ? 'bg-brand-500/20 text-brand-400'
                                               : apt.status === 'completed' ? 'bg-blue-500/20 text-blue-400'
                                               : apt.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400'
                                               : apt.status === 'cancelled' ? 'bg-gray-500/20 text-gray-400'
@@ -1828,7 +1828,7 @@ const BusinessOwnerDashboard = () => {
                   onClick={() => setAnalyticsSubTab(tab.id)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
                     analyticsSubTab === tab.id
-                      ? 'bg-lime-500 text-black'
+                      ? 'bg-brand-500 text-black'
                       : 'text-gray-400 hover:text-white hover:bg-zinc-800'
                   }`}
                   data-testid={`analytics-tab-${tab.id}`}
@@ -1865,11 +1865,11 @@ const BusinessOwnerDashboard = () => {
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-1">Total Bookings</p>
                         <p className="text-white text-2xl font-bold">{analytics.averageMetrics.totalBookings}</p>
-                        <p className="text-lime-400 text-sm">{analytics.averageMetrics.confirmedBookings} confirmed</p>
+                        <p className="text-brand-400 text-sm">{analytics.averageMetrics.confirmedBookings} confirmed</p>
                       </div>
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-1">Avg. Booking Value</p>
-                        <p className="text-lime-400 text-2xl font-bold">£{analytics.averageMetrics.averageBookingValue.toFixed(2)}</p>
+                        <p className="text-brand-400 text-2xl font-bold">£{analytics.averageMetrics.averageBookingValue.toFixed(2)}</p>
                       </div>
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-1">Conversion Rate</p>
@@ -1878,7 +1878,7 @@ const BusinessOwnerDashboard = () => {
                       </div>
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-1">Customer Retention</p>
-                        <p className="text-lime-400 text-2xl font-bold">{analytics.customerRetention.retentionRate}%</p>
+                        <p className="text-brand-400 text-2xl font-bold">{analytics.customerRetention.retentionRate}%</p>
                         <p className="text-gray-500 text-sm">{analytics.customerRetention.repeatCustomers} repeat customers</p>
                       </div>
                     </div>
@@ -1887,7 +1887,7 @@ const BusinessOwnerDashboard = () => {
                       {/* Popular Services */}
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
-                          <TrendingUp className="w-5 h-5 text-lime-400" />
+                          <TrendingUp className="w-5 h-5 text-brand-400" />
                           Most Popular Services
                         </h3>
                         {analytics.popularServices.length > 0 ? (
@@ -1895,7 +1895,7 @@ const BusinessOwnerDashboard = () => {
                             {analytics.popularServices.map((service, index) => (
                               <div key={service.serviceId} className="flex items-center justify-between bg-zinc-800 rounded-lg p-3">
                                 <div className="flex items-center gap-3">
-                                  <div className="w-8 h-8 bg-lime-500/20 rounded-full flex items-center justify-center text-lime-400 font-semibold text-sm">
+                                  <div className="w-8 h-8 bg-brand-500/20 rounded-full flex items-center justify-center text-brand-400 font-semibold text-sm">
                                     {index + 1}
                                   </div>
                                   <div>
@@ -1903,7 +1903,7 @@ const BusinessOwnerDashboard = () => {
                                     <p className="text-gray-500 text-sm">{service.count} bookings</p>
                                   </div>
                                 </div>
-                                <p className="text-lime-400 font-semibold">£{service.revenue.toFixed(2)}</p>
+                                <p className="text-brand-400 font-semibold">£{service.revenue.toFixed(2)}</p>
                               </div>
                             ))}
                           </div>
@@ -1915,7 +1915,7 @@ const BusinessOwnerDashboard = () => {
                       {/* Peak Hours */}
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
-                          <Clock className="w-5 h-5 text-lime-400" />
+                          <Clock className="w-5 h-5 text-brand-400" />
                           Peak Booking Hours
                         </h3>
                         {analytics.peakHours.length > 0 ? (
@@ -1924,7 +1924,7 @@ const BusinessOwnerDashboard = () => {
                               <div key={hour.hour} className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                   <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm ${
-                                    index === 0 ? 'bg-lime-500 text-black' : 'bg-zinc-800 text-white'
+                                    index === 0 ? 'bg-brand-500 text-black' : 'bg-zinc-800 text-white'
                                   }`}>
                                     {index + 1}
                                   </div>
@@ -1933,7 +1933,7 @@ const BusinessOwnerDashboard = () => {
                                 <div className="flex items-center gap-2">
                                   <div className="w-24 bg-zinc-800 rounded-full h-2">
                                     <div 
-                                      className="bg-lime-500 h-2 rounded-full" 
+                                      className="bg-brand-500 h-2 rounded-full" 
                                       style={{ width: `${(hour.count / analytics.peakHours[0].count) * 100}%` }}
                                     />
                                   </div>
@@ -1952,7 +1952,7 @@ const BusinessOwnerDashboard = () => {
                       {/* Busiest Days */}
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
-                          <Calendar className="w-5 h-5 text-lime-400" />
+                          <Calendar className="w-5 h-5 text-brand-400" />
                           Busiest Days
                         </h3>
                         {analytics.busiestDays.length > 0 ? (
@@ -1961,7 +1961,7 @@ const BusinessOwnerDashboard = () => {
                               <div key={day.day} className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                   <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm ${
-                                    index === 0 ? 'bg-lime-500 text-black' : 'bg-zinc-800 text-white'
+                                    index === 0 ? 'bg-brand-500 text-black' : 'bg-zinc-800 text-white'
                                   }`}>
                                     {index + 1}
                                   </div>
@@ -1970,7 +1970,7 @@ const BusinessOwnerDashboard = () => {
                                 <div className="flex items-center gap-2">
                                   <div className="w-24 bg-zinc-800 rounded-full h-2">
                                     <div 
-                                      className="bg-lime-500 h-2 rounded-full" 
+                                      className="bg-brand-500 h-2 rounded-full" 
                                       style={{ width: `${(day.count / analytics.busiestDays[0].count) * 100}%` }}
                                     />
                                   </div>
@@ -1987,14 +1987,14 @@ const BusinessOwnerDashboard = () => {
                       {/* Booking Status Breakdown */}
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
-                          <PieChart className="w-5 h-5 text-lime-400" />
+                          <PieChart className="w-5 h-5 text-brand-400" />
                           Booking Status Breakdown
                         </h3>
                         {analytics.bookingStatusBreakdown.length > 0 ? (
                           <div className="space-y-3">
                             {analytics.bookingStatusBreakdown.map((item) => {
                               const colors = {
-                                confirmed: 'bg-lime-500',
+                                confirmed: 'bg-brand-500',
                                 completed: 'bg-green-500',
                                 pending: 'bg-yellow-500',
                                 cancelled: 'bg-red-500',
@@ -2020,7 +2020,7 @@ const BusinessOwnerDashboard = () => {
                     {/* Customer Insights */}
                     <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                       <h3 className="text-white font-medium mb-4 flex items-center gap-2">
-                        <Users className="w-5 h-5 text-lime-400" />
+                        <Users className="w-5 h-5 text-brand-400" />
                         Customer Insights
                       </h3>
                       <div className="grid md:grid-cols-3 gap-4">
@@ -2029,7 +2029,7 @@ const BusinessOwnerDashboard = () => {
                           <p className="text-gray-400 text-sm">Total Customers</p>
                         </div>
                         <div className="bg-zinc-800 rounded-lg p-4 text-center">
-                          <p className="text-3xl font-bold text-lime-400">{analytics.customerRetention.repeatCustomers}</p>
+                          <p className="text-3xl font-bold text-brand-400">{analytics.customerRetention.repeatCustomers}</p>
                           <p className="text-gray-400 text-sm">Repeat Customers</p>
                         </div>
                         <div className="bg-zinc-800 rounded-lg p-4 text-center">
@@ -2042,7 +2042,7 @@ const BusinessOwnerDashboard = () => {
                     {/* Monthly Trend */}
                     <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                       <h3 className="text-white font-medium mb-4 flex items-center gap-2">
-                        <Activity className="w-5 h-5 text-lime-400" />
+                        <Activity className="w-5 h-5 text-brand-400" />
                         6-Month Trend
                       </h3>
                       <div className="grid grid-cols-6 gap-2">
@@ -2053,13 +2053,13 @@ const BusinessOwnerDashboard = () => {
                             <div key={index} className="text-center">
                               <div className="h-32 bg-zinc-800 rounded-lg flex flex-col justify-end p-1">
                                 <div 
-                                  className="bg-lime-500 rounded transition-all"
+                                  className="bg-brand-500 rounded transition-all"
                                   style={{ height: `${heightPercent}%`, minHeight: month.bookings > 0 ? '8px' : '0' }}
                                 />
                               </div>
                               <p className="text-xs text-gray-400 mt-2">{month.month}</p>
                               <p className="text-xs text-white">{month.bookings}</p>
-                              <p className="text-xs text-lime-400">£{month.revenue}</p>
+                              <p className="text-xs text-brand-400">£{month.revenue}</p>
                             </div>
                           );
                         })}
@@ -2107,7 +2107,7 @@ const BusinessOwnerDashboard = () => {
                         <p className="text-white text-3xl font-bold">£{revenueSummary.currentWeek.revenue.toFixed(2)}</p>
                         <p className="text-gray-500 text-sm">{revenueSummary.currentWeek.bookingCount} bookings</p>
                         <div className={`flex items-center gap-1 mt-2 text-sm ${
-                          revenueSummary.comparison.weekOverWeek.change >= 0 ? 'text-lime-400' : 'text-red-400'
+                          revenueSummary.comparison.weekOverWeek.change >= 0 ? 'text-brand-400' : 'text-red-400'
                         }`}>
                           {revenueSummary.comparison.weekOverWeek.change >= 0 ? (
                             <TrendingUp className="w-4 h-4" />
@@ -2127,7 +2127,7 @@ const BusinessOwnerDashboard = () => {
                         <p className="text-white text-3xl font-bold">£{revenueSummary.currentMonth.revenue.toFixed(2)}</p>
                         <p className="text-gray-500 text-sm">{revenueSummary.currentMonth.bookingCount} bookings</p>
                         <div className={`flex items-center gap-1 mt-2 text-sm ${
-                          revenueSummary.comparison.monthOverMonth.change >= 0 ? 'text-lime-400' : 'text-red-400'
+                          revenueSummary.comparison.monthOverMonth.change >= 0 ? 'text-brand-400' : 'text-red-400'
                         }`}>
                           {revenueSummary.comparison.monthOverMonth.change >= 0 ? (
                             <TrendingUp className="w-4 h-4" />
@@ -2144,7 +2144,7 @@ const BusinessOwnerDashboard = () => {
                       {/* Current Year */}
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-1">{revenueSummary.currentYear.label}</p>
-                        <p className="text-lime-400 text-3xl font-bold">£{revenueSummary.currentYear.revenue.toFixed(2)}</p>
+                        <p className="text-brand-400 text-3xl font-bold">£{revenueSummary.currentYear.revenue.toFixed(2)}</p>
                         <p className="text-gray-500 text-sm">{revenueSummary.currentYear.bookingCount} bookings</p>
                       </div>
                     </div>
@@ -2153,7 +2153,7 @@ const BusinessOwnerDashboard = () => {
                     {serviceRevenue && serviceRevenue.serviceRevenue && serviceRevenue.serviceRevenue.length > 0 && (
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
-                          <Settings className="w-5 h-5 text-lime-400" />
+                          <Settings className="w-5 h-5 text-brand-400" />
                           Revenue by Treatment
                         </h3>
                         <div className="space-y-3">
@@ -2161,7 +2161,7 @@ const BusinessOwnerDashboard = () => {
                             <div key={service.serviceId} className="flex items-center justify-between bg-zinc-800 rounded-lg p-4">
                               <div className="flex items-center gap-3">
                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                                  index === 0 ? 'bg-lime-500 text-black' : 'bg-zinc-700 text-white'
+                                  index === 0 ? 'bg-brand-500 text-black' : 'bg-zinc-700 text-white'
                                 }`}>
                                   {index + 1}
                                 </div>
@@ -2173,13 +2173,13 @@ const BusinessOwnerDashboard = () => {
                                   <p className="text-gray-500 text-sm">{service.bookingCount} booking{service.bookingCount !== 1 ? 's' : ''}</p>
                                 </div>
                               </div>
-                              <p className="text-lime-400 font-bold text-lg">£{service.totalRevenue.toFixed(2)}</p>
+                              <p className="text-brand-400 font-bold text-lg">£{service.totalRevenue.toFixed(2)}</p>
                             </div>
                           ))}
                         </div>
                         <div className="mt-4 pt-4 border-t border-zinc-700 flex justify-between items-center">
                           <p className="text-gray-400 font-medium">Total Revenue</p>
-                          <p className="text-lime-400 font-bold text-xl">£{serviceRevenue.totalRevenue.toFixed(2)}</p>
+                          <p className="text-brand-400 font-bold text-xl">£{serviceRevenue.totalRevenue.toFixed(2)}</p>
                         </div>
                       </div>
                     )}
@@ -2188,7 +2188,7 @@ const BusinessOwnerDashboard = () => {
                     {staffRevenue && staffRevenue.staffRevenue && staffRevenue.staffRevenue.length > 1 && (
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
-                          <Users className="w-5 h-5 text-lime-400" />
+                          <Users className="w-5 h-5 text-brand-400" />
                           Revenue by Staff Member
                         </h3>
                         <div className="space-y-4">
@@ -2202,8 +2202,8 @@ const BusinessOwnerDashboard = () => {
                               <div key={staff.staffId} className="bg-zinc-800 rounded-lg p-4">
                                 <div className="flex items-center justify-between mb-3">
                                   <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-lime-500/20 rounded-full flex items-center justify-center">
-                                      <User className="w-5 h-5 text-lime-400" />
+                                    <div className="w-10 h-10 bg-brand-500/20 rounded-full flex items-center justify-center">
+                                      <User className="w-5 h-5 text-brand-400" />
                                     </div>
                                     <div>
                                       <p className="text-white font-medium">{staff.staffName}</p>
@@ -2211,7 +2211,7 @@ const BusinessOwnerDashboard = () => {
                                     </div>
                                   </div>
                                   <div className="text-right">
-                                    <p className="text-lime-400 text-xl font-bold">£{totalRev.toFixed(2)}</p>
+                                    <p className="text-brand-400 text-xl font-bold">£{totalRev.toFixed(2)}</p>
                                     <p className="text-gray-500 text-sm">all time</p>
                                   </div>
                                 </div>
@@ -2225,7 +2225,7 @@ const BusinessOwnerDashboard = () => {
                                     <p className="text-gray-400 text-xs">This Month</p>
                                   </div>
                                   <div className="bg-zinc-700/50 rounded p-2">
-                                    <p className={`font-semibold ${change >= 0 ? 'text-lime-400' : 'text-red-400'}`}>
+                                    <p className={`font-semibold ${change >= 0 ? 'text-brand-400' : 'text-red-400'}`}>
                                       {change >= 0 ? '+' : ''}£{change.toFixed(2)}
                                     </p>
                                     <p className="text-gray-400 text-xs">vs Last Month</p>
@@ -2242,7 +2242,7 @@ const BusinessOwnerDashboard = () => {
                     {monthlyRevenue && monthlyRevenue.yearlyBreakdown && (
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
-                          <Calendar className="w-5 h-5 text-lime-400" />
+                          <Calendar className="w-5 h-5 text-brand-400" />
                           Monthly Revenue Breakdown
                         </h3>
                         <div className="overflow-x-auto">
@@ -2265,7 +2265,7 @@ const BusinessOwnerDashboard = () => {
                                     const monthData = yearData?.months?.[idx];
                                     const revenue = monthData?.revenue || 0;
                                     return (
-                                      <td key={year} className={`text-right py-3 px-2 ${revenue > 0 ? 'text-lime-400' : 'text-gray-600'}`}>
+                                      <td key={year} className={`text-right py-3 px-2 ${revenue > 0 ? 'text-brand-400' : 'text-gray-600'}`}>
                                         £{revenue.toFixed(2)}
                                       </td>
                                     );
@@ -2278,7 +2278,7 @@ const BusinessOwnerDashboard = () => {
                                 {monthlyRevenue.years.map(year => {
                                   const yearData = monthlyRevenue.yearlyBreakdown[year];
                                   return (
-                                    <td key={year} className="text-right text-lime-400 font-bold py-3 px-2">
+                                    <td key={year} className="text-right text-brand-400 font-bold py-3 px-2">
                                       £{(yearData?.yearTotal || 0).toFixed(2)}
                                     </td>
                                   );
@@ -2323,7 +2323,7 @@ const BusinessOwnerDashboard = () => {
                     {/* Fee Breakdown Info */}
                     <div className="bg-zinc-800/50 border border-zinc-700 rounded-xl p-4">
                       <p className="text-gray-300 text-sm">
-                        <span className="text-lime-400 font-medium">Fee Structure:</span> A {payoutHistory.summary.platformFeePercent || 5}% platform fee is deducted from each customer deposit to cover payment processing costs.
+                        <span className="text-brand-400 font-medium">Fee Structure:</span> A {payoutHistory.summary.platformFeePercent || 5}% platform fee is deducted from each customer deposit to cover payment processing costs.
                       </p>
                     </div>
 
@@ -2341,12 +2341,12 @@ const BusinessOwnerDashboard = () => {
                       </div>
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-1">You Receive (95%)</p>
-                        <p className="text-lime-400 text-2xl font-bold">£{payoutHistory.summary.totalReceived.toFixed(2)}</p>
+                        <p className="text-brand-400 text-2xl font-bold">£{payoutHistory.summary.totalReceived.toFixed(2)}</p>
                         <p className="text-gray-500 text-sm">After fees</p>
                       </div>
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-1">Net (After Refunds)</p>
-                        <p className="text-lime-400 text-2xl font-bold">£{payoutHistory.summary.netReceived.toFixed(2)}</p>
+                        <p className="text-brand-400 text-2xl font-bold">£{payoutHistory.summary.netReceived.toFixed(2)}</p>
                         {payoutHistory.summary.totalRefunded > 0 && (
                           <p className="text-red-400 text-sm">-£{payoutHistory.summary.totalRefunded.toFixed(2)} refunded</p>
                         )}
@@ -2368,7 +2368,7 @@ const BusinessOwnerDashboard = () => {
                           </div>
                           <div className="flex justify-between border-t border-zinc-700 pt-2">
                             <span className="text-gray-300 font-medium">You Receive:</span>
-                            <span className="text-lime-400 font-bold">£{payoutHistory.summary.currentMonth.toFixed(2)}</span>
+                            <span className="text-brand-400 font-bold">£{payoutHistory.summary.currentMonth.toFixed(2)}</span>
                           </div>
                         </div>
                       </div>
@@ -2385,7 +2385,7 @@ const BusinessOwnerDashboard = () => {
                           </div>
                           <div className="flex justify-between border-t border-zinc-700 pt-2">
                             <span className="text-gray-300 font-medium">You Receive:</span>
-                            <span className="text-lime-400 font-bold">£{payoutHistory.summary.yearToDate.toFixed(2)}</span>
+                            <span className="text-brand-400 font-bold">£{payoutHistory.summary.yearToDate.toFixed(2)}</span>
                           </div>
                         </div>
                       </div>
@@ -2393,14 +2393,14 @@ const BusinessOwnerDashboard = () => {
 
                     {/* Payout Destination Notice */}
                     <div className={`rounded-xl p-4 flex items-start gap-3 ${
-                      payoutHistory.stripeConnected ? 'bg-lime-500/10 border border-lime-500/20' : 'bg-yellow-500/10 border border-yellow-500/20'
+                      payoutHistory.stripeConnected ? 'bg-brand-500/10 border border-brand-500/20' : 'bg-yellow-500/10 border border-yellow-500/20'
                     }`}>
                       {payoutHistory.stripeConnected ? (
                         <>
-                          <Check className="w-5 h-5 text-lime-400 flex-shrink-0 mt-0.5" />
+                          <Check className="w-5 h-5 text-brand-400 flex-shrink-0 mt-0.5" />
                           <div>
-                            <p className="text-lime-400 font-medium">Deposits going to: {payoutHistory.payoutDestination}</p>
-                            <p className="text-lime-200 text-sm">Customer deposits (minus 5% fee) are routed directly to your connected bank account.</p>
+                            <p className="text-brand-400 font-medium">Deposits going to: {payoutHistory.payoutDestination}</p>
+                            <p className="text-brand-200 text-sm">Customer deposits (minus 5% fee) are routed directly to your connected bank account.</p>
                           </div>
                         </>
                       ) : (
@@ -2418,7 +2418,7 @@ const BusinessOwnerDashboard = () => {
                     <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
                       <div className="p-4 border-b border-zinc-800">
                         <h3 className="text-white font-medium flex items-center gap-2">
-                          <Banknote className="w-5 h-5 text-lime-400" />
+                          <Banknote className="w-5 h-5 text-brand-400" />
                           Recent Deposits
                         </h3>
                       </div>
@@ -2429,7 +2429,7 @@ const BusinessOwnerDashboard = () => {
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-4">
                                   <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                                    payout.status === 'refunded' ? 'bg-red-500/20 text-red-400' : 'bg-lime-500/20 text-lime-400'
+                                    payout.status === 'refunded' ? 'bg-red-500/20 text-red-400' : 'bg-brand-500/20 text-brand-400'
                                   }`}>
                                     {payout.status === 'refunded' ? <XCircle className="w-5 h-5" /> : <Check className="w-5 h-5" />}
                                   </div>
@@ -2448,7 +2448,7 @@ const BusinessOwnerDashboard = () => {
                                         Deposit: £{(payout.depositAmount || payout.amount).toFixed(2)}
                                         {payout.platformFee > 0 && <span className="text-yellow-400"> - £{payout.platformFee.toFixed(2)} fee</span>}
                                       </p>
-                                      <p className="text-lime-400 font-semibold">
+                                      <p className="text-brand-400 font-semibold">
                                         +£{(payout.businessReceives || payout.amount).toFixed(2)}
                                       </p>
                                     </>
@@ -2503,7 +2503,7 @@ const BusinessOwnerDashboard = () => {
 
                 {billingLoading && billingInvoices.length === 0 ? (
                   <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
-                    <Loader2 className="w-8 h-8 text-lime-400 animate-spin mx-auto mb-3" />
+                    <Loader2 className="w-8 h-8 text-brand-400 animate-spin mx-auto mb-3" />
                     <p className="text-gray-400">Loading billing history...</p>
                   </div>
                 ) : (
@@ -2512,7 +2512,7 @@ const BusinessOwnerDashboard = () => {
                     {billingUpcoming && (
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
-                          <Clock className="w-5 h-5 text-lime-400" />
+                          <Clock className="w-5 h-5 text-brand-400" />
                           Next Invoice
                         </h3>
                         <div className="flex items-center justify-between">
@@ -2529,17 +2529,17 @@ const BusinessOwnerDashboard = () => {
                               <p className="text-yellow-400 text-xs mt-1">Payment method required</p>
                             )}
                           </div>
-                          <p className="text-lime-400 text-2xl font-bold">£{billingUpcoming.amount?.toFixed(2) || '0.00'}</p>
+                          <p className="text-brand-400 text-2xl font-bold">£{billingUpcoming.amount?.toFixed(2) || '0.00'}</p>
                         </div>
                       </div>
                     )}
 
                     {/* Invoice Info */}
-                    <div className="bg-lime-500/10 border border-lime-500/20 rounded-xl p-4 flex items-start gap-3">
-                      <FileText className="w-5 h-5 text-lime-400 flex-shrink-0 mt-0.5" />
+                    <div className="bg-brand-500/10 border border-brand-500/20 rounded-xl p-4 flex items-start gap-3">
+                      <FileText className="w-5 h-5 text-brand-400 flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-lime-400 font-medium">Automatic Invoice Emails</p>
-                        <p className="text-lime-200 text-sm">
+                        <p className="text-brand-400 font-medium">Automatic Invoice Emails</p>
+                        <p className="text-brand-200 text-sm">
                           Stripe automatically sends you an invoice email each time your subscription payment is processed.
                           You can download PDF invoices below for your records.
                         </p>
@@ -2550,7 +2550,7 @@ const BusinessOwnerDashboard = () => {
                     <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden" data-testid="invoice-list">
                       <div className="p-4 border-b border-zinc-800">
                         <h3 className="text-white font-medium flex items-center gap-2">
-                          <Receipt className="w-5 h-5 text-lime-400" />
+                          <Receipt className="w-5 h-5 text-brand-400" />
                           Invoice History
                         </h3>
                       </div>
@@ -2561,7 +2561,7 @@ const BusinessOwnerDashboard = () => {
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-4">
                                   <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                                    invoice.paid ? 'bg-lime-500/20 text-lime-400' : 'bg-yellow-500/20 text-yellow-400'
+                                    invoice.paid ? 'bg-brand-500/20 text-brand-400' : 'bg-yellow-500/20 text-yellow-400'
                                   }`}>
                                     {invoice.paid ? <Check className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
                                   </div>
@@ -2581,10 +2581,10 @@ const BusinessOwnerDashboard = () => {
                                 </div>
                                 <div className="flex items-center gap-4">
                                   <div className="text-right">
-                                    <p className={`font-semibold ${invoice.paid ? 'text-lime-400' : 'text-yellow-400'}`}>
+                                    <p className={`font-semibold ${invoice.paid ? 'text-brand-400' : 'text-yellow-400'}`}>
                                       £{invoice.amount?.toFixed(2) || '0.00'}
                                     </p>
-                                    <p className={`text-xs ${invoice.paid ? 'text-lime-400' : 'text-yellow-400'}`}>
+                                    <p className={`text-xs ${invoice.paid ? 'text-brand-400' : 'text-yellow-400'}`}>
                                       {invoice.paid ? 'Paid' : invoice.status}
                                     </p>
                                   </div>
@@ -2636,14 +2636,14 @@ const BusinessOwnerDashboard = () => {
                     {subscription && (
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
-                          <CreditCard className="w-5 h-5 text-lime-400" />
+                          <CreditCard className="w-5 h-5 text-brand-400" />
                           Subscription Summary
                         </h3>
                         <div className="grid md:grid-cols-3 gap-4">
                           <div className="bg-zinc-800 rounded-lg p-4">
                             <p className="text-gray-400 text-sm">Status</p>
                             <p className={`font-semibold ${
-                              subscription.status === 'active' ? 'text-lime-400' : 
+                              subscription.status === 'active' ? 'text-brand-400' : 
                               subscription.status === 'trial' ? 'text-blue-400' : 'text-yellow-400'
                             }`}>
                               {subscription.status === 'trial' ? 'Free Trial' : 
@@ -2652,7 +2652,7 @@ const BusinessOwnerDashboard = () => {
                           </div>
                           <div className="bg-zinc-800 rounded-lg p-4">
                             <p className="text-gray-400 text-sm">Monthly Cost</p>
-                            <p className="text-lime-400 font-semibold">
+                            <p className="text-brand-400 font-semibold">
                               £{subscription.priceMonthly?.toFixed(2) || '10.00'}
                             </p>
                           </div>
@@ -2690,13 +2690,13 @@ const BusinessOwnerDashboard = () => {
             {subscription && (
               <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                 <h3 className="text-white font-medium mb-4 flex items-center gap-2">
-                  <CreditCard className="w-5 h-5 text-lime-400" />
+                  <CreditCard className="w-5 h-5 text-brand-400" />
                   Subscription & Payment
                 </h3>
                 <div className="grid md:grid-cols-4 gap-4 mb-4">
                   <div className="bg-zinc-800 rounded-lg p-4">
                     <p className="text-gray-400 text-sm">Status</p>
-                    <p className={`font-semibold ${subscription.status === 'trial' ? 'text-yellow-400' : subscription.status === 'active' ? 'text-lime-400' : 'text-red-400'}`}>
+                    <p className={`font-semibold ${subscription.status === 'trial' ? 'text-yellow-400' : subscription.status === 'active' ? 'text-brand-400' : 'text-red-400'}`}>
                       {subscription.status === 'trial' ? 'Free Trial' : subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1)}
                     </p>
                   </div>
@@ -2706,7 +2706,7 @@ const BusinessOwnerDashboard = () => {
                   </div>
                   <div className="bg-zinc-800 rounded-lg p-4">
                     <p className="text-gray-400 text-sm">Monthly Price</p>
-                    <p className="text-lime-400 font-semibold">£{subscription.priceMonthly?.toFixed(2)}</p>
+                    <p className="text-brand-400 font-semibold">£{subscription.priceMonthly?.toFixed(2)}</p>
                   </div>
                   {subscription.status === 'trial' && subscription.trialDaysRemaining > 0 && (
                     <div className="bg-zinc-800 rounded-lg p-4">
@@ -2717,7 +2717,7 @@ const BusinessOwnerDashboard = () => {
                 </div>
                 
                 {subscription.freeAccessOverride ? (
-                  <p className="text-lime-400 text-sm flex items-center gap-2">
+                  <p className="text-brand-400 text-sm flex items-center gap-2">
                     <Check className="w-4 h-4" /> Free access granted by admin
                   </p>
                 ) : subscription.status === 'trial' ? (
@@ -2741,7 +2741,7 @@ const BusinessOwnerDashboard = () => {
                   </div>
                 ) : subscription.status === 'active' ? (
                   <div className="flex items-center justify-between">
-                    <p className="text-lime-400 text-sm flex items-center gap-2">
+                    <p className="text-brand-400 text-sm flex items-center gap-2">
                       <Check className="w-4 h-4" /> Subscription active - Payment method on file
                     </p>
                     <button
@@ -2785,7 +2785,7 @@ const BusinessOwnerDashboard = () => {
             {/* Stripe Connect Card */}
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
               <h3 className="text-white font-medium mb-4 flex items-center gap-2">
-                <Banknote className="w-5 h-5 text-lime-400" />
+                <Banknote className="w-5 h-5 text-brand-400" />
                 Bank Account (Receive Payments)
               </h3>
               
@@ -2797,7 +2797,7 @@ const BusinessOwnerDashboard = () => {
                   <button
                     onClick={handleConnectStripe}
                     disabled={stripeLoading}
-                    className="flex items-center gap-2 bg-lime-500 text-black px-6 py-3 rounded-lg font-medium hover:bg-lime-400 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-2 bg-brand-500 text-black px-6 py-3 rounded-lg font-medium hover:bg-brand-400 transition-colors disabled:opacity-50"
                   >
                     {stripeLoading ? (
                       <>Processing...</>
@@ -2812,7 +2812,7 @@ const BusinessOwnerDashboard = () => {
               ) : (
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-full ${stripeStatus.chargesEnabled ? 'bg-lime-500' : 'bg-yellow-500'}`}></div>
+                    <div className={`w-3 h-3 rounded-full ${stripeStatus.chargesEnabled ? 'bg-brand-500' : 'bg-yellow-500'}`}></div>
                     <span className="text-white">
                       {stripeStatus.chargesEnabled ? 'Account active - Ready to receive payments' : 'Account setup incomplete'}
                     </span>
@@ -2851,7 +2851,7 @@ const BusinessOwnerDashboard = () => {
             {/* Deposit Settings */}
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
               <h3 className="text-white font-medium mb-4 flex items-center gap-2">
-                <Settings className="w-5 h-5 text-lime-400" />
+                <Settings className="w-5 h-5 text-brand-400" />
                 Deposit Settings
               </h3>
               <p className="text-gray-400 mb-4">
@@ -2870,7 +2870,7 @@ const BusinessOwnerDashboard = () => {
                     onClick={() => setProfileForm({...profileForm, depositLevel: option.value})}
                     className={`p-4 rounded-lg border transition-all ${
                       profileForm.depositLevel === option.value
-                        ? 'bg-lime-500/20 border-lime-500 text-lime-400'
+                        ? 'bg-brand-500/20 border-brand-500 text-brand-400'
                         : 'bg-zinc-800 border-zinc-700 text-gray-400 hover:border-zinc-600'
                     }`}
                   >
@@ -2890,7 +2890,7 @@ const BusinessOwnerDashboard = () => {
             {/* Business Details Form */}
             <form onSubmit={handleProfileSave} className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-6">
               <h3 className="text-white font-medium flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-lime-400" />
+                <Building2 className="w-5 h-5 text-brand-400" />
                 Business Details
               </h3>
               
@@ -2972,7 +2972,7 @@ const BusinessOwnerDashboard = () => {
                     type="text"
                     value={profileForm.businessName}
                     onChange={(e) => setProfileForm({...profileForm, businessName: e.target.value})}
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-lime-500"
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-500"
                   />
                 </div>
                 
@@ -2982,7 +2982,7 @@ const BusinessOwnerDashboard = () => {
                     type="text"
                     value={profileForm.postcode}
                     onChange={(e) => setProfileForm({...profileForm, postcode: e.target.value})}
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-lime-500"
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-500"
                   />
                 </div>
               </div>
@@ -2993,7 +2993,7 @@ const BusinessOwnerDashboard = () => {
                   value={profileForm.description}
                   onChange={(e) => setProfileForm({...profileForm, description: e.target.value})}
                   rows={3}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-lime-500"
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-500"
                 />
               </div>
 
@@ -3003,7 +3003,7 @@ const BusinessOwnerDashboard = () => {
                   type="text"
                   value={profileForm.address}
                   onChange={(e) => setProfileForm({...profileForm, address: e.target.value})}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-lime-500"
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-500"
                   placeholder="Full business address"
                 />
               </div>
@@ -3015,7 +3015,7 @@ const BusinessOwnerDashboard = () => {
                     type="tel"
                     value={profileForm.phone}
                     onChange={(e) => setProfileForm({...profileForm, phone: e.target.value})}
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-lime-500"
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-500"
                   />
                 </div>
                 
@@ -3025,7 +3025,7 @@ const BusinessOwnerDashboard = () => {
                     type="email"
                     value={profileForm.email}
                     onChange={(e) => setProfileForm({...profileForm, email: e.target.value})}
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-lime-500"
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-500"
                   />
                 </div>
                 
@@ -3035,7 +3035,7 @@ const BusinessOwnerDashboard = () => {
                     type="url"
                     value={profileForm.website}
                     onChange={(e) => setProfileForm({...profileForm, website: e.target.value})}
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-lime-500"
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-500"
                     placeholder="https://"
                   />
                 </div>
@@ -3049,7 +3049,7 @@ const BusinessOwnerDashboard = () => {
                 </label>
                 <p className="text-gray-500 text-xs mb-3">
                   These photos will be displayed on your public business page. 
-                  <span className="text-lime-400 ml-1">The first photo becomes your hero/background image.</span>
+                  <span className="text-brand-400 ml-1">The first photo becomes your hero/background image.</span>
                 </p>
                 
                 <div className="grid grid-cols-3 gap-4 mb-4">
@@ -3058,7 +3058,7 @@ const BusinessOwnerDashboard = () => {
                     return (
                       <div key={index} className="relative aspect-square rounded-xl overflow-hidden bg-zinc-800">
                         {index === 0 && (
-                          <span className="absolute top-2 left-2 bg-lime-500 text-black text-xs px-2 py-1 rounded-full z-10 font-medium">
+                          <span className="absolute top-2 left-2 bg-brand-500 text-black text-xs px-2 py-1 rounded-full z-10 font-medium">
                             Hero
                           </span>
                         )}
@@ -3078,7 +3078,7 @@ const BusinessOwnerDashboard = () => {
                                   photoInputRef.current.dataset.replace = 'true';
                                   photoInputRef.current?.click();
                                 }}
-                                className="bg-lime-500 hover:bg-lime-400 text-black px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2"
+                                className="bg-brand-500 hover:bg-brand-400 text-black px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2"
                               >
                                 <Upload className="w-4 h-4" />
                                 Replace
@@ -3101,10 +3101,10 @@ const BusinessOwnerDashboard = () => {
                               photoInputRef.current?.click();
                             }}
                             disabled={photoUploading}
-                            className="w-full h-full border-2 border-dashed border-zinc-700 hover:border-lime-500 flex flex-col items-center justify-center gap-2 transition-colors rounded-xl"
+                            className="w-full h-full border-2 border-dashed border-zinc-700 hover:border-brand-500 flex flex-col items-center justify-center gap-2 transition-colors rounded-xl"
                           >
                             {photoUploading ? (
-                              <Loader2 className="w-8 h-8 text-lime-400 animate-spin" />
+                              <Loader2 className="w-8 h-8 text-brand-400 animate-spin" />
                             ) : (
                               <>
                                 <Upload className="w-8 h-8 text-gray-500" />
@@ -3131,7 +3131,7 @@ const BusinessOwnerDashboard = () => {
                 <button
                   type="submit"
                   disabled={profileSaving}
-                  className="flex items-center gap-2 bg-lime-500 text-black px-6 py-3 rounded-lg font-medium hover:bg-lime-400 transition-colors disabled:opacity-50"
+                  className="flex items-center gap-2 bg-brand-500 text-black px-6 py-3 rounded-lg font-medium hover:bg-brand-400 transition-colors disabled:opacity-50"
                 >
                   <Save className="w-4 h-4" />
                   {profileSaving ? 'Saving...' : 'Save Changes'}
@@ -3162,7 +3162,7 @@ const BusinessOwnerDashboard = () => {
                   type="text"
                   value={serviceForm.name}
                   onChange={(e) => setServiceForm({...serviceForm, name: e.target.value})}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-lime-500"
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-brand-500"
                   required
                 />
               </div>
@@ -3172,7 +3172,7 @@ const BusinessOwnerDashboard = () => {
                 <textarea
                   value={serviceForm.description}
                   onChange={(e) => setServiceForm({...serviceForm, description: e.target.value})}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-lime-500 min-h-20"
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-brand-500 min-h-20"
                   required
                 />
               </div>
@@ -3184,7 +3184,7 @@ const BusinessOwnerDashboard = () => {
                     type="number"
                     value={serviceForm.duration}
                     onChange={(e) => setServiceForm({...serviceForm, duration: parseInt(e.target.value) || 0})}
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-lime-500"
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-brand-500"
                     min="15"
                     step="15"
                     required
@@ -3196,7 +3196,7 @@ const BusinessOwnerDashboard = () => {
                     type="number"
                     value={serviceForm.price}
                     onChange={(e) => setServiceForm({...serviceForm, price: parseFloat(e.target.value) || 0})}
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-lime-500"
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-brand-500"
                     min="0"
                     step="0.01"
                     required
@@ -3206,7 +3206,7 @@ const BusinessOwnerDashboard = () => {
 
               <button
                 type="submit"
-                className="w-full bg-lime-500 text-black font-semibold py-3 rounded-lg hover:bg-lime-400 transition-colors"
+                className="w-full bg-brand-500 text-black font-semibold py-3 rounded-lg hover:bg-brand-400 transition-colors"
               >
                 {editingService ? 'Update Service' : 'Add Service'}
               </button>
@@ -3235,7 +3235,7 @@ const BusinessOwnerDashboard = () => {
                   type="text"
                   value={staffForm.name}
                   onChange={(e) => setStaffForm({...staffForm, name: e.target.value})}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-lime-500"
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-brand-500"
                   required
                 />
               </div>
@@ -3253,7 +3253,7 @@ const BusinessOwnerDashboard = () => {
                         type="checkbox"
                         checked={staffForm.serviceIds.includes(service.id)}
                         onChange={() => toggleStaffService(service.id)}
-                        className="w-4 h-4 rounded border-zinc-600 text-lime-500 focus:ring-lime-500 focus:ring-offset-zinc-900"
+                        className="w-4 h-4 rounded border-zinc-600 text-brand-500 focus:ring-brand-500 focus:ring-offset-zinc-900"
                       />
                       <div>
                         <p className="text-white text-sm">{service.name}</p>
@@ -3271,7 +3271,7 @@ const BusinessOwnerDashboard = () => {
 
               <button
                 type="submit"
-                className="w-full bg-lime-500 text-black font-semibold py-3 rounded-lg hover:bg-lime-400 transition-colors"
+                className="w-full bg-brand-500 text-black font-semibold py-3 rounded-lg hover:bg-brand-400 transition-colors"
               >
                 {editingStaff ? 'Update Staff' : 'Add Staff'}
               </button>
@@ -3286,10 +3286,10 @@ const BusinessOwnerDashboard = () => {
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-md">
             <div className="p-6">
               <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
-                staffConfirmData.type === 'add' ? 'bg-lime-500/20' : 'bg-yellow-500/20'
+                staffConfirmData.type === 'add' ? 'bg-brand-500/20' : 'bg-yellow-500/20'
               }`}>
                 {staffConfirmData.type === 'add' ? (
-                  <UserPlus className={`w-8 h-8 ${staffConfirmData.type === 'add' ? 'text-lime-400' : 'text-yellow-400'}`} />
+                  <UserPlus className={`w-8 h-8 ${staffConfirmData.type === 'add' ? 'text-brand-400' : 'text-yellow-400'}`} />
                 ) : (
                   <Trash2 className="w-8 h-8 text-yellow-400" />
                 )}
@@ -3333,13 +3333,13 @@ const BusinessOwnerDashboard = () => {
                   <ChevronRight className="w-5 h-5 text-gray-600" />
                   <div className="text-center">
                     <p className="text-gray-500 text-xs">New</p>
-                    <p className={`font-semibold ${staffConfirmData.type === 'add' ? 'text-lime-400' : 'text-yellow-400'}`}>
+                    <p className={`font-semibold ${staffConfirmData.type === 'add' ? 'text-brand-400' : 'text-yellow-400'}`}>
                       £{staffConfirmData.newPrice?.toFixed(2)}
                     </p>
                     <p className="text-gray-500 text-xs">{staffConfirmData.newStaffCount} staff</p>
                   </div>
                 </div>
-                <p className={`text-sm text-center mt-3 ${staffConfirmData.type === 'add' ? 'text-lime-400' : 'text-yellow-400'}`}>
+                <p className={`text-sm text-center mt-3 ${staffConfirmData.type === 'add' ? 'text-brand-400' : 'text-yellow-400'}`}>
                   {staffConfirmData.type === 'add' 
                     ? `+£${staffConfirmData.priceIncrease?.toFixed(2)}/month`
                     : `-£${staffConfirmData.priceDecrease?.toFixed(2)}/month`
@@ -3358,7 +3358,7 @@ const BusinessOwnerDashboard = () => {
                   onClick={handleConfirmStaffAction}
                   className={`flex-1 font-semibold py-3 rounded-lg transition-colors ${
                     staffConfirmData.type === 'add' 
-                      ? 'bg-lime-500 text-black hover:bg-lime-400'
+                      ? 'bg-brand-500 text-black hover:bg-brand-400'
                       : staffConfirmData.futureBookingsCount > 0
                         ? 'bg-red-500 text-white hover:bg-red-400'
                         : 'bg-yellow-500 text-black hover:bg-yellow-400'
@@ -3406,8 +3406,8 @@ const BusinessOwnerDashboard = () => {
                 </div>
               </div>
               
-              <div className="bg-lime-500/10 border border-lime-500/30 rounded-lg p-4 mb-6">
-                <p className="text-lime-400 text-sm">
+              <div className="bg-brand-500/10 border border-brand-500/30 rounded-lg p-4 mb-6">
+                <p className="text-brand-400 text-sm">
                   <strong>Revenue preserved:</strong> Historical revenue from past appointments will still be included in your analytics.
                 </p>
               </div>
@@ -3462,7 +3462,7 @@ const BusinessOwnerDashboard = () => {
                       customerPhone: customer?.mobile || ''
                     });
                   }}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-lime-500"
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-brand-500"
                 >
                   <option value="">-- New Customer --</option>
                   {businessCustomers.map(c => (
@@ -3478,21 +3478,21 @@ const BusinessOwnerDashboard = () => {
                     placeholder="Customer Name"
                     value={bookingForm.customerName}
                     onChange={(e) => setBookingForm({...bookingForm, customerName: e.target.value})}
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-lime-500"
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-brand-500"
                   />
                   <input
                     type="email"
                     placeholder="Customer Email"
                     value={bookingForm.customerEmail}
                     onChange={(e) => setBookingForm({...bookingForm, customerEmail: e.target.value})}
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-lime-500"
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-brand-500"
                   />
                   <input
                     type="tel"
                     placeholder="Customer Phone"
                     value={bookingForm.customerPhone}
                     onChange={(e) => setBookingForm({...bookingForm, customerPhone: e.target.value})}
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-lime-500"
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-brand-500"
                   />
                 </div>
               )}
@@ -3503,7 +3503,7 @@ const BusinessOwnerDashboard = () => {
                 <select
                   value={bookingForm.serviceId}
                   onChange={(e) => setBookingForm({...bookingForm, serviceId: e.target.value})}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-lime-500"
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-brand-500"
                   required
                 >
                   <option value="">Select a service</option>
@@ -3520,7 +3520,7 @@ const BusinessOwnerDashboard = () => {
                   <select
                     value={bookingForm.staffId}
                     onChange={(e) => setBookingForm({...bookingForm, staffId: e.target.value, date: '', time: ''})}
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-lime-500"
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-brand-500"
                   >
                     {staffMembers.map(s => (
                       <option key={s.id} value={s.id}>{s.name}</option>
@@ -3537,7 +3537,7 @@ const BusinessOwnerDashboard = () => {
                   value={bookingForm.date}
                   onChange={(e) => handleBookingDateSelect(e.target.value)}
                   min={new Date().toISOString().split('T')[0]}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-lime-500"
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-brand-500"
                   required
                 />
               </div>
@@ -3555,7 +3555,7 @@ const BusinessOwnerDashboard = () => {
                           onClick={() => setBookingForm({...bookingForm, time: slot})}
                           className={`py-2 px-3 rounded-lg text-sm font-medium transition-all ${
                             bookingForm.time === slot
-                              ? 'bg-lime-500 text-black'
+                              ? 'bg-brand-500 text-black'
                               : 'bg-zinc-800 text-white hover:bg-zinc-700'
                           }`}
                         >
@@ -3573,7 +3573,7 @@ const BusinessOwnerDashboard = () => {
               <button
                 onClick={handleBookForCustomerSubmit}
                 disabled={!bookingForm.serviceId || !bookingForm.date || !bookingForm.time || (!bookingForm.customerId && !bookingForm.customerEmail)}
-                className="w-full bg-lime-500 text-black font-semibold py-3 rounded-lg hover:bg-lime-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-brand-500 text-black font-semibold py-3 rounded-lg hover:bg-brand-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Create Booking
               </button>

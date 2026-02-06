@@ -318,7 +318,7 @@ const BusinessPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-lime-500"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
       </div>
     );
   }
@@ -331,7 +331,7 @@ const BusinessPage = () => {
           <p className="text-gray-500 mb-4">Business not found</p>
           <button
             onClick={() => navigate('/dashboard')}
-            className="bg-lime-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-lime-400 transition-colors"
+            className="bg-brand-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
           >
             Back to Dashboard
           </button>
@@ -383,7 +383,7 @@ const BusinessPage = () => {
           {/* Home Button */}
           <button
             onClick={() => navigate('/dashboard')}
-            className="flex items-center gap-2 bg-lime-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-lime-400 transition-colors"
+            className="flex items-center gap-2 bg-brand-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
           >
             <Home className="w-4 h-4" />
             Dashboard
@@ -395,14 +395,14 @@ const BusinessPage = () => {
       <main className="max-w-4xl mx-auto px-4 py-8">
         {/* Success Message */}
         {bookingSuccess && (
-          <div className="bg-lime-500/10 border border-lime-500/50 text-lime-400 px-4 py-4 rounded-xl mb-6">
+          <div className="bg-brand-500/10 border border-brand-500/50 text-brand-400 px-4 py-4 rounded-xl mb-6">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-lime-500 rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 bg-brand-500 rounded-full flex items-center justify-center flex-shrink-0">
                 <Check className="w-5 h-5 text-black" />
               </div>
               <div>
                 <p className="font-medium">Booking Request Sent!</p>
-                <p className="text-sm text-lime-400/80 mt-1">
+                <p className="text-sm text-brand-400/80 mt-1">
                   Your booking request has been sent to {business.businessName}. 
                   You will receive a notification once they confirm your appointment.
                 </p>
@@ -435,14 +435,14 @@ const BusinessPage = () => {
                         onClick={() => handleServiceToggle(service)}
                         className={`w-full text-left p-4 rounded-xl border transition-all ${
                           isSelected
-                            ? 'bg-lime-500/10 border-lime-500'
+                            ? 'bg-brand-500/10 border-brand-500'
                             : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
                         }`}
                       >
                         <div className="flex justify-between items-start">
                           <div className="flex items-start gap-3">
                             <div className={`w-6 h-6 rounded border-2 flex items-center justify-center mt-0.5 transition-all ${
-                              isSelected ? 'bg-lime-500 border-lime-500' : 'border-zinc-600'
+                              isSelected ? 'bg-brand-500 border-brand-500' : 'border-zinc-600'
                             }`}>
                               {isSelected && (
                                 <Check className="w-4 h-4 text-black" />
@@ -456,7 +456,7 @@ const BusinessPage = () => {
                               </span>
                             </div>
                           </div>
-                          <span className="text-lime-400 font-semibold">£{service.price}</span>
+                          <span className="text-brand-400 font-semibold">£{service.price}</span>
                         </div>
                       </button>
                     );
@@ -473,7 +473,7 @@ const BusinessPage = () => {
               {selectedServices.length > 0 && (
                 <div className="mt-4 bg-zinc-800 rounded-xl p-4">
                   <h3 className="text-white font-medium mb-3 flex items-center gap-2">
-                    <ShoppingCart className="w-4 h-4 text-lime-400" />
+                    <ShoppingCart className="w-4 h-4 text-brand-400" />
                     Selected Treatments ({selectedServices.length})
                   </h3>
                   <div className="space-y-2 mb-3">
@@ -491,7 +491,7 @@ const BusinessPage = () => {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Total Price:</span>
-                      <span className="text-lime-400 font-bold">£{totalPrice.toFixed(2)}</span>
+                      <span className="text-brand-400 font-bold">£{totalPrice.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
@@ -502,7 +502,7 @@ const BusinessPage = () => {
             {showStaffSelection && (
               <div className="mb-8">
                 <h2 className="text-white text-lg font-semibold mb-4 flex items-center gap-2">
-                  <User className="w-5 h-5 text-lime-400" /> Select Staff Member
+                  <User className="w-5 h-5 text-brand-400" /> Select Staff Member
                 </h2>
                 {availableStaff.length > 0 ? (
                   <div className="space-y-3">
@@ -512,18 +512,18 @@ const BusinessPage = () => {
                         onClick={() => handleStaffSelect(staff)}
                         className={`w-full text-left p-4 rounded-xl border transition-all ${
                           selectedStaff?.id === staff.id
-                            ? 'bg-lime-500/10 border-lime-500'
+                            ? 'bg-brand-500/10 border-brand-500'
                             : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-lime-500/20 flex items-center justify-center">
-                            <User className="w-5 h-5 text-lime-400" />
+                          <div className="w-10 h-10 rounded-full bg-brand-500/20 flex items-center justify-center">
+                            <User className="w-5 h-5 text-brand-400" />
                           </div>
                           <div>
                             <h4 className="text-white font-medium">{staff.name}</h4>
                             {staff.isOwner && (
-                              <span className="text-lime-400 text-xs">Business Owner</span>
+                              <span className="text-brand-400 text-xs">Business Owner</span>
                             )}
                           </div>
                         </div>
@@ -542,7 +542,7 @@ const BusinessPage = () => {
             {canShowCalendar && (
               <div className="mb-8">
                 <h2 className="text-white text-lg font-semibold mb-4 flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-lime-400" /> Select Date
+                  <Calendar className="w-5 h-5 text-brand-400" /> Select Date
                 </h2>
                 
                 <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
@@ -589,9 +589,9 @@ const BusinessPage = () => {
                             : dayInfo.hasSlots === false
                             ? 'bg-zinc-800/50 text-gray-600 cursor-not-allowed'
                             : selectedDate?.date === dayInfo.date
-                            ? 'bg-lime-500 text-black font-bold'
+                            ? 'bg-brand-500 text-black font-bold'
                             : dayInfo.isToday
-                            ? 'bg-lime-500/30 text-lime-400 font-bold hover:bg-lime-500/40'
+                            ? 'bg-brand-500/30 text-brand-400 font-bold hover:bg-brand-500/40'
                             : dayInfo.hasSlots === true
                             ? 'bg-zinc-800 text-white hover:bg-zinc-700'
                             : 'bg-zinc-800 text-white hover:bg-zinc-700'
@@ -599,7 +599,7 @@ const BusinessPage = () => {
                       >
                         {dayInfo?.day}
                         {dayInfo?.hasSlots === true && selectedDate?.date !== dayInfo.date && (
-                          <span className="w-1 h-1 rounded-full bg-lime-400 mt-0.5"></span>
+                          <span className="w-1 h-1 rounded-full bg-brand-400 mt-0.5"></span>
                         )}
                       </button>
                     ))}
@@ -616,7 +616,7 @@ const BusinessPage = () => {
             {selectedDate && selectedDate.availableSlots.length > 0 && (
               <div className="mb-8">
                 <h2 className="text-white text-lg font-semibold mb-4 flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-lime-400" /> Select Time
+                  <Clock className="w-5 h-5 text-brand-400" /> Select Time
                 </h2>
                 <div className="grid grid-cols-4 gap-2">
                   {selectedDate.availableSlots.map(time => (
@@ -625,7 +625,7 @@ const BusinessPage = () => {
                       onClick={() => setSelectedTime(time)}
                       className={`py-2 px-3 rounded-lg text-sm font-medium transition-all ${
                         selectedTime === time
-                          ? 'bg-lime-500 text-black'
+                          ? 'bg-brand-500 text-black'
                           : 'bg-zinc-900 border border-zinc-800 text-white hover:border-zinc-700'
                       }`}
                     >
@@ -656,7 +656,7 @@ const BusinessPage = () => {
                 {!isNoDeposit && (
                   <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
                     <h3 className="text-white text-sm font-medium mb-3 flex items-center gap-2">
-                      <Tag className="w-4 h-4 text-lime-400" /> Have an offer code?
+                      <Tag className="w-4 h-4 text-brand-400" /> Have an offer code?
                     </h3>
                     <div className="flex gap-2">
                       <input
@@ -668,7 +668,7 @@ const BusinessPage = () => {
                           setOfferCodeMessage('');
                         }}
                         placeholder="Enter code"
-                        className="flex-1 bg-zinc-800 border border-zinc-700 text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-lime-500"
+                        className="flex-1 bg-zinc-800 border border-zinc-700 text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-brand-500"
                       />
                       <button
                         onClick={handleValidateOfferCode}
@@ -678,7 +678,7 @@ const BusinessPage = () => {
                       </button>
                     </div>
                     {offerCodeMessage && (
-                      <p className={`text-sm mt-2 ${offerCodeValid ? 'text-lime-400' : 'text-red-400'}`}>
+                      <p className={`text-sm mt-2 ${offerCodeValid ? 'text-brand-400' : 'text-red-400'}`}>
                         {offerCodeMessage}
                       </p>
                     )}
@@ -688,7 +688,7 @@ const BusinessPage = () => {
                 {/* Booking Summary */}
                 <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
                   <h3 className="text-white text-sm font-medium mb-3 flex items-center gap-2">
-                    <CreditCard className="w-4 h-4 text-lime-400" /> Booking Summary
+                    <CreditCard className="w-4 h-4 text-brand-400" /> Booking Summary
                   </h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between text-gray-400">
@@ -715,19 +715,19 @@ const BusinessPage = () => {
                       <span className="text-white">£{totalPrice.toFixed(2)}</span>
                     </div>
                     {isNoDeposit && !offerCodeValid && (
-                      <div className="flex justify-between text-lime-400 font-medium">
+                      <div className="flex justify-between text-brand-400 font-medium">
                         <span>Deposit</span>
                         <span>Not required</span>
                       </div>
                     )}
                     {!isNoDeposit && !offerCodeValid && (
-                      <div className="flex justify-between text-lime-400 font-medium">
+                      <div className="flex justify-between text-brand-400 font-medium">
                         <span>{isFullPayment ? 'Payment' : `Deposit (${depositPercentage}%)`}</span>
                         <span>£{depositAmount}</span>
                       </div>
                     )}
                     {offerCodeValid && (
-                      <div className="flex justify-between text-lime-400 font-medium">
+                      <div className="flex justify-between text-brand-400 font-medium">
                         <span>Deposit</span>
                         <span>£0.00 (Code Applied)</span>
                       </div>
@@ -749,7 +749,7 @@ const BusinessPage = () => {
                 <button
                   onClick={handleBooking}
                   disabled={isProcessingPayment}
-                  className="w-full bg-lime-500 text-black font-semibold py-4 rounded-lg hover:bg-lime-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full bg-brand-500 text-black font-semibold py-4 rounded-lg hover:bg-brand-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isProcessingPayment ? (
                     <>
@@ -776,7 +776,7 @@ const BusinessPage = () => {
           <div>
             <div className="mb-4">
               <h2 className="text-white text-lg font-semibold mb-2 flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-lime-400" /> Location
+                <MapPin className="w-5 h-5 text-brand-400" /> Location
               </h2>
               {business.address && (
                 <p className="text-gray-500 text-sm mb-2">{business.address}</p>
@@ -817,7 +817,7 @@ const BusinessPage = () => {
                 </div>
                 <div>
                   <h3 className="text-white font-semibold">{business.businessName}</h3>
-                  <p className="text-lime-400 text-sm">{businessServices.length} services available</p>
+                  <p className="text-brand-400 text-sm">{businessServices.length} services available</p>
                 </div>
               </div>
               <p className="text-gray-400 text-sm">{business.description}</p>

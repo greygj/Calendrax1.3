@@ -191,7 +191,7 @@ const CustomerDashboard = () => {
               >
                 <Bell className="w-5 h-5" />
                 {unreadNotifications.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-lime-500 text-black text-xs font-bold rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-brand-500 text-black text-xs font-bold rounded-full flex items-center justify-center">
                     {unreadNotifications.length}
                   </span>
                 )}
@@ -205,7 +205,7 @@ const CustomerDashboard = () => {
                     {unreadNotifications.length > 0 && (
                       <button
                         onClick={handleMarkAllRead}
-                        className="text-lime-400 text-sm hover:text-lime-300"
+                        className="text-brand-400 text-sm hover:text-brand-300"
                       >
                         Mark all read
                       </button>
@@ -218,7 +218,7 @@ const CustomerDashboard = () => {
                           key={notif.id}
                           onClick={() => handleNotificationClick(notif)}
                           className={`w-full text-left p-3 border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors ${
-                            !notif.read ? 'bg-lime-500/5' : ''
+                            !notif.read ? 'bg-brand-500/5' : ''
                           }`}
                         >
                           <p className={`text-sm ${!notif.read ? 'text-white font-medium' : 'text-gray-400'}`}>
@@ -264,14 +264,14 @@ const CustomerDashboard = () => {
                 onClick={() => setActiveView(tab.id)}
                 className={`flex items-center gap-2 px-4 py-3 font-medium transition-colors whitespace-nowrap ${
                   activeView === tab.id
-                    ? 'text-lime-400 border-b-2 border-lime-400'
+                    ? 'text-brand-400 border-b-2 border-brand-400'
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
                 <tab.icon className="w-4 h-4" />
                 {tab.label}
                 {tab.badge > 0 && (
-                  <span className="w-5 h-5 bg-lime-500 text-black text-xs font-bold rounded-full flex items-center justify-center">
+                  <span className="w-5 h-5 bg-brand-500 text-black text-xs font-bold rounded-full flex items-center justify-center">
                     {tab.badge}
                   </span>
                 )}
@@ -285,7 +285,7 @@ const CustomerDashboard = () => {
       <main className="max-w-4xl mx-auto px-4 py-8">
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-lime-500"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
           </div>
         ) : (
           <>
@@ -304,7 +304,7 @@ const CustomerDashboard = () => {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
                     <p className="text-gray-500 text-sm">Upcoming Bookings</p>
-                    <p className="text-lime-400 text-3xl font-bold mt-1">{upcomingBookings.length}</p>
+                    <p className="text-brand-400 text-3xl font-bold mt-1">{upcomingBookings.length}</p>
                   </div>
                   <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
                     <p className="text-gray-500 text-sm">Past Bookings</p>
@@ -323,7 +323,7 @@ const CustomerDashboard = () => {
                       <h2 className="text-white text-lg font-semibold">Upcoming Bookings</h2>
                       <button
                         onClick={() => setActiveView('bookings')}
-                        className="text-lime-400 text-sm hover:text-lime-300 flex items-center gap-1"
+                        className="text-brand-400 text-sm hover:text-brand-300 flex items-center gap-1"
                       >
                         View all <ChevronRight className="w-4 h-4" />
                       </button>
@@ -334,7 +334,7 @@ const CustomerDashboard = () => {
                           <div className="flex items-start justify-between">
                             <div>
                               <h4 className="text-white font-medium">{booking.serviceName}</h4>
-                              <p className="text-lime-400 text-sm">{booking.businessName}</p>
+                              <p className="text-brand-400 text-sm">{booking.businessName}</p>
                               {booking.staffName && (
                                 <p className="text-gray-500 text-sm">with {booking.staffName}</p>
                               )}
@@ -345,7 +345,7 @@ const CustomerDashboard = () => {
                             </div>
                             <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                               booking.status === 'confirmed'
-                                ? 'bg-lime-500/20 text-lime-400'
+                                ? 'bg-brand-500/20 text-brand-400'
                                 : 'bg-yellow-500/20 text-yellow-400'
                             }`}>
                               {booking.status === 'confirmed' ? 'Confirmed' : 'Pending'}
@@ -363,7 +363,7 @@ const CustomerDashboard = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       onClick={() => setActiveView('businesses')}
-                      className="bg-lime-500 text-black p-4 rounded-xl font-medium hover:bg-lime-400 transition-colors flex items-center justify-center gap-2"
+                      className="bg-brand-500 text-black p-4 rounded-xl font-medium hover:bg-brand-400 transition-colors flex items-center justify-center gap-2"
                     >
                       <Building2 className="w-5 h-5" />
                       Browse Businesses
@@ -414,7 +414,7 @@ const CustomerDashboard = () => {
 
                           {/* Business Info */}
                           <div className="flex-1 min-w-0">
-                            <h3 className="text-white text-lg font-semibold group-hover:text-lime-400 transition-colors">
+                            <h3 className="text-white text-lg font-semibold group-hover:text-brand-400 transition-colors">
                               {business.businessName}
                             </h3>
                             <p className="text-gray-400 text-sm mt-1 line-clamp-1">{business.description}</p>
@@ -425,7 +425,7 @@ const CustomerDashboard = () => {
                           </div>
 
                           {/* Arrow */}
-                          <ChevronRight className="w-6 h-6 text-gray-500 group-hover:text-lime-400 transition-colors flex-shrink-0" />
+                          <ChevronRight className="w-6 h-6 text-gray-500 group-hover:text-brand-400 transition-colors flex-shrink-0" />
                         </div>
                       </button>
                     ))}
@@ -451,7 +451,7 @@ const CustomerDashboard = () => {
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <h4 className="text-white font-medium">{booking.serviceName}</h4>
-                            <p className="text-lime-400">{booking.businessName}</p>
+                            <p className="text-brand-400">{booking.businessName}</p>
                             {booking.staffName && (
                               <p className="text-gray-500 text-sm">with {booking.staffName}</p>
                             )}
@@ -469,7 +469,7 @@ const CustomerDashboard = () => {
                           <div className="flex flex-col items-end gap-2">
                             <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                               booking.status === 'confirmed'
-                                ? 'bg-lime-500/20 text-lime-400'
+                                ? 'bg-brand-500/20 text-brand-400'
                                 : 'bg-yellow-500/20 text-yellow-400'
                             }`}>
                               {booking.status === 'confirmed' ? 'Confirmed' : 'Pending'}
@@ -491,7 +491,7 @@ const CustomerDashboard = () => {
                     <p className="text-gray-500 mb-4">No upcoming bookings</p>
                     <button
                       onClick={() => setActiveView('businesses')}
-                      className="bg-lime-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-lime-400 transition-colors"
+                      className="bg-brand-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
                     >
                       Browse Businesses
                     </button>
@@ -529,7 +529,7 @@ const CustomerDashboard = () => {
                           </div>
                           <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                             booking.status === 'completed' || (booking.status === 'confirmed' && isDatePassed(booking.date))
-                              ? 'bg-lime-500/20 text-lime-400'
+                              ? 'bg-brand-500/20 text-brand-400'
                               : booking.status === 'cancelled'
                               ? 'bg-gray-500/20 text-gray-400'
                               : 'bg-red-500/20 text-red-400'
@@ -564,7 +564,7 @@ const CustomerDashboard = () => {
                   )}
                   
                   {profileSuccess && (
-                    <div className="bg-lime-500/10 border border-lime-500/50 text-lime-400 px-4 py-3 rounded-lg">
+                    <div className="bg-brand-500/10 border border-brand-500/50 text-brand-400 px-4 py-3 rounded-lg">
                       Profile updated successfully!
                     </div>
                   )}
@@ -577,7 +577,7 @@ const CustomerDashboard = () => {
                       type="text"
                       value={profileForm.fullName}
                       onChange={(e) => setProfileForm({...profileForm, fullName: e.target.value})}
-                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-lime-500"
+                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-500"
                       placeholder="Enter your full name"
                       required
                     />
@@ -591,7 +591,7 @@ const CustomerDashboard = () => {
                       type="email"
                       value={profileForm.email}
                       onChange={(e) => setProfileForm({...profileForm, email: e.target.value})}
-                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-lime-500"
+                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-500"
                       placeholder="Enter your email"
                       required
                     />
@@ -605,7 +605,7 @@ const CustomerDashboard = () => {
                       type="tel"
                       value={profileForm.mobile}
                       onChange={(e) => setProfileForm({...profileForm, mobile: e.target.value})}
-                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-lime-500"
+                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-500"
                       placeholder="Enter your phone number"
                       required
                     />
@@ -615,7 +615,7 @@ const CustomerDashboard = () => {
                     <button
                       type="submit"
                       disabled={profileSaving}
-                      className="flex items-center gap-2 bg-lime-500 text-black px-6 py-3 rounded-lg font-medium hover:bg-lime-400 transition-colors disabled:opacity-50"
+                      className="flex items-center gap-2 bg-brand-500 text-black px-6 py-3 rounded-lg font-medium hover:bg-brand-400 transition-colors disabled:opacity-50"
                     >
                       <Save className="w-4 h-4" />
                       {profileSaving ? 'Saving...' : 'Save Changes'}

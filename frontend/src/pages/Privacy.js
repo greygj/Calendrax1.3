@@ -21,7 +21,7 @@ const Privacy = () => {
 
   const Section = ({ title, children }) => (
     <div className="mb-6">
-      <h2 className="text-lime-400 text-lg font-semibold mb-3">{title}</h2>
+      <h2 className="text-brand-400 text-lg font-semibold mb-3">{title}</h2>
       <div className="text-gray-300 text-sm leading-relaxed space-y-2">
         {children}
       </div>
@@ -186,7 +186,7 @@ const Privacy = () => {
             <p className="mt-2">You also have the right to lodge a complaint with the Information Commissioner's Office (ICO):</p>
             <p className="mt-2">
               <strong className="text-white">Information Commissioner's Office</strong><br />
-              Website: <a href="https://ico.org.uk" target="_blank" rel="noopener noreferrer" className="text-lime-400 hover:underline">ico.org.uk</a><br />
+              Website: <a href="https://ico.org.uk" target="_blank" rel="noopener noreferrer" className="text-brand-400 hover:underline">ico.org.uk</a><br />
               Helpline: 0303 123 1113
             </p>
           </Section>

@@ -45,7 +45,7 @@ const PublicBusinessPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-lime-500"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
       </div>
     );
   }
@@ -58,7 +58,7 @@ const PublicBusinessPage = () => {
           <p className="text-gray-500 mb-4">Business not found</p>
           <button
             onClick={() => navigate('/')}
-            className="bg-lime-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-lime-400 transition-colors"
+            className="bg-brand-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
           >
             Back to Home
           </button>
@@ -98,7 +98,7 @@ const PublicBusinessPage = () => {
               </button>
               <button
                 onClick={() => navigate('/signup')}
-                className="bg-lime-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-lime-400 transition-colors text-sm"
+                className="bg-brand-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors text-sm"
               >
                 Sign Up
               </button>
@@ -153,19 +153,19 @@ const PublicBusinessPage = () => {
           <div className="flex flex-wrap gap-4 text-sm">
             {business.postcode && (
               <span className="flex items-center gap-2 text-gray-400">
-                <MapPin className="w-4 h-4 text-lime-400" />
+                <MapPin className="w-4 h-4 text-brand-400" />
                 {business.address || business.postcode}
               </span>
             )}
             {business.phone && (
               <span className="flex items-center gap-2 text-gray-400">
-                <Phone className="w-4 h-4 text-lime-400" />
+                <Phone className="w-4 h-4 text-brand-400" />
                 {business.phone}
               </span>
             )}
             {business.email && (
               <span className="flex items-center gap-2 text-gray-400">
-                <Mail className="w-4 h-4 text-lime-400" />
+                <Mail className="w-4 h-4 text-brand-400" />
                 {business.email}
               </span>
             )}
@@ -176,7 +176,7 @@ const PublicBusinessPage = () => {
         {businessPhotos.length > 1 && (
           <div className="mb-8">
             <h2 className="text-white text-xl font-semibold mb-4 flex items-center gap-2">
-              <ImageIcon className="w-5 h-5 text-lime-400" />
+              <ImageIcon className="w-5 h-5 text-brand-400" />
               Photos
             </h2>
             <div className="grid grid-cols-3 gap-3">
@@ -214,7 +214,7 @@ const PublicBusinessPage = () => {
                         {service.duration} min
                       </span>
                     </div>
-                    <span className="text-lime-400 font-semibold text-lg">£{service.price}</span>
+                    <span className="text-brand-400 font-semibold text-lg">£{service.price}</span>
                   </div>
                 </div>
               ))}
@@ -229,7 +229,7 @@ const PublicBusinessPage = () => {
         {/* Reviews Section */}
         <div className="mb-8">
           <h2 className="text-white text-xl font-semibold mb-4 flex items-center gap-2">
-            <Star className="w-5 h-5 text-lime-400" />
+            <Star className="w-5 h-5 text-brand-400" />
             Reviews
           </h2>
           {reviews.length > 0 ? (
@@ -265,7 +265,7 @@ const PublicBusinessPage = () => {
         {business.postcode && (
           <div className="mb-8">
             <h2 className="text-white text-xl font-semibold mb-4 flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-lime-400" />
+              <MapPin className="w-5 h-5 text-brand-400" />
               Location
             </h2>
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
@@ -291,7 +291,7 @@ const PublicBusinessPage = () => {
         <div className="max-w-4xl mx-auto">
           <button
             onClick={handleBookNow}
-            className="w-full bg-lime-500 text-black font-semibold py-4 rounded-xl hover:bg-lime-400 transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-brand-500 text-black font-semibold py-4 rounded-xl hover:bg-brand-400 transition-colors flex items-center justify-center gap-2"
           >
             Book Now
             <ChevronRight className="w-5 h-5" />

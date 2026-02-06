@@ -83,7 +83,7 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-lime-500 transition-colors"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
               required
             />
           </div>
@@ -99,7 +99,7 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-lime-500 transition-colors"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
               required
             />
             <button
@@ -116,7 +116,7 @@ const Login = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-lime-500 text-black font-semibold py-4 rounded-lg mt-6 hover:bg-lime-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-brand-500 text-black font-semibold py-4 rounded-lg mt-6 hover:bg-brand-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? 'Signing in...' : 'Sign In'}
         </button>
@@ -127,7 +127,7 @@ const Login = () => {
         Don't have an account?{' '}
         <Link 
           to={redirectUrl ? `/signup?redirect=${encodeURIComponent(redirectUrl)}` : '/signup'} 
-          className="text-lime-400 font-semibold hover:underline"
+          className="text-brand-400 font-semibold hover:underline"
         >
           Sign Up
         </Link>

@@ -158,7 +158,7 @@ const Signup = () => {
           onClick={() => setActiveTab('customer')}
           className={`flex-1 flex items-center justify-center gap-2 py-3.5 font-medium transition-all ${
             activeTab === 'customer'
-              ? 'bg-lime-500 text-black'
+              ? 'bg-brand-500 text-black'
               : 'bg-transparent text-gray-400 hover:text-white'
           }`}
         >
@@ -169,7 +169,7 @@ const Signup = () => {
           onClick={() => setActiveTab('business')}
           className={`flex-1 flex items-center justify-center gap-2 py-3.5 font-medium transition-all ${
             activeTab === 'business'
-              ? 'bg-lime-500 text-black'
+              ? 'bg-brand-500 text-black'
               : 'bg-transparent text-gray-400 hover:text-white'
           }`}
         >
@@ -198,7 +198,7 @@ const Signup = () => {
                 value={formData.businessName}
                 onChange={handleChange}
                 placeholder="Enter your business name"
-                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-lime-500 transition-colors"
+                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
                 required={activeTab === 'business'}
               />
             </div>
@@ -265,7 +265,7 @@ const Signup = () => {
               onChange={handleChange}
               placeholder="Describe what your business offers..."
               rows={3}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:border-lime-500 transition-colors resize-none"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors resize-none"
               required={activeTab === 'business'}
             />
           </div>
@@ -283,7 +283,7 @@ const Signup = () => {
                 value={formData.postcode}
                 onChange={handleChange}
                 placeholder="Enter your business postcode"
-                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-lime-500 transition-colors"
+                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
                 required={activeTab === 'business'}
               />
             </div>
@@ -301,7 +301,7 @@ const Signup = () => {
               value={formData.fullName}
               onChange={handleChange}
               placeholder="Enter your full name"
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-lime-500 transition-colors"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
               required
             />
           </div>
@@ -318,7 +318,7 @@ const Signup = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-lime-500 transition-colors"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
               required
             />
           </div>
@@ -335,7 +335,7 @@ const Signup = () => {
               value={formData.mobile}
               onChange={handleChange}
               placeholder="Enter your mobile number"
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-lime-500 transition-colors"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
               required
             />
           </div>
@@ -352,7 +352,7 @@ const Signup = () => {
               value={formData.password}
               onChange={handleChange}
               placeholder="Create a password"
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-lime-500 transition-colors"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
               required
             />
             <button
@@ -376,7 +376,7 @@ const Signup = () => {
               value={formData.confirmPassword}
               onChange={handleChange}
               placeholder="Confirm your password"
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-lime-500 transition-colors"
+              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
               required
             />
           </div>
@@ -384,10 +384,10 @@ const Signup = () => {
 
         {/* Subscription Fee Notice - Business Owner Only */}
         {activeTab === 'business' && (
-          <div className="bg-lime-500/10 border border-lime-500/30 rounded-lg p-4">
-            <h4 className="text-lime-400 font-semibold mb-2">Subscription Information</h4>
+          <div className="bg-brand-500/10 border border-brand-500/30 rounded-lg p-4">
+            <h4 className="text-brand-400 font-semibold mb-2">Subscription Information</h4>
             <p className="text-gray-300 text-sm mb-2">
-              As a business owner, you'll have access to a <span className="text-lime-400 font-medium">30-day free trial</span>. After the trial, subscription fees apply:
+              As a business owner, you'll have access to a <span className="text-brand-400 font-medium">30-day free trial</span>. After the trial, subscription fees apply:
             </p>
             <ul className="text-gray-400 text-sm space-y-1 ml-4 list-disc">
               <li>1 Staff Member: <span className="text-white">£10/month</span></li>
@@ -410,7 +410,7 @@ const Signup = () => {
                 onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
                 className="sr-only peer"
               />
-              <div className="w-5 h-5 border-2 border-zinc-600 rounded bg-zinc-900 peer-checked:bg-lime-500 peer-checked:border-lime-500 transition-all flex items-center justify-center">
+              <div className="w-5 h-5 border-2 border-zinc-600 rounded bg-zinc-900 peer-checked:bg-brand-500 peer-checked:border-brand-500 transition-all flex items-center justify-center">
                 {formData.acceptTerms && (
                   <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
@@ -420,7 +420,7 @@ const Signup = () => {
             </div>
             <span className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors">
               I have read and agree to the{' '}
-              <a href="/terms" target="_blank" className="text-lime-400 hover:underline">Terms and Conditions</a>
+              <a href="/terms" target="_blank" className="text-brand-400 hover:underline">Terms and Conditions</a>
               <span className="text-red-500 ml-1">*</span>
             </span>
           </label>
@@ -434,7 +434,7 @@ const Signup = () => {
                 onChange={(e) => setFormData({ ...formData, acceptPrivacy: e.target.checked })}
                 className="sr-only peer"
               />
-              <div className="w-5 h-5 border-2 border-zinc-600 rounded bg-zinc-900 peer-checked:bg-lime-500 peer-checked:border-lime-500 transition-all flex items-center justify-center">
+              <div className="w-5 h-5 border-2 border-zinc-600 rounded bg-zinc-900 peer-checked:bg-brand-500 peer-checked:border-brand-500 transition-all flex items-center justify-center">
                 {formData.acceptPrivacy && (
                   <svg className="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
@@ -444,7 +444,7 @@ const Signup = () => {
             </div>
             <span className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors">
               I have read and agree to the{' '}
-              <a href="/privacy" target="_blank" className="text-lime-400 hover:underline">Privacy Policy</a>
+              <a href="/privacy" target="_blank" className="text-brand-400 hover:underline">Privacy Policy</a>
               <span className="text-red-500 ml-1">*</span>
             </span>
           </label>
@@ -454,7 +454,7 @@ const Signup = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-lime-500 text-black font-semibold py-4 rounded-lg mt-6 hover:bg-lime-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-brand-500 text-black font-semibold py-4 rounded-lg mt-6 hover:bg-brand-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? 'Creating Account...' : 'Create Account'}
         </button>
@@ -463,7 +463,7 @@ const Signup = () => {
       {/* Sign In Link */}
       <p className="text-gray-500 mt-8 text-center">
         Already have an account?{' '}
-        <Link to="/" className="text-lime-400 font-semibold hover:underline">
+        <Link to="/" className="text-brand-400 font-semibold hover:underline">
           Sign In
         </Link>
       </p>

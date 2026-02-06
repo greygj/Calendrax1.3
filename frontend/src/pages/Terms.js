@@ -21,7 +21,7 @@ const Terms = () => {
 
   const Section = ({ title, children }) => (
     <div className="mb-6">
-      <h2 className="text-lime-400 text-lg font-semibold mb-3">{title}</h2>
+      <h2 className="text-brand-400 text-lg font-semibold mb-3">{title}</h2>
       <div className="text-gray-300 text-sm leading-relaxed space-y-2">
         {children}
       </div>

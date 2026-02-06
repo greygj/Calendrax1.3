@@ -47,20 +47,20 @@ const CookieConsent = () => {
         <div className="p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             {/* Icon */}
-            <div className="flex-shrink-0 w-12 h-12 bg-lime-400/10 rounded-full flex items-center justify-center">
-              <Cookie className="w-6 h-6 text-lime-400" />
+            <div className="flex-shrink-0 w-12 h-12 bg-brand-400/10 rounded-full flex items-center justify-center">
+              <Cookie className="w-6 h-6 text-brand-400" />
             </div>
             
             {/* Content */}
             <div className="flex-1">
               <h3 className="text-white font-semibold text-lg mb-1 flex items-center gap-2">
-                <Shield className="w-4 h-4 text-lime-400" />
+                <Shield className="w-4 h-4 text-brand-400" />
                 We value your privacy
               </h3>
               <p className="text-gray-400 text-sm leading-relaxed">
                 We use cookies to keep you logged in, remember your preferences, and improve our services. 
                 By clicking "Accept", you consent to our use of cookies as described in our{' '}
-                <Link to="/privacy" className="text-lime-400 hover:underline">Privacy Policy</Link>.
+                <Link to="/privacy" className="text-brand-400 hover:underline">Privacy Policy</Link>.
               </p>
             </div>
             
@@ -75,7 +75,7 @@ const CookieConsent = () => {
               </button>
               <button
                 onClick={handleAccept}
-                className="px-4 py-2 text-sm font-medium text-black bg-lime-400 hover:bg-lime-300 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium text-black bg-brand-400 hover:bg-brand-300 rounded-lg transition-colors"
                 data-testid="cookie-accept-btn"
               >
                 Accept All
@@ -87,7 +87,7 @@ const CookieConsent = () => {
           <div className="mt-4 pt-4 border-t border-zinc-800">
             <p className="text-gray-500 text-xs">
               Essential cookies are required for the platform to function. You can change your preferences at any time.
-              See our <Link to="/terms" className="text-lime-400 hover:underline">Terms & Conditions</Link> for more details.
+              See our <Link to="/terms" className="text-brand-400 hover:underline">Terms & Conditions</Link> for more details.
             </p>
           </div>
         </div>

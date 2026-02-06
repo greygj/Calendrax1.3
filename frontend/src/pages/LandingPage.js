@@ -53,7 +53,7 @@ const LandingPage = () => {
             {user ? (
               <button
                 onClick={() => navigate('/dashboard')}
-                className="bg-lime-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-lime-400 transition-colors"
+                className="bg-brand-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
               >
                 Go to Dashboard
               </button>
@@ -67,7 +67,7 @@ const LandingPage = () => {
                 </button>
                 <button
                   onClick={() => navigate('/signup')}
-                  className="bg-lime-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-lime-400 transition-colors"
+                  className="bg-brand-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
                 >
                   Sign Up
                 </button>
@@ -81,7 +81,7 @@ const LandingPage = () => {
       <section className="bg-gradient-to-b from-zinc-900 to-black py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Book Your Next <span className="text-lime-400">Appointment</span>
+            Book Your Next <span className="text-brand-400">Appointment</span>
           </h1>
           <p className="text-gray-400 text-lg mb-8">
             Discover and book services from local businesses in just a few clicks
@@ -95,7 +95,7 @@ const LandingPage = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search businesses by name or location..."
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-lime-500 transition-colors"
+              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
             />
           </div>
         </div>
@@ -109,7 +109,7 @@ const LandingPage = () => {
 
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-lime-500"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
           </div>
         ) : filteredBusinesses.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -133,7 +133,7 @@ const LandingPage = () => {
 
                 {/* Business Info */}
                 <div className="p-5">
-                  <h3 className="text-white text-lg font-semibold mb-2 group-hover:text-lime-400 transition-colors">
+                  <h3 className="text-white text-lg font-semibold mb-2 group-hover:text-brand-400 transition-colors">
                     {business.businessName}
                   </h3>
                   
@@ -160,7 +160,7 @@ const LandingPage = () => {
 
                   <button
                     onClick={() => handleViewBusiness(business.id)}
-                    className="w-full bg-zinc-800 text-white py-3 rounded-lg font-medium hover:bg-lime-500 hover:text-black transition-all flex items-center justify-center gap-2 group-hover:bg-lime-500 group-hover:text-black"
+                    className="w-full bg-zinc-800 text-white py-3 rounded-lg font-medium hover:bg-brand-500 hover:text-black transition-all flex items-center justify-center gap-2 group-hover:bg-brand-500 group-hover:text-black"
                   >
                     View & Book
                     <ArrowRight className="w-4 h-4" />
@@ -190,7 +190,7 @@ const LandingPage = () => {
           </p>
           <button
             onClick={() => navigate('/signup')}
-            className="bg-lime-500 text-black px-8 py-3 rounded-lg font-semibold hover:bg-lime-400 transition-colors"
+            className="bg-brand-500 text-black px-8 py-3 rounded-lg font-semibold hover:bg-brand-400 transition-colors"
           >
             Register Your Business
           </button>
