@@ -259,7 +259,7 @@ STRIPE_API_KEY=sk_test_emergent
   - 30-day free trial
   - £12/month for 1 staff, +£8/month each additional
   - 5% platform fee on deposits
-- [x] **Terms and Privacy placeholder pages** - `/terms` and `/privacy` routes created
+- [x] **Terms and Privacy pages** - `/terms` and `/privacy` routes with full legal content
 - [x] **New Logo** - Updated Calendrax logo throughout app
 
 ### Phase 10: Multi-Service Booking ✅ (February 2, 2026)
@@ -316,6 +316,22 @@ STRIPE_API_KEY=sk_test_emergent
   - `POST /api/admin/test-trial-reminder/{business_id}` - Test endpoint for sending reminders
 - [x] **Phone Number Formatting** - Automatic E.164 formatting for UK numbers (07xxx → +447xxx)
 
+### Phase 14: Legal Pages Content ✅ (December 2025)
+- [x] **Terms & Conditions** - Full professional content including:
+  - Business identity: Gareth Grey (Sole Trader) trading as Calendrax
+  - Subscription pricing: £10/month + £5/additional staff (no VAT)
+  - 5% platform fee on customer deposits
+  - 30-day free trial terms
+  - Cancellation and refund policies
+  - UK law governance
+- [x] **Privacy Policy** - UK GDPR compliant content including:
+  - Data controller information
+  - Information collection and usage
+  - Legal basis for processing
+  - User rights (access, rectification, erasure, portability)
+  - ICO complaints information
+  - Data retention and security
+
 ## Upcoming Tasks (P1)
 1. Enable Stripe Connect on your Stripe account to activate business payout functionality
 2. Add Google Maps API for accurate business location display
@@ -325,3 +341,5 @@ STRIPE_API_KEY=sk_test_emergent
 ## Future/Backlog (P2)
 1. Customer reviews and ratings
 2. Refactor server.py into modular structure (routes/, models/, auth/)
+3. Refactor BusinessOwnerDashboard.js into smaller components
+4. Export analytics functionality (CSV/PDF reports)
