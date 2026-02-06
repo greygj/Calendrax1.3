@@ -45,7 +45,7 @@ const LandingPage = () => {
       <header className="bg-cardBg border-b border-zinc-800">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <img 
-            src="https://customer-assets.emergentagent.com/job_f0df9ebf-768b-4fcd-bb61-3b3b5c837dfa/artifacts/92mrru0r_Calendrax%20Logo%20New.png" 
+            src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/ndfsqqas_1770416747206.png" 
             alt="Calendrax" 
             className="h-12"
           />
@@ -201,7 +201,7 @@ const LandingPage = () => {
       <footer className="bg-appbg border-t border-zinc-800 py-8 px-4">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <img 
-            src="https://customer-assets.emergentagent.com/job_f0df9ebf-768b-4fcd-bb61-3b3b5c837dfa/artifacts/92mrru0r_Calendrax%20Logo%20New.png" 
+            src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/ndfsqqas_1770416747206.png" 
             alt="Calendrax" 
             className="h-8"
           />
