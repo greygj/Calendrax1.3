@@ -210,14 +210,16 @@ STRIPE_API_KEY=sk_test_emergent
 
 ---
 
-## Subscription Pricing
+## Subscription Pricing (Updated December 2025)
 | Staff Count | Monthly Price |
 |-------------|---------------|
-| 1 | £12.00 |
-| 2 | £20.00 |
-| 3 | £28.00 |
-| 4 | £36.00 |
-| 5 | £44.00 |
+| 1 | £10.00 |
+| 2 | £15.00 |
+| 3 | £20.00 |
+| 4 | £25.00 |
+| 5 | £30.00 |
+
+*Note: £10 base + £5 per additional staff. No VAT (not VAT registered).*
 
 ## Deposit Level Options
 | Setting | Customer Pays |
