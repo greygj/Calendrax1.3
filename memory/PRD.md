@@ -333,6 +333,12 @@ STRIPE_API_KEY=sk_test_emergent
   - User rights (access, rectification, erasure, portability)
   - ICO complaints information
   - Data retention and security
+- [x] **Cookie Consent Banner** - GDPR compliant cookie notice:
+  - Appears on first visit with 1-second delay
+  - Accept/Decline buttons
+  - Links to Privacy Policy and Terms & Conditions
+  - Stores preference in localStorage
+  - Responsive design for mobile and desktop
 
 ## Upcoming Tasks (P1)
 1. Enable Stripe Connect on your Stripe account to activate business payout functionality
