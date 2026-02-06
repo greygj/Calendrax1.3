@@ -72,7 +72,7 @@ const PublicBusinessPage = () => {
   return (
     <div className="min-h-screen bg-appbg">
       {/* Header */}
-      <header className="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-10">
+      <header className="bg-card border-b border-zinc-800 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <button
             onClick={() => navigate('/')}
@@ -116,7 +116,7 @@ const PublicBusinessPage = () => {
             className="w-full h-full object-cover"
           />
         ) : business.logo ? (
-          <div className="w-full h-full flex items-center justify-center bg-zinc-900">
+          <div className="w-full h-full flex items-center justify-center bg-card">
             <img 
               src={business.logo} 
               alt={business.businessName}
@@ -201,7 +201,7 @@ const PublicBusinessPage = () => {
               {services.filter(s => s.active !== false).map(service => (
                 <div 
                   key={service.id}
-                  className="bg-zinc-900 border border-zinc-800 rounded-xl p-4"
+                  className="bg-card border border-zinc-800 rounded-xl p-4"
                 >
                   <div className="flex justify-between items-start">
                     <div>
@@ -220,7 +220,7 @@ const PublicBusinessPage = () => {
               ))}
             </div>
           ) : (
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+            <div className="bg-card border border-zinc-800 rounded-xl p-8 text-center">
               <p className="text-gray-500">No services listed yet</p>
             </div>
           )}
@@ -235,7 +235,7 @@ const PublicBusinessPage = () => {
           {reviews.length > 0 ? (
             <div className="space-y-4">
               {reviews.map((review, index) => (
-                <div key={index} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+                <div key={index} className="bg-card border border-zinc-800 rounded-xl p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <div className="flex">
                       {[...Array(5)].map((_, i) => (
@@ -253,7 +253,7 @@ const PublicBusinessPage = () => {
               ))}
             </div>
           ) : (
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+            <div className="bg-card border border-zinc-800 rounded-xl p-8 text-center">
               <Star className="w-12 h-12 text-gray-600 mx-auto mb-3" />
               <p className="text-gray-500">No reviews yet</p>
               <p className="text-gray-600 text-sm mt-1">Be the first to leave a review!</p>
@@ -268,7 +268,7 @@ const PublicBusinessPage = () => {
               <MapPin className="w-5 h-5 text-brand-400" />
               Location
             </h2>
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+            <div className="bg-card border border-zinc-800 rounded-xl overflow-hidden">
               <iframe
                 title="Business Location"
                 width="100%"
@@ -287,7 +287,7 @@ const PublicBusinessPage = () => {
       </div>
 
       {/* Fixed Book Now Button */}
-      <div className="fixed bottom-0 left-0 right-0 bg-zinc-900 border-t border-zinc-800 p-4">
+      <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-zinc-800 p-4">
         <div className="max-w-4xl mx-auto">
           <button
             onClick={handleBookNow}

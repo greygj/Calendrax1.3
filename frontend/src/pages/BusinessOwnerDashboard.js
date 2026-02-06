@@ -943,7 +943,7 @@ const BusinessOwnerDashboard = () => {
   return (
     <div className="min-h-screen bg-appbg">
       {/* Header */}
-      <header className="bg-zinc-900 border-b border-zinc-800 px-4 py-3">
+      <header className="bg-card border-b border-zinc-800 px-4 py-3">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg overflow-hidden bg-zinc-800">
@@ -977,7 +977,7 @@ const BusinessOwnerDashboard = () => {
               </button>
 
               {showNotifications && (
-                <div className="absolute right-0 top-12 w-80 bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden">
+                <div className="absolute right-0 top-12 w-80 bg-card border border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden">
                   <div className="p-3 border-b border-zinc-800 flex items-center justify-between">
                     <h3 className="text-white font-semibold">Notifications</h3>
                     {unreadNotifications.length > 0 && (
@@ -1016,7 +1016,7 @@ const BusinessOwnerDashboard = () => {
       </header>
 
       {/* Navigation Tabs */}
-      <div className="bg-zinc-900/50 border-b border-zinc-800">
+      <div className="bg-card/50 border-b border-zinc-800">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex gap-1 overflow-x-auto">
             {[
@@ -1057,7 +1057,7 @@ const BusinessOwnerDashboard = () => {
         {activeView === 'dashboard' && (
           <div className="space-y-6">
             {/* Business Info Card */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+            <div className="bg-card border border-zinc-800 rounded-xl p-6">
               <div className="flex items-start gap-4">
                 <div className="w-20 h-20 rounded-xl overflow-hidden bg-zinc-800">
                   {business?.logo ? (
@@ -1083,23 +1083,23 @@ const BusinessOwnerDashboard = () => {
 
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+              <div className="bg-card border border-zinc-800 rounded-xl p-4">
                 <p className="text-gray-500 text-sm">Pending</p>
                 <p className="text-white text-2xl font-bold mt-1">{pendingAppointments.length}</p>
               </div>
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+              <div className="bg-card border border-zinc-800 rounded-xl p-4">
                 <p className="text-gray-500 text-sm">Confirmed</p>
                 <p className="text-brand-400 text-2xl font-bold mt-1">{confirmedAppointments.length}</p>
               </div>
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+              <div className="bg-card border border-zinc-800 rounded-xl p-4">
                 <p className="text-gray-500 text-sm">Services</p>
                 <p className="text-white text-2xl font-bold mt-1">{businessServices.length}</p>
               </div>
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+              <div className="bg-card border border-zinc-800 rounded-xl p-4">
                 <p className="text-gray-500 text-sm">Staff</p>
                 <p className="text-white text-2xl font-bold mt-1">{staffMembers.length}</p>
               </div>
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+              <div className="bg-card border border-zinc-800 rounded-xl p-4">
                 <p className="text-gray-500 text-sm">Customers</p>
                 <p className="text-white text-2xl font-bold mt-1">{customers.length}</p>
               </div>
@@ -1128,7 +1128,7 @@ const BusinessOwnerDashboard = () => {
 
             {/* Quick Actions - Getting Started Checklist */}
             {pendingAppointments.length === 0 && (
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+              <div className="bg-card border border-zinc-800 rounded-xl p-6">
                 <div className="text-center mb-6">
                   <Calendar className="w-12 h-12 text-gray-600 mx-auto mb-3" />
                   <p className="text-gray-500 mb-2">No appointments yet</p>
@@ -1182,7 +1182,7 @@ const BusinessOwnerDashboard = () => {
           <div className="space-y-6">
             {/* Staff Selector Tabs */}
             {staffMembers.length > 0 && (
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-2">
+              <div className="bg-card border border-zinc-800 rounded-xl p-2">
                 <div className="flex gap-2 overflow-x-auto">
                   {staffMembers.map(staff => (
                     <button
@@ -1208,7 +1208,7 @@ const BusinessOwnerDashboard = () => {
 
             <div className="grid lg:grid-cols-2 gap-8">
               {/* Calendar */}
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+              <div className="bg-card border border-zinc-800 rounded-xl p-6">
                 <h2 className="text-white text-xl font-semibold mb-4">
                   {selectedStaff ? `${selectedStaff.name}'s Availability` : 'Set Availability'}
                 </h2>
@@ -1275,7 +1275,7 @@ const BusinessOwnerDashboard = () => {
 
               {/* Time Slots */}
               {selectedDate && (
-                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                <div className="bg-card border border-zinc-800 rounded-xl p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-white text-lg font-semibold">
                       Slots for {selectedDate}
@@ -1332,7 +1332,7 @@ const BusinessOwnerDashboard = () => {
               )}
 
               {!selectedDate && (
-                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 flex items-center justify-center">
+                <div className="bg-card border border-zinc-800 rounded-xl p-6 flex items-center justify-center">
                   <div className="text-center">
                     <Calendar className="w-16 h-16 text-gray-600 mx-auto mb-3" />
                     <p className="text-gray-500">Select a date to manage time slots</p>
@@ -1394,7 +1394,7 @@ const BusinessOwnerDashboard = () => {
                     </h2>
                     <div className="space-y-3">
                       {pendingAppointments.map(apt => (
-                        <div key={apt.id} className="bg-zinc-900 border border-yellow-500/30 rounded-xl p-4">
+                        <div key={apt.id} className="bg-card border border-yellow-500/30 rounded-xl p-4">
                           <div className="flex items-start justify-between">
                             <div>
                               <h4 className="text-white font-medium">{apt.customerName}</h4>
@@ -1435,7 +1435,7 @@ const BusinessOwnerDashboard = () => {
                   {confirmedAppointments.length > 0 ? (
                     <div className="space-y-3">
                       {confirmedAppointments.map(apt => (
-                        <div key={apt.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+                        <div key={apt.id} className="bg-card border border-zinc-800 rounded-xl p-4">
                           <div className="flex items-start justify-between">
                             <div>
                               <h4 className="text-white font-medium">{apt.customerName}</h4>
@@ -1453,7 +1453,7 @@ const BusinessOwnerDashboard = () => {
                       ))}
                     </div>
                   ) : (
-                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                    <div className="bg-card border border-zinc-800 rounded-xl p-8 text-center">
                       <Calendar className="w-12 h-12 text-gray-600 mx-auto mb-3" />
                       <p className="text-gray-500">No confirmed appointments</p>
                     </div>
@@ -1462,7 +1462,7 @@ const BusinessOwnerDashboard = () => {
 
                 {/* No appointments at all */}
                 {pendingAppointments.length === 0 && confirmedAppointments.length === 0 && (
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-12 text-center">
+                  <div className="bg-card border border-zinc-800 rounded-xl p-12 text-center">
                     <Calendar className="w-16 h-16 text-gray-600 mx-auto mb-4" />
                     <p className="text-gray-400 mb-2">No upcoming appointments</p>
                     <p className="text-gray-500 text-sm">New bookings will appear here</p>
@@ -1481,7 +1481,7 @@ const BusinessOwnerDashboard = () => {
                 {historyAppointments.length > 0 ? (
                   <div className="space-y-3">
                     {historyAppointments.map(apt => (
-                      <div key={apt.id} className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4">
+                      <div key={apt.id} className="bg-card/50 border border-zinc-800 rounded-xl p-4">
                         <div className="flex items-start justify-between">
                           <div>
                             <h4 className="text-white font-medium">{apt.customerName}</h4>
@@ -1514,7 +1514,7 @@ const BusinessOwnerDashboard = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-12 text-center">
+                  <div className="bg-card border border-zinc-800 rounded-xl p-12 text-center">
                     <Clock className="w-16 h-16 text-gray-600 mx-auto mb-4" />
                     <p className="text-gray-500">No appointment history yet</p>
                   </div>
@@ -1540,7 +1540,7 @@ const BusinessOwnerDashboard = () => {
             {businessServices.length > 0 ? (
               <div className="space-y-3">
                 {businessServices.map(service => (
-                  <div key={service.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+                  <div key={service.id} className="bg-card border border-zinc-800 rounded-xl p-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
@@ -1591,7 +1591,7 @@ const BusinessOwnerDashboard = () => {
                 ))}
               </div>
             ) : (
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+              <div className="bg-card border border-zinc-800 rounded-xl p-8 text-center">
                 <Settings className="w-12 h-12 text-gray-600 mx-auto mb-3" />
                 <p className="text-gray-500 mb-4">No services yet</p>
                 <button
@@ -1626,7 +1626,7 @@ const BusinessOwnerDashboard = () => {
             {staffMembers.length > 0 ? (
               <div className="space-y-3">
                 {staffMembers.map(staff => (
-                  <div key={staff.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+                  <div key={staff.id} className="bg-card border border-zinc-800 rounded-xl p-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
@@ -1678,7 +1678,7 @@ const BusinessOwnerDashboard = () => {
                 ))}
               </div>
             ) : (
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+              <div className="bg-card border border-zinc-800 rounded-xl p-8 text-center">
                 <Users className="w-12 h-12 text-gray-600 mx-auto mb-3" />
                 <p className="text-gray-500 mb-4">No staff members yet</p>
                 <button
@@ -1698,7 +1698,7 @@ const BusinessOwnerDashboard = () => {
             <h2 className="text-white text-xl font-semibold mb-6">Customers</h2>
             
             {customers.length > 0 ? (
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+              <div className="bg-card border border-zinc-800 rounded-xl overflow-hidden">
                 {/* Customer List - Alphabetically sorted */}
                 <div className="divide-y divide-zinc-800">
                   {[...customers]
@@ -1804,7 +1804,7 @@ const BusinessOwnerDashboard = () => {
                 </div>
               </div>
             ) : (
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+              <div className="bg-card border border-zinc-800 rounded-xl p-8 text-center">
                 <Users className="w-12 h-12 text-gray-600 mx-auto mb-3" />
                 <p className="text-gray-500">No customers yet</p>
               </div>
@@ -1816,7 +1816,7 @@ const BusinessOwnerDashboard = () => {
         {activeView === 'analytics' && (
           <div className="space-y-6">
             {/* Sub-tabs */}
-            <div className="flex items-center gap-1 bg-zinc-900 border border-zinc-800 rounded-xl p-1 overflow-x-auto">
+            <div className="flex items-center gap-1 bg-card border border-zinc-800 rounded-xl p-1 overflow-x-auto">
               {[
                 { id: 'overview', label: 'Overview', icon: PieChart },
                 { id: 'revenue', label: 'Revenue', icon: PoundSterling },
@@ -1855,28 +1855,28 @@ const BusinessOwnerDashboard = () => {
                 </div>
 
                 {analyticsLoading && !analytics ? (
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                  <div className="bg-card border border-zinc-800 rounded-xl p-8 text-center">
                     <p className="text-gray-400">Loading analytics...</p>
                   </div>
                 ) : analytics ? (
                   <>
                     {/* Key Metrics Overview */}
                     <div className="grid md:grid-cols-4 gap-4">
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-1">Total Bookings</p>
                         <p className="text-white text-2xl font-bold">{analytics.averageMetrics.totalBookings}</p>
                         <p className="text-brand-400 text-sm">{analytics.averageMetrics.confirmedBookings} confirmed</p>
                       </div>
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-1">Avg. Booking Value</p>
                         <p className="text-brand-400 text-2xl font-bold">£{analytics.averageMetrics.averageBookingValue.toFixed(2)}</p>
                       </div>
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-1">Conversion Rate</p>
                         <p className="text-white text-2xl font-bold">{analytics.averageMetrics.conversionRate}%</p>
                         <p className="text-gray-500 text-sm">confirmed / total</p>
                       </div>
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-1">Customer Retention</p>
                         <p className="text-brand-400 text-2xl font-bold">{analytics.customerRetention.retentionRate}%</p>
                         <p className="text-gray-500 text-sm">{analytics.customerRetention.repeatCustomers} repeat customers</p>
@@ -1885,7 +1885,7 @@ const BusinessOwnerDashboard = () => {
 
                     <div className="grid md:grid-cols-2 gap-6">
                       {/* Popular Services */}
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
                           <TrendingUp className="w-5 h-5 text-brand-400" />
                           Most Popular Services
@@ -1913,7 +1913,7 @@ const BusinessOwnerDashboard = () => {
                       </div>
 
                       {/* Peak Hours */}
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
                           <Clock className="w-5 h-5 text-brand-400" />
                           Peak Booking Hours
@@ -1950,7 +1950,7 @@ const BusinessOwnerDashboard = () => {
 
                     <div className="grid md:grid-cols-2 gap-6">
                       {/* Busiest Days */}
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
                           <Calendar className="w-5 h-5 text-brand-400" />
                           Busiest Days
@@ -1985,7 +1985,7 @@ const BusinessOwnerDashboard = () => {
                       </div>
 
                       {/* Booking Status Breakdown */}
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
                           <PieChart className="w-5 h-5 text-brand-400" />
                           Booking Status Breakdown
@@ -2018,7 +2018,7 @@ const BusinessOwnerDashboard = () => {
                     </div>
 
                     {/* Customer Insights */}
-                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                    <div className="bg-card border border-zinc-800 rounded-xl p-6">
                       <h3 className="text-white font-medium mb-4 flex items-center gap-2">
                         <Users className="w-5 h-5 text-brand-400" />
                         Customer Insights
@@ -2040,7 +2040,7 @@ const BusinessOwnerDashboard = () => {
                     </div>
 
                     {/* Monthly Trend */}
-                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                    <div className="bg-card border border-zinc-800 rounded-xl p-6">
                       <h3 className="text-white font-medium mb-4 flex items-center gap-2">
                         <Activity className="w-5 h-5 text-brand-400" />
                         6-Month Trend
@@ -2067,7 +2067,7 @@ const BusinessOwnerDashboard = () => {
                     </div>
                   </>
                 ) : (
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                  <div className="bg-card border border-zinc-800 rounded-xl p-8 text-center">
                     <PieChart className="w-12 h-12 text-gray-600 mx-auto mb-3" />
                     <p className="text-gray-500">No analytics data available</p>
                   </div>
@@ -2094,7 +2094,7 @@ const BusinessOwnerDashboard = () => {
                 </div>
 
                 {revenueLoading && !revenueSummary ? (
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                  <div className="bg-card border border-zinc-800 rounded-xl p-8 text-center">
                     <p className="text-gray-400">Loading revenue data...</p>
                   </div>
                 ) : revenueSummary ? (
@@ -2102,7 +2102,7 @@ const BusinessOwnerDashboard = () => {
                     {/* Overview Cards */}
                     <div className="grid md:grid-cols-3 gap-4">
                       {/* Current Week */}
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-1">This Week</p>
                         <p className="text-white text-3xl font-bold">£{revenueSummary.currentWeek.revenue.toFixed(2)}</p>
                         <p className="text-gray-500 text-sm">{revenueSummary.currentWeek.bookingCount} bookings</p>
@@ -2122,7 +2122,7 @@ const BusinessOwnerDashboard = () => {
                       </div>
 
                       {/* Current Month */}
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-1">{revenueSummary.currentMonth.label}</p>
                         <p className="text-white text-3xl font-bold">£{revenueSummary.currentMonth.revenue.toFixed(2)}</p>
                         <p className="text-gray-500 text-sm">{revenueSummary.currentMonth.bookingCount} bookings</p>
@@ -2142,7 +2142,7 @@ const BusinessOwnerDashboard = () => {
                       </div>
 
                       {/* Current Year */}
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-1">{revenueSummary.currentYear.label}</p>
                         <p className="text-brand-400 text-3xl font-bold">£{revenueSummary.currentYear.revenue.toFixed(2)}</p>
                         <p className="text-gray-500 text-sm">{revenueSummary.currentYear.bookingCount} bookings</p>
@@ -2151,7 +2151,7 @@ const BusinessOwnerDashboard = () => {
 
                     {/* Revenue by Treatment/Service */}
                     {serviceRevenue && serviceRevenue.serviceRevenue && serviceRevenue.serviceRevenue.length > 0 && (
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
                           <Settings className="w-5 h-5 text-brand-400" />
                           Revenue by Treatment
@@ -2186,7 +2186,7 @@ const BusinessOwnerDashboard = () => {
 
                     {/* Revenue by Staff - only show if more than one staff */}
                     {staffRevenue && staffRevenue.staffRevenue && staffRevenue.staffRevenue.length > 1 && (
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
                           <Users className="w-5 h-5 text-brand-400" />
                           Revenue by Staff Member
@@ -2240,7 +2240,7 @@ const BusinessOwnerDashboard = () => {
 
                     {/* Monthly Revenue Table */}
                     {monthlyRevenue && monthlyRevenue.yearlyBreakdown && (
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
                           <Calendar className="w-5 h-5 text-brand-400" />
                           Monthly Revenue Breakdown
@@ -2291,7 +2291,7 @@ const BusinessOwnerDashboard = () => {
                     )}
                   </>
                 ) : (
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                  <div className="bg-card border border-zinc-800 rounded-xl p-8 text-center">
                     <BarChart3 className="w-12 h-12 text-gray-600 mx-auto mb-3" />
                     <p className="text-gray-500">No revenue data available</p>
                   </div>
@@ -2315,7 +2315,7 @@ const BusinessOwnerDashboard = () => {
                 </div>
 
                 {payoutLoading && !payoutHistory ? (
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                  <div className="bg-card border border-zinc-800 rounded-xl p-8 text-center">
                     <p className="text-gray-400">Loading payout data...</p>
                   </div>
                 ) : payoutHistory ? (
@@ -2329,22 +2329,22 @@ const BusinessOwnerDashboard = () => {
 
                     {/* Payout Summary Cards */}
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-1">Customer Deposits</p>
                         <p className="text-white text-2xl font-bold">£{(payoutHistory.summary.totalDeposits || 0).toFixed(2)}</p>
                         <p className="text-gray-500 text-sm">{payoutHistory.summary.transactionCount} transactions</p>
                       </div>
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-1">Platform Fees ({payoutHistory.summary.platformFeePercent || 5}%)</p>
                         <p className="text-yellow-400 text-2xl font-bold">-£{(payoutHistory.summary.totalPlatformFees || 0).toFixed(2)}</p>
                         <p className="text-gray-500 text-sm">Processing costs</p>
                       </div>
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-1">You Receive (95%)</p>
                         <p className="text-brand-400 text-2xl font-bold">£{payoutHistory.summary.totalReceived.toFixed(2)}</p>
                         <p className="text-gray-500 text-sm">After fees</p>
                       </div>
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-1">Net (After Refunds)</p>
                         <p className="text-brand-400 text-2xl font-bold">£{payoutHistory.summary.netReceived.toFixed(2)}</p>
                         {payoutHistory.summary.totalRefunded > 0 && (
@@ -2355,7 +2355,7 @@ const BusinessOwnerDashboard = () => {
 
                     {/* Period Summary */}
                     <div className="grid md:grid-cols-2 gap-4">
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-3">This Month</p>
                         <div className="space-y-2">
                           <div className="flex justify-between">
@@ -2372,7 +2372,7 @@ const BusinessOwnerDashboard = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <p className="text-gray-400 text-sm mb-3">Year to Date</p>
                         <div className="space-y-2">
                           <div className="flex justify-between">
@@ -2415,7 +2415,7 @@ const BusinessOwnerDashboard = () => {
                     </div>
 
                     {/* Transaction History */}
-                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+                    <div className="bg-card border border-zinc-800 rounded-xl overflow-hidden">
                       <div className="p-4 border-b border-zinc-800">
                         <h3 className="text-white font-medium flex items-center gap-2">
                           <Banknote className="w-5 h-5 text-brand-400" />
@@ -2477,7 +2477,7 @@ const BusinessOwnerDashboard = () => {
                     </div>
                   </>
                 ) : (
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                  <div className="bg-card border border-zinc-800 rounded-xl p-8 text-center">
                     <Banknote className="w-12 h-12 text-gray-600 mx-auto mb-3" />
                     <p className="text-gray-500">No payout data available</p>
                   </div>
@@ -2502,7 +2502,7 @@ const BusinessOwnerDashboard = () => {
                 </div>
 
                 {billingLoading && billingInvoices.length === 0 ? (
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                  <div className="bg-card border border-zinc-800 rounded-xl p-8 text-center">
                     <Loader2 className="w-8 h-8 text-brand-400 animate-spin mx-auto mb-3" />
                     <p className="text-gray-400">Loading billing history...</p>
                   </div>
@@ -2510,7 +2510,7 @@ const BusinessOwnerDashboard = () => {
                   <>
                     {/* Upcoming Invoice */}
                     {billingUpcoming && (
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
                           <Clock className="w-5 h-5 text-brand-400" />
                           Next Invoice
@@ -2547,7 +2547,7 @@ const BusinessOwnerDashboard = () => {
                     </div>
 
                     {/* Invoice List */}
-                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden" data-testid="invoice-list">
+                    <div className="bg-card border border-zinc-800 rounded-xl overflow-hidden" data-testid="invoice-list">
                       <div className="p-4 border-b border-zinc-800">
                         <h3 className="text-white font-medium flex items-center gap-2">
                           <Receipt className="w-5 h-5 text-brand-400" />
@@ -2634,7 +2634,7 @@ const BusinessOwnerDashboard = () => {
 
                     {/* Subscription Summary */}
                     {subscription && (
-                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                      <div className="bg-card border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
                           <CreditCard className="w-5 h-5 text-brand-400" />
                           Subscription Summary
@@ -2688,7 +2688,7 @@ const BusinessOwnerDashboard = () => {
             
             {/* Subscription Status Card */}
             {subscription && (
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+              <div className="bg-card border border-zinc-800 rounded-xl p-6">
                 <h3 className="text-white font-medium mb-4 flex items-center gap-2">
                   <CreditCard className="w-5 h-5 text-brand-400" />
                   Subscription & Payment
@@ -2783,7 +2783,7 @@ const BusinessOwnerDashboard = () => {
             )}
 
             {/* Stripe Connect Card */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+            <div className="bg-card border border-zinc-800 rounded-xl p-6">
               <h3 className="text-white font-medium mb-4 flex items-center gap-2">
                 <Banknote className="w-5 h-5 text-brand-400" />
                 Bank Account (Receive Payments)
@@ -2849,7 +2849,7 @@ const BusinessOwnerDashboard = () => {
             </div>
 
             {/* Deposit Settings */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+            <div className="bg-card border border-zinc-800 rounded-xl p-6">
               <h3 className="text-white font-medium mb-4 flex items-center gap-2">
                 <Settings className="w-5 h-5 text-brand-400" />
                 Deposit Settings
@@ -2888,7 +2888,7 @@ const BusinessOwnerDashboard = () => {
             </div>
             
             {/* Business Details Form */}
-            <form onSubmit={handleProfileSave} className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-6">
+            <form onSubmit={handleProfileSave} className="bg-card border border-zinc-800 rounded-xl p-6 space-y-6">
               <h3 className="text-white font-medium flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-brand-400" />
                 Business Details
@@ -3145,7 +3145,7 @@ const BusinessOwnerDashboard = () => {
       {/* Service Modal */}
       {showServiceModal && (
         <div className="fixed inset-0 bg-appbg/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-md">
+          <div className="bg-card border border-zinc-800 rounded-xl w-full max-w-md">
             <div className="flex items-center justify-between p-4 border-b border-zinc-800">
               <h3 className="text-white text-lg font-semibold">
                 {editingService ? 'Edit Service' : 'Add Service'}
@@ -3218,8 +3218,8 @@ const BusinessOwnerDashboard = () => {
       {/* Staff Modal */}
       {showStaffModal && (
         <div className="fixed inset-0 bg-appbg/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-4 border-b border-zinc-800 sticky top-0 bg-zinc-900">
+          <div className="bg-card border border-zinc-800 rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-4 border-b border-zinc-800 sticky top-0 bg-card">
               <h3 className="text-white text-lg font-semibold">
                 {editingStaff ? 'Edit Staff Member' : 'Add Staff Member'}
               </h3>
@@ -3283,7 +3283,7 @@ const BusinessOwnerDashboard = () => {
       {/* Staff Subscription Confirmation Modal */}
       {showStaffConfirmModal && staffConfirmData && (
         <div className="fixed inset-0 bg-appbg/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-md">
+          <div className="bg-card border border-zinc-800 rounded-xl w-full max-w-md">
             <div className="p-6">
               <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
                 staffConfirmData.type === 'add' ? 'bg-brand-500/20' : 'bg-yellow-500/20'
@@ -3378,7 +3378,7 @@ const BusinessOwnerDashboard = () => {
       {/* Delete Customer Modal */}
       {showDeleteCustomerModal && customerToDelete && (
         <div className="fixed inset-0 bg-appbg/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-md">
+          <div className="bg-card border border-zinc-800 rounded-xl w-full max-w-md">
             <div className="p-6">
               <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Trash2 className="w-8 h-8 text-red-400" />
@@ -3438,8 +3438,8 @@ const BusinessOwnerDashboard = () => {
       {/* Book for Customer Modal */}
       {showBookingModal && (
         <div className="fixed inset-0 bg-appbg/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-4 border-b border-zinc-800 sticky top-0 bg-zinc-900">
+          <div className="bg-card border border-zinc-800 rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-4 border-b border-zinc-800 sticky top-0 bg-card">
               <h3 className="text-white text-lg font-semibold">Book for Customer</h3>
               <button onClick={() => setShowBookingModal(false)} className="text-gray-400 hover:text-white">
                 <X className="w-5 h-5" />

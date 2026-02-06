@@ -94,7 +94,7 @@ const BookingSuccess = () => {
       <div className="max-w-md w-full">
         {/* Checking Payment Status */}
         {status === 'checking' && (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center">
+          <div className="bg-card border border-zinc-800 rounded-2xl p-8 text-center">
             <Loader2 className="w-16 h-16 text-brand-500 mx-auto mb-4 animate-spin" />
             <h1 className="text-white text-2xl font-bold mb-2">Confirming Your Booking</h1>
             <p className="text-gray-400 mb-4">Please wait while we verify your payment...</p>
@@ -111,7 +111,7 @@ const BookingSuccess = () => {
 
         {/* Success */}
         {status === 'success' && (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center">
+          <div className="bg-card border border-zinc-800 rounded-2xl p-8 text-center">
             <div className="w-20 h-20 bg-brand-500 rounded-full flex items-center justify-center mx-auto mb-6">
               <Check className="w-10 h-10 text-black" />
             </div>
@@ -176,7 +176,7 @@ const BookingSuccess = () => {
 
         {/* Error */}
         {status === 'error' && (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center">
+          <div className="bg-card border border-zinc-800 rounded-2xl p-8 text-center">
             <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
               <XCircle className="w-10 h-10 text-red-500" />
             </div>

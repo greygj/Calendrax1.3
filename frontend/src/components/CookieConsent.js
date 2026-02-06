@@ -43,7 +43,7 @@ const CookieConsent = () => {
       }`}
       data-testid="cookie-consent-banner"
     >
-      <div className="max-w-4xl mx-auto bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden">
+      <div className="max-w-4xl mx-auto bg-card border border-zinc-700 rounded-xl shadow-2xl overflow-hidden">
         <div className="p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             {/* Icon */}

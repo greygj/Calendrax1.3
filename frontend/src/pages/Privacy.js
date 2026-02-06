@@ -33,7 +33,7 @@ const Privacy = () => {
       {/* Back Button */}
       <button
         onClick={handleBack}
-        className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center text-white hover:bg-zinc-800 transition-colors mb-6"
+        className="w-10 h-10 rounded-full bg-card flex items-center justify-center text-white hover:bg-zinc-800 transition-colors mb-6"
         data-testid="back-button"
       >
         <ArrowLeft className="w-5 h-5" />
@@ -51,7 +51,7 @@ const Privacy = () => {
       <div className="max-w-3xl mx-auto" data-testid="privacy-page">
         <h1 className="text-white text-3xl font-bold mb-6">Privacy Policy</h1>
         
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+        <div className="bg-card border border-zinc-800 rounded-xl p-6">
           
           <Section title="1. Introduction">
             <p>Gareth Grey (Sole Trader) trading as Calendrax ("we", "us", "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use the Calendrax platform.</p>

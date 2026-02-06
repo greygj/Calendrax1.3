@@ -166,7 +166,7 @@ const CustomerDashboard = () => {
   return (
     <div className="min-h-screen bg-appbg">
       {/* Header */}
-      <header className="bg-zinc-900 border-b border-zinc-800 px-4 py-4">
+      <header className="bg-card border-b border-zinc-800 px-4 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           {/* Logo - Larger */}
           <img 
@@ -199,7 +199,7 @@ const CustomerDashboard = () => {
 
               {/* Notifications Dropdown */}
               {showNotifications && (
-                <div className="absolute right-0 top-12 w-80 bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden">
+                <div className="absolute right-0 top-12 w-80 bg-card border border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden">
                   <div className="p-3 border-b border-zinc-800 flex items-center justify-between">
                     <h3 className="text-white font-semibold">Notifications</h3>
                     {unreadNotifications.length > 0 && (
@@ -249,7 +249,7 @@ const CustomerDashboard = () => {
       </header>
 
       {/* Navigation Tabs */}
-      <div className="bg-zinc-900/50 border-b border-zinc-800">
+      <div className="bg-card/50 border-b border-zinc-800">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex gap-1 overflow-x-auto">
             {[
@@ -293,7 +293,7 @@ const CustomerDashboard = () => {
             {activeView === 'dashboard' && (
               <div className="space-y-8">
                 {/* Welcome Section */}
-                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                <div className="bg-card border border-zinc-800 rounded-xl p-6">
                   <h1 className="text-white text-2xl font-bold mb-2">
                     Welcome back, {user?.fullName?.split(' ')[0]}!
                   </h1>
@@ -302,15 +302,15 @@ const CustomerDashboard = () => {
 
                 {/* Quick Stats */}
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+                  <div className="bg-card border border-zinc-800 rounded-xl p-4">
                     <p className="text-gray-500 text-sm">Upcoming Bookings</p>
                     <p className="text-brand-400 text-3xl font-bold mt-1">{upcomingBookings.length}</p>
                   </div>
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+                  <div className="bg-card border border-zinc-800 rounded-xl p-4">
                     <p className="text-gray-500 text-sm">Past Bookings</p>
                     <p className="text-white text-3xl font-bold mt-1">{pastBookings.length}</p>
                   </div>
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+                  <div className="bg-card border border-zinc-800 rounded-xl p-4">
                     <p className="text-gray-500 text-sm">Available Businesses</p>
                     <p className="text-white text-3xl font-bold mt-1">{businesses.length}</p>
                   </div>
@@ -330,7 +330,7 @@ const CustomerDashboard = () => {
                     </div>
                     <div className="space-y-3">
                       {upcomingBookings.slice(0, 2).map(booking => (
-                        <div key={booking.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+                        <div key={booking.id} className="bg-card border border-zinc-800 rounded-xl p-4">
                           <div className="flex items-start justify-between">
                             <div>
                               <h4 className="text-white font-medium">{booking.serviceName}</h4>
@@ -370,7 +370,7 @@ const CustomerDashboard = () => {
                     </button>
                     <button
                       onClick={() => setActiveView('bookings')}
-                      className="bg-zinc-900 border border-zinc-800 text-white p-4 rounded-xl font-medium hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2"
+                      className="bg-card border border-zinc-800 text-white p-4 rounded-xl font-medium hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2"
                     >
                       <Calendar className="w-5 h-5" />
                       My Bookings
@@ -394,7 +394,7 @@ const CustomerDashboard = () => {
                       <button
                         key={business.id}
                         onClick={() => handleBusinessClick(business.id)}
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-4 hover:border-zinc-700 transition-all group text-left"
+                        className="w-full bg-card border border-zinc-800 rounded-xl p-4 hover:border-zinc-700 transition-all group text-left"
                       >
                         <div className="flex items-center gap-4">
                           {/* Business Logo */}
@@ -431,7 +431,7 @@ const CustomerDashboard = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-12 text-center">
+                  <div className="bg-card border border-zinc-800 rounded-xl p-12 text-center">
                     <Building2 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
                     <p className="text-gray-500">No businesses available at the moment</p>
                   </div>
@@ -447,7 +447,7 @@ const CustomerDashboard = () => {
                 {upcomingBookings.length > 0 ? (
                   <div className="space-y-4">
                     {upcomingBookings.map(booking => (
-                      <div key={booking.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+                      <div key={booking.id} className="bg-card border border-zinc-800 rounded-xl p-4">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <h4 className="text-white font-medium">{booking.serviceName}</h4>
@@ -486,7 +486,7 @@ const CustomerDashboard = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-12 text-center">
+                  <div className="bg-card border border-zinc-800 rounded-xl p-12 text-center">
                     <Calendar className="w-16 h-16 text-gray-600 mx-auto mb-4" />
                     <p className="text-gray-500 mb-4">No upcoming bookings</p>
                     <button
@@ -508,7 +508,7 @@ const CustomerDashboard = () => {
                 {pastBookings.length > 0 ? (
                   <div className="space-y-4">
                     {pastBookings.map(booking => (
-                      <div key={booking.id} className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4">
+                      <div key={booking.id} className="bg-card/50 border border-zinc-800 rounded-xl p-4">
                         <div className="flex items-start justify-between">
                           <div>
                             <h4 className="text-white font-medium">{booking.serviceName}</h4>
@@ -543,7 +543,7 @@ const CustomerDashboard = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-12 text-center">
+                  <div className="bg-card border border-zinc-800 rounded-xl p-12 text-center">
                     <History className="w-16 h-16 text-gray-600 mx-auto mb-4" />
                     <p className="text-gray-500">No booking history yet</p>
                   </div>
@@ -556,7 +556,7 @@ const CustomerDashboard = () => {
               <div>
                 <h2 className="text-white text-xl font-semibold mb-6">My Profile</h2>
 
-                <form onSubmit={handleProfileSave} className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-6">
+                <form onSubmit={handleProfileSave} className="bg-card border border-zinc-800 rounded-xl p-6 space-y-6">
                   {profileError && (
                     <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg">
                       {profileError}

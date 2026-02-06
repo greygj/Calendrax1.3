@@ -42,7 +42,7 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-appbg">
       {/* Header */}
-      <header className="bg-zinc-900 border-b border-zinc-800">
+      <header className="bg-card border-b border-zinc-800">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <img 
             src="https://customer-assets.emergentagent.com/job_f0df9ebf-768b-4fcd-bb61-3b3b5c837dfa/artifacts/92mrru0r_Calendrax%20Logo%20New.png" 
@@ -95,7 +95,7 @@ const LandingPage = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search businesses by name or location..."
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
+              className="w-full bg-card border border-zinc-700 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
             />
           </div>
         </div>
@@ -116,7 +116,7 @@ const LandingPage = () => {
             {filteredBusinesses.map(business => (
               <div
                 key={business.id}
-                className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden hover:border-zinc-700 transition-all group"
+                className="bg-card border border-zinc-800 rounded-xl overflow-hidden hover:border-zinc-700 transition-all group"
               >
                 {/* Business Image/Logo */}
                 <div className="h-40 bg-zinc-800 flex items-center justify-center">
@@ -170,7 +170,7 @@ const LandingPage = () => {
             ))}
           </div>
         ) : (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-12 text-center">
+          <div className="bg-card border border-zinc-800 rounded-xl p-12 text-center">
             <Building2 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
             <p className="text-gray-500 text-lg">
               {searchTerm ? 'No businesses found matching your search' : 'No businesses available yet'}
@@ -180,7 +180,7 @@ const LandingPage = () => {
       </section>
 
       {/* CTA Section for Business Owners */}
-      <section className="bg-zinc-900 border-t border-zinc-800 py-16 px-4">
+      <section className="bg-card border-t border-zinc-800 py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-white text-2xl font-semibold mb-4">
             Are you a business owner?

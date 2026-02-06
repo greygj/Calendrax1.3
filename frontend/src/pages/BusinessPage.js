@@ -347,7 +347,7 @@ const BusinessPage = () => {
   return (
     <div className="min-h-screen bg-appbg">
       {/* Header */}
-      <header className="bg-zinc-900 border-b border-zinc-800 px-4 py-4">
+      <header className="bg-card border-b border-zinc-800 px-4 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
@@ -436,7 +436,7 @@ const BusinessPage = () => {
                         className={`w-full text-left p-4 rounded-xl border transition-all ${
                           isSelected
                             ? 'bg-brand-500/10 border-brand-500'
-                            : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
+                            : 'bg-card border-zinc-800 hover:border-zinc-700'
                         }`}
                       >
                         <div className="flex justify-between items-start">
@@ -463,7 +463,7 @@ const BusinessPage = () => {
                   })}
                 </div>
               ) : (
-                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
+                <div className="bg-card border border-zinc-800 rounded-xl p-8 text-center">
                   <Info className="w-12 h-12 text-gray-600 mx-auto mb-3" />
                   <p className="text-gray-500">No services available at the moment</p>
                 </div>
@@ -513,7 +513,7 @@ const BusinessPage = () => {
                         className={`w-full text-left p-4 rounded-xl border transition-all ${
                           selectedStaff?.id === staff.id
                             ? 'bg-brand-500/10 border-brand-500'
-                            : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
+                            : 'bg-card border-zinc-800 hover:border-zinc-700'
                         }`}
                       >
                         <div className="flex items-center gap-3">
@@ -545,7 +545,7 @@ const BusinessPage = () => {
                   <Calendar className="w-5 h-5 text-brand-400" /> Select Date
                 </h2>
                 
-                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+                <div className="bg-card border border-zinc-800 rounded-xl p-4">
                   {/* Calendar Header */}
                   <div className="flex items-center justify-between mb-4">
                     <button
@@ -626,7 +626,7 @@ const BusinessPage = () => {
                       className={`py-2 px-3 rounded-lg text-sm font-medium transition-all ${
                         selectedTime === time
                           ? 'bg-brand-500 text-black'
-                          : 'bg-zinc-900 border border-zinc-800 text-white hover:border-zinc-700'
+                          : 'bg-card border border-zinc-800 text-white hover:border-zinc-700'
                       }`}
                     >
                       {time}
@@ -654,7 +654,7 @@ const BusinessPage = () => {
               <div className="space-y-4">
                 {/* Offer Code Input - only show if deposit is required */}
                 {!isNoDeposit && (
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+                  <div className="bg-card border border-zinc-800 rounded-xl p-4">
                     <h3 className="text-white text-sm font-medium mb-3 flex items-center gap-2">
                       <Tag className="w-4 h-4 text-brand-400" /> Have an offer code?
                     </h3>
@@ -686,7 +686,7 @@ const BusinessPage = () => {
                 )}
 
                 {/* Booking Summary */}
-                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+                <div className="bg-card border border-zinc-800 rounded-xl p-4">
                   <h3 className="text-white text-sm font-medium mb-3 flex items-center gap-2">
                     <CreditCard className="w-4 h-4 text-brand-400" /> Booking Summary
                   </h3>
@@ -785,7 +785,7 @@ const BusinessPage = () => {
             </div>
             
             {/* Google Map */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+            <div className="bg-card border border-zinc-800 rounded-xl overflow-hidden">
               <iframe
                 title={`${business.businessName} location`}
                 src={getGoogleMapsUrl(business.postcode)}
@@ -800,7 +800,7 @@ const BusinessPage = () => {
             </div>
 
             {/* Business Info Card */}
-            <div className="mt-6 bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+            <div className="mt-6 bg-card border border-zinc-800 rounded-xl p-4">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 rounded-lg overflow-hidden bg-zinc-800">
                   {business.logo ? (
