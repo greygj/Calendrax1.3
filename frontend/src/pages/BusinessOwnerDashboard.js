@@ -2303,7 +2303,7 @@ const BusinessOwnerDashboard = () => {
                 {/* Pricing breakdown */}
                 <div className="mt-4 pt-4 border-t border-zinc-800">
                   <p className="text-gray-500 text-sm">
-                    Pricing: £12/month base + £8 for each additional staff member
+                    Pricing: £10/month base + £5 for each additional staff member
                   </p>
                 </div>
               </div>
