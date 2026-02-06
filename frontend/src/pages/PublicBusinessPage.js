@@ -44,7 +44,7 @@ const PublicBusinessPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-appbg flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
       </div>
     );
@@ -52,7 +52,7 @@ const PublicBusinessPage = () => {
 
   if (!business) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-appbg flex items-center justify-center">
         <div className="text-center">
           <Building2 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
           <p className="text-gray-500 mb-4">Business not found</p>
@@ -70,7 +70,7 @@ const PublicBusinessPage = () => {
   const businessPhotos = business.photos || [];
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-appbg">
       {/* Header */}
       <header className="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">

@@ -934,14 +934,14 @@ const BusinessOwnerDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-appbg flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-appbg">
       {/* Header */}
       <header className="bg-zinc-900 border-b border-zinc-800 px-4 py-3">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -3070,7 +3070,7 @@ const BusinessOwnerDashboard = () => {
                               className="w-full h-full object-cover"
                             />
                             {/* Overlay with replace and delete options */}
-                            <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                            <div className="absolute inset-0 bg-appbg/50 opacity-0 hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                               <button
                                 type="button"
                                 onClick={() => {
@@ -3144,7 +3144,7 @@ const BusinessOwnerDashboard = () => {
 
       {/* Service Modal */}
       {showServiceModal && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-appbg/80 flex items-center justify-center z-50 p-4">
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-md">
             <div className="flex items-center justify-between p-4 border-b border-zinc-800">
               <h3 className="text-white text-lg font-semibold">
@@ -3217,7 +3217,7 @@ const BusinessOwnerDashboard = () => {
 
       {/* Staff Modal */}
       {showStaffModal && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-appbg/80 flex items-center justify-center z-50 p-4">
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b border-zinc-800 sticky top-0 bg-zinc-900">
               <h3 className="text-white text-lg font-semibold">
@@ -3282,7 +3282,7 @@ const BusinessOwnerDashboard = () => {
 
       {/* Staff Subscription Confirmation Modal */}
       {showStaffConfirmModal && staffConfirmData && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-appbg/80 flex items-center justify-center z-50 p-4">
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-md">
             <div className="p-6">
               <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
@@ -3377,7 +3377,7 @@ const BusinessOwnerDashboard = () => {
 
       {/* Delete Customer Modal */}
       {showDeleteCustomerModal && customerToDelete && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-appbg/80 flex items-center justify-center z-50 p-4">
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-md">
             <div className="p-6">
               <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -3437,7 +3437,7 @@ const BusinessOwnerDashboard = () => {
 
       {/* Book for Customer Modal */}
       {showBookingModal && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-appbg/80 flex items-center justify-center z-50 p-4">
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b border-zinc-800 sticky top-0 bg-zinc-900">
               <h3 className="text-white text-lg font-semibold">Book for Customer</h3>

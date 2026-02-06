@@ -38,7 +38,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-appbg flex flex-col items-center justify-center px-4">
       {/* Back to Browse Button */}
       <button
         onClick={() => navigate('/')}

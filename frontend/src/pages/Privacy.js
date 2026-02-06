@@ -29,7 +29,7 @@ const Privacy = () => {
   );
 
   return (
-    <div className="min-h-screen bg-black px-4 py-6">
+    <div className="min-h-screen bg-appbg px-4 py-6">
       {/* Back Button */}
       <button
         onClick={handleBack}

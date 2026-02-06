@@ -164,7 +164,7 @@ const CustomerDashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-appbg">
       {/* Header */}
       <header className="bg-zinc-900 border-b border-zinc-800 px-4 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">

@@ -594,7 +594,7 @@ const AdminDashboard = () => {
 
   if (user?.role !== 'platform_admin') {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-appbg flex items-center justify-center">
         <div className="text-center">
           <Shield className="w-16 h-16 text-red-400 mx-auto mb-4" />
           <h2 className="text-white text-xl font-semibold mb-2">Access Denied</h2>
@@ -611,7 +611,7 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-appbg">
       {/* Header */}
       <header className="bg-zinc-900 border-b border-zinc-800 px-4 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">

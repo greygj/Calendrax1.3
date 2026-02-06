@@ -40,7 +40,7 @@ const LandingPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-appbg">
       {/* Header */}
       <header className="bg-zinc-900 border-b border-zinc-800">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -198,7 +198,7 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-black border-t border-zinc-800 py-8 px-4">
+      <footer className="bg-appbg border-t border-zinc-800 py-8 px-4">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <img 
             src="https://customer-assets.emergentagent.com/job_f0df9ebf-768b-4fcd-bb61-3b3b5c837dfa/artifacts/92mrru0r_Calendrax%20Logo%20New.png" 

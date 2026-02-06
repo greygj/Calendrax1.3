@@ -90,7 +90,7 @@ const BookingSuccess = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4">
+    <div className="min-h-screen bg-appbg flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         {/* Checking Payment Status */}
         {status === 'checking' && (
