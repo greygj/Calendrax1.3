@@ -858,7 +858,7 @@ const BusinessOwnerDashboard = () => {
 
   const generateTimeSlots = () => {
     const slots = [];
-    for (let hour = 9; hour < 18; hour++) {
+    for (let hour = 5; hour < 23; hour++) {
       for (let min = 0; min < 60; min += 15) {
         const h = hour.toString().padStart(2, '0');
         const m = min.toString().padStart(2, '0');
