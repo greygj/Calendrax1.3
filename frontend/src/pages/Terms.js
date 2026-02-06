@@ -1,9 +1,20 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
 const Terms = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleBack = () => {
+    // Check if there's history to go back to
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      // Default to signup page if opened directly (e.g., new tab)
+      navigate('/signup');
+    }
+  };
 
   const Section = ({ title, children }) => (
     <div className="mb-6">
@@ -18,7 +29,7 @@ const Terms = () => {
     <div className="min-h-screen bg-black px-4 py-6">
       {/* Back Button */}
       <button
-        onClick={() => navigate(-1)}
+        onClick={handleBack}
         className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center text-white hover:bg-zinc-800 transition-colors mb-6"
         data-testid="back-button"
       >
