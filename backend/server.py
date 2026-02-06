@@ -1098,9 +1098,13 @@ async def setup_subscription_payment(request: Request, user: dict = Depends(requ
         else:
             customer_id = subscription["stripeCustomerId"]
         
-        # Create checkout session for subscription with invoice settings
+        # Create checkout session for subscription
         checkout_session = stripe.checkout.Session.create(
             customer=customer_id,
+            customer_update={
+                "name": "auto",
+                "address": "auto"
+            },
             payment_method_types=["card"],
             line_items=[{
                 "price_data": {
@@ -1122,24 +1126,14 @@ async def setup_subscription_payment(request: Request, user: dict = Depends(requ
                 "subscription_id": subscription["id"],
                 "staff_count": str(staff_count)
             },
-            # Enable invoice creation and automatic sending
+            # Add description for the subscription
             subscription_data={
                 "description": f"Calendrax Subscription for {business['businessName']}",
                 "metadata": {
                     "business_id": business["id"],
                     "business_name": business["businessName"]
                 }
-            },
-            invoice_creation={
-                "enabled": True,
-                "invoice_data": {
-                    "description": f"Calendrax Monthly Subscription",
-                    "footer": "Thank you for using Calendrax!",
-                    "metadata": {
-                        "business_id": business["id"]
-                    }
-                }
-            } if False else None  # invoice_creation only for payment mode, not subscription
+            }
         )
         
         return {"url": checkout_session.url, "sessionId": checkout_session.id}
