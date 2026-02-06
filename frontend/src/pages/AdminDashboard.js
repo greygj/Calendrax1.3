@@ -537,7 +537,7 @@ const AdminDashboard = () => {
                   className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 cursor-pointer hover:bg-red-500/20 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <DollarSign className="w-6 h-6 text-red-400" />
+                    <PoundSterling className="w-6 h-6 text-red-400" />
                     <div>
                       <p className="text-white font-medium">{stats.failedPayments} Failed Payment(s)</p>
                       <p className="text-red-400/80 text-sm">Click to manage</p>
