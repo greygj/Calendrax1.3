@@ -44,13 +44,12 @@ const LandingPage = () => {
       {/* Header */}
       <header className="bg-cardBg border-b border-zinc-800">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="bg-white/90 rounded-lg px-3 py-1">
-            <img 
-              src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/syzj4nzu_1770417348108.png" 
-              alt="Calendrax" 
-              className="h-10"
-            />
-          </div>
+          <img 
+            src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/syzj4nzu_1770417348108.png" 
+            alt="Calendrax" 
+            className="h-12"
+            style={{ filter: 'brightness(0.35) contrast(1.5) sepia(0.3)' }}
+          />
           <div className="flex items-center gap-3">
             {user ? (
               <button
