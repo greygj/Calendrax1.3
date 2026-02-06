@@ -6,11 +6,15 @@ const Privacy = () => {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    // Check if there's history to go back to
-    if (window.history.length > 1) {
+    // Check if we have a referrer from the same site, otherwise go to signup
+    const referrer = document.referrer;
+    const currentHost = window.location.host;
+    
+    if (referrer && referrer.includes(currentHost)) {
+      // We came from another page on this site, go back
       navigate(-1);
     } else {
-      // Default to signup page if opened directly (e.g., new tab)
+      // Opened directly or from external link, go to signup
       navigate('/signup');
     }
   };
