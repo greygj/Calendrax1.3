@@ -5,6 +5,16 @@ import { ArrowLeft } from 'lucide-react';
 const Privacy = () => {
   const navigate = useNavigate();
 
+  const handleBack = () => {
+    // Check if there's history to go back to
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      // Default to signup page if opened directly (e.g., new tab)
+      navigate('/signup');
+    }
+  };
+
   const Section = ({ title, children }) => (
     <div className="mb-6">
       <h2 className="text-lime-400 text-lg font-semibold mb-3">{title}</h2>
@@ -18,7 +28,7 @@ const Privacy = () => {
     <div className="min-h-screen bg-black px-4 py-6">
       {/* Back Button */}
       <button
-        onClick={() => navigate(-1)}
+        onClick={handleBack}
         className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center text-white hover:bg-zinc-800 transition-colors mb-6"
         data-testid="back-button"
       >
