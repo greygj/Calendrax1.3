@@ -54,6 +54,7 @@ const Login = () => {
           src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/syzj4nzu_1770417348108.png" 
           alt="Calendrax" 
           className="h-48 mx-auto"
+          style={{ filter: 'brightness(0.35) contrast(1.5) sepia(0.3)' }}
         />
       </div>
 
