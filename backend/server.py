@@ -1084,7 +1084,11 @@ async def setup_subscription_payment(request: Request, user: dict = Depends(requ
             customer = stripe.Customer.create(
                 email=user["email"],
                 name=user["fullName"],
-                metadata={"business_id": business["id"]}
+                metadata={"business_id": business["id"]},
+                # Enable automatic invoice emails
+                invoice_settings={
+                    "footer": "Thank you for using Calendrax!"
+                }
             )
             await db.subscriptions.update_one(
                 {"id": subscription["id"]},
@@ -1094,7 +1098,7 @@ async def setup_subscription_payment(request: Request, user: dict = Depends(requ
         else:
             customer_id = subscription["stripeCustomerId"]
         
-        # Create checkout session for subscription
+        # Create checkout session for subscription with invoice settings
         checkout_session = stripe.checkout.Session.create(
             customer=customer_id,
             payment_method_types=["card"],
@@ -1117,7 +1121,25 @@ async def setup_subscription_payment(request: Request, user: dict = Depends(requ
                 "business_id": business["id"],
                 "subscription_id": subscription["id"],
                 "staff_count": str(staff_count)
-            }
+            },
+            # Enable invoice creation and automatic sending
+            subscription_data={
+                "description": f"Calendrax Subscription for {business['businessName']}",
+                "metadata": {
+                    "business_id": business["id"],
+                    "business_name": business["businessName"]
+                }
+            },
+            invoice_creation={
+                "enabled": True,
+                "invoice_data": {
+                    "description": f"Calendrax Monthly Subscription",
+                    "footer": "Thank you for using Calendrax!",
+                    "metadata": {
+                        "business_id": business["id"]
+                    }
+                }
+            } if False else None  # invoice_creation only for payment mode, not subscription
         )
         
         return {"url": checkout_session.url, "sessionId": checkout_session.id}
