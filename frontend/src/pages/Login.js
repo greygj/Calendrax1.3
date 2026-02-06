@@ -51,7 +51,7 @@ const Login = () => {
       {/* Logo */}
       <div className="mb-8">
         <img 
-          src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/ndfsqqas_1770416747206.png" 
+          src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/syzj4nzu_1770417348108.png" 
           alt="Calendrax" 
           className="h-48 mx-auto"
         />
