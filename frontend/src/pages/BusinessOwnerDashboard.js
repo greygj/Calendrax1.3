@@ -1945,7 +1945,10 @@ const BusinessOwnerDashboard = () => {
             {analyticsSubTab === 'revenue' && (
               <>
                 <div className="flex items-center justify-between">
-                  <h2 className="text-white text-xl font-semibold">Revenue</h2>
+                  <div>
+                    <h2 className="text-white text-xl font-semibold">Revenue</h2>
+                    <p className="text-gray-500 text-sm mt-1">The figures below take into account all past and future bookings on your system</p>
+                  </div>
                   <button 
                     onClick={loadRevenue}
                     disabled={revenueLoading}
@@ -2012,18 +2015,55 @@ const BusinessOwnerDashboard = () => {
                       </div>
                     </div>
 
-                    {/* Revenue by Staff */}
-                    {staffRevenue && staffRevenue.length > 0 && (
+                    {/* Revenue by Treatment/Service */}
+                    {serviceRevenue && serviceRevenue.serviceRevenue && serviceRevenue.serviceRevenue.length > 0 && (
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                          <Settings className="w-5 h-5 text-lime-400" />
+                          Revenue by Treatment
+                        </h3>
+                        <div className="space-y-3">
+                          {serviceRevenue.serviceRevenue.map((service, index) => (
+                            <div key={service.serviceId} className="flex items-center justify-between bg-zinc-800 rounded-lg p-4">
+                              <div className="flex items-center gap-3">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                                  index === 0 ? 'bg-lime-500 text-black' : 'bg-zinc-700 text-white'
+                                }`}>
+                                  {index + 1}
+                                </div>
+                                <div>
+                                  <p className={`font-medium ${service.isDeleted ? 'text-gray-400' : 'text-white'}`}>
+                                    {service.serviceName}
+                                    {service.isDeleted && <span className="text-red-400 text-xs ml-2">(Deleted)</span>}
+                                  </p>
+                                  <p className="text-gray-500 text-sm">{service.bookingCount} booking{service.bookingCount !== 1 ? 's' : ''}</p>
+                                </div>
+                              </div>
+                              <p className="text-lime-400 font-bold text-lg">£{service.totalRevenue.toFixed(2)}</p>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-4 pt-4 border-t border-zinc-700 flex justify-between items-center">
+                          <p className="text-gray-400 font-medium">Total Revenue</p>
+                          <p className="text-lime-400 font-bold text-xl">£{serviceRevenue.totalRevenue.toFixed(2)}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Revenue by Staff - only show if more than one staff */}
+                    {staffRevenue && staffRevenue.staffRevenue && staffRevenue.staffRevenue.length > 1 && (
                       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
                         <h3 className="text-white font-medium mb-4 flex items-center gap-2">
                           <Users className="w-5 h-5 text-lime-400" />
                           Revenue by Staff Member
                         </h3>
                         <div className="space-y-4">
-                          {staffRevenue.map((staff) => {
+                          {staffRevenue.staffRevenue.map((staff) => {
                             const curr_month_rev = staff.currentMonth?.revenue || 0;
                             const prev_month_rev = staff.previousMonth?.revenue || 0;
                             const change = curr_month_rev - prev_month_rev;
+                            const totalRev = staff.currentYear?.revenue || 0;
+                            const totalBookings = staff.currentYear?.bookingCount || 0;
                             return (
                               <div key={staff.staffId} className="bg-zinc-800 rounded-lg p-4">
                                 <div className="flex items-center justify-between mb-3">
@@ -2033,11 +2073,11 @@ const BusinessOwnerDashboard = () => {
                                     </div>
                                     <div>
                                       <p className="text-white font-medium">{staff.staffName}</p>
-                                      <p className="text-gray-500 text-sm">{staff.totalBookings} total bookings</p>
+                                      <p className="text-gray-500 text-sm">{totalBookings} total bookings</p>
                                     </div>
                                   </div>
                                   <div className="text-right">
-                                    <p className="text-lime-400 text-xl font-bold">£{staff.totalRevenue.toFixed(2)}</p>
+                                    <p className="text-lime-400 text-xl font-bold">£{totalRev.toFixed(2)}</p>
                                     <p className="text-gray-500 text-sm">all time</p>
                                   </div>
                                 </div>
@@ -2060,6 +2100,58 @@ const BusinessOwnerDashboard = () => {
                               </div>
                             );
                           })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Monthly Revenue Table */}
+                    {monthlyRevenue && monthlyRevenue.yearlyBreakdown && (
+                      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                        <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                          <Calendar className="w-5 h-5 text-lime-400" />
+                          Monthly Revenue Breakdown
+                        </h3>
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr className="border-b border-zinc-700">
+                                <th className="text-left text-gray-400 font-medium py-3 px-2">Month</th>
+                                {monthlyRevenue.years.map(year => (
+                                  <th key={year} className="text-right text-gray-400 font-medium py-3 px-2">{year}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {['January', 'February', 'March', 'April', 'May', 'June', 
+                                'July', 'August', 'September', 'October', 'November', 'December'].map((month, idx) => (
+                                <tr key={month} className="border-b border-zinc-800 hover:bg-zinc-800/50">
+                                  <td className="text-gray-300 py-3 px-2">{month}</td>
+                                  {monthlyRevenue.years.map(year => {
+                                    const yearData = monthlyRevenue.yearlyBreakdown[year];
+                                    const monthData = yearData?.months?.[idx];
+                                    const revenue = monthData?.revenue || 0;
+                                    return (
+                                      <td key={year} className={`text-right py-3 px-2 ${revenue > 0 ? 'text-lime-400' : 'text-gray-600'}`}>
+                                        £{revenue.toFixed(2)}
+                                      </td>
+                                    );
+                                  })}
+                                </tr>
+                              ))}
+                              {/* Year Total Row */}
+                              <tr className="border-t-2 border-zinc-600 bg-zinc-800/50">
+                                <td className="text-white font-bold py-3 px-2">Year Total</td>
+                                {monthlyRevenue.years.map(year => {
+                                  const yearData = monthlyRevenue.yearlyBreakdown[year];
+                                  return (
+                                    <td key={year} className="text-right text-lime-400 font-bold py-3 px-2">
+                                      £{(yearData?.yearTotal || 0).toFixed(2)}
+                                    </td>
+                                  );
+                                })}
+                              </tr>
+                            </tbody>
+                          </table>
                         </div>
                       </div>
                     )}
