@@ -2637,6 +2637,161 @@ async def get_revenue_by_staff(user: dict = Depends(require_business_owner)):
         }
     }
 
+@api_router.get("/revenue/by-service")
+async def get_revenue_by_service(user: dict = Depends(require_business_owner)):
+    """Get revenue breakdown by service/treatment including deleted services"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    # Get all appointments for this business (confirmed and completed)
+    appointments = await db.appointments.find({
+        "businessId": business["id"],
+        "status": {"$in": ["confirmed", "completed"]}
+    }).to_list(10000)
+    
+    # Get current services
+    current_services = await db.services.find({"businessId": business["id"]}).to_list(100)
+    service_map = {s["id"]: s["name"] for s in current_services}
+    
+    # Calculate revenue by service
+    service_revenue = {}
+    for apt in appointments:
+        # Handle multi-service bookings
+        service_ids = apt.get("serviceIds", [apt.get("serviceId")] if apt.get("serviceId") else [])
+        total_price = apt.get("totalPrice", 0)
+        
+        # If single service, use it directly
+        if len(service_ids) == 1:
+            service_id = service_ids[0]
+            service_name = apt.get("serviceName") or service_map.get(service_id, "Unknown Service")
+            
+            if service_id not in service_revenue:
+                service_revenue[service_id] = {
+                    "serviceId": service_id,
+                    "serviceName": service_name,
+                    "totalRevenue": 0,
+                    "bookingCount": 0,
+                    "isDeleted": service_id not in service_map
+                }
+            
+            service_revenue[service_id]["totalRevenue"] += total_price
+            service_revenue[service_id]["bookingCount"] += 1
+        else:
+            # For multi-service bookings, try to split by individual service prices
+            # Or divide evenly if not possible
+            for service_id in service_ids:
+                service_name = service_map.get(service_id, "Unknown Service")
+                
+                if service_id not in service_revenue:
+                    service_revenue[service_id] = {
+                        "serviceId": service_id,
+                        "serviceName": service_name,
+                        "totalRevenue": 0,
+                        "bookingCount": 0,
+                        "isDeleted": service_id not in service_map
+                    }
+                
+                # Divide revenue equally among services in multi-service booking
+                service_revenue[service_id]["totalRevenue"] += total_price / len(service_ids)
+                service_revenue[service_id]["bookingCount"] += 1
+    
+    # Convert to list and sort by revenue
+    services_list = list(service_revenue.values())
+    services_list.sort(key=lambda x: x["totalRevenue"], reverse=True)
+    
+    # Calculate total
+    total_revenue = sum(s["totalRevenue"] for s in services_list)
+    
+    return {
+        "serviceRevenue": services_list,
+        "totalRevenue": round(total_revenue, 2),
+        "serviceCount": len(services_list)
+    }
+
+@api_router.get("/revenue/monthly")
+async def get_monthly_revenue(user: dict = Depends(require_business_owner)):
+    """Get monthly revenue breakdown for current year and future years (2027-2030)"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    now = datetime.now(timezone.utc)
+    current_year = now.year
+    years_to_include = [current_year, 2027, 2028, 2029, 2030]
+    
+    # Make sure we include current year even if it's after 2030
+    if current_year not in years_to_include:
+        years_to_include = [current_year] + years_to_include
+    years_to_include = sorted(list(set(years_to_include)))
+    
+    month_names = ["January", "February", "March", "April", "May", "June", 
+                   "July", "August", "September", "October", "November", "December"]
+    
+    yearly_data = {}
+    
+    for year in years_to_include:
+        monthly_data = []
+        year_total = 0
+        
+        for month_num in range(1, 13):
+            # Get month range
+            month_start = f"{year}-{month_num:02d}-01"
+            if month_num == 12:
+                month_end = f"{year}-12-31"
+            else:
+                next_month = month_num + 1
+                month_end = f"{year}-{next_month:02d}-01"
+            
+            revenue_data = await calculate_revenue(business["id"], month_start, month_end)
+            
+            monthly_data.append({
+                "month": month_names[month_num - 1],
+                "monthNum": month_num,
+                "revenue": round(revenue_data["revenue"], 2),
+                "bookingCount": revenue_data["bookingCount"]
+            })
+            year_total += revenue_data["revenue"]
+        
+        yearly_data[str(year)] = {
+            "year": year,
+            "months": monthly_data,
+            "yearTotal": round(year_total, 2)
+        }
+    
+    return {
+        "yearlyBreakdown": yearly_data,
+        "years": years_to_include
+    }
+
+@api_router.delete("/business-customers/{customer_id}")
+async def delete_business_customer(customer_id: str, user: dict = Depends(require_business_owner)):
+    """Delete a customer record and their associated appointments"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    # Check if customer has any appointments with this business
+    customer_appointments = await db.appointments.find({
+        "businessId": business["id"],
+        "userId": customer_id
+    }).to_list(1000)
+    
+    if not customer_appointments:
+        raise HTTPException(status_code=404, detail="Customer not found for this business")
+    
+    # Delete all appointments for this customer with this business
+    delete_result = await db.appointments.delete_many({
+        "businessId": business["id"],
+        "userId": customer_id
+    })
+    
+    return {
+        "success": True,
+        "message": f"Customer record deleted. {delete_result.deleted_count} appointment(s) removed.",
+        "deletedAppointments": delete_result.deleted_count
+    }
+
 
 # ==================== PAYOUT HISTORY ROUTES ====================
 
