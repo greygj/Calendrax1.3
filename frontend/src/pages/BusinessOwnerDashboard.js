@@ -3392,16 +3392,24 @@ const BusinessOwnerDashboard = () => {
                 Are you sure you want to delete <span className="text-white font-medium">{customerToDelete.name}</span>'s record?
               </p>
               
-              <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-6">
+              <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-4">
                 <div className="flex items-start gap-3">
-                  <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                  <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-red-400 font-medium">Warning</p>
-                    <p className="text-red-300/80 text-sm mt-1">
-                      This will permanently delete all booking records for this customer from your system. This action cannot be undone.
-                    </p>
+                    <p className="text-yellow-400 font-medium">What will happen</p>
+                    <ul className="text-yellow-200/80 text-sm mt-1 space-y-1">
+                      <li>• <strong>Future bookings</strong> will be cancelled and removed</li>
+                      <li>• <strong>Past bookings</strong> will be preserved for revenue tracking</li>
+                      <li>• Customer will no longer appear in your active customer list</li>
+                    </ul>
                   </div>
                 </div>
+              </div>
+              
+              <div className="bg-lime-500/10 border border-lime-500/30 rounded-lg p-4 mb-6">
+                <p className="text-lime-400 text-sm">
+                  <strong>Revenue preserved:</strong> Historical revenue from past appointments will still be included in your analytics.
+                </p>
               </div>
               
               <div className="flex gap-3">
