@@ -56,6 +56,11 @@ const BusinessOwnerDashboard = () => {
   const [analytics, setAnalytics] = useState(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
   
+  // Billing state
+  const [billingInvoices, setBillingInvoices] = useState([]);
+  const [billingUpcoming, setBillingUpcoming] = useState(null);
+  const [billingLoading, setBillingLoading] = useState(false);
+  
   // Service management state
   const [showServiceModal, setShowServiceModal] = useState(false);
   const [editingService, setEditingService] = useState(null);
