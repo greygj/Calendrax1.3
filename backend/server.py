@@ -2766,7 +2766,7 @@ async def get_monthly_revenue(user: dict = Depends(require_business_owner)):
 
 @api_router.delete("/business-customers/{customer_id}")
 async def delete_business_customer(customer_id: str, user: dict = Depends(require_business_owner)):
-    """Delete a customer record and their associated appointments"""
+    """Delete future appointments for a customer while preserving past booking history for revenue tracking"""
     business = await db.businesses.find_one({"ownerId": user["id"]})
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
@@ -2780,16 +2780,34 @@ async def delete_business_customer(customer_id: str, user: dict = Depends(requir
     if not customer_appointments:
         raise HTTPException(status_code=404, detail="Customer not found for this business")
     
-    # Delete all appointments for this customer with this business
-    delete_result = await db.appointments.delete_many({
-        "businessId": business["id"],
-        "userId": customer_id
-    })
+    # Get today's date for comparison
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    
+    # Count past and future appointments
+    past_appointments = [apt for apt in customer_appointments if apt.get("date", "") < today]
+    future_appointments = [apt for apt in customer_appointments if apt.get("date", "") >= today]
+    
+    # Calculate past revenue to preserve
+    past_revenue = sum(apt.get("totalPrice", 0) for apt in past_appointments)
+    
+    # Delete only future appointments
+    if future_appointments:
+        future_ids = [apt["id"] for apt in future_appointments]
+        delete_result = await db.appointments.delete_many({
+            "businessId": business["id"],
+            "userId": customer_id,
+            "id": {"$in": future_ids}
+        })
+        deleted_count = delete_result.deleted_count
+    else:
+        deleted_count = 0
     
     return {
         "success": True,
-        "message": f"Customer record deleted. {delete_result.deleted_count} appointment(s) removed.",
-        "deletedAppointments": delete_result.deleted_count
+        "message": f"Customer's future bookings deleted. Past booking history preserved for revenue tracking.",
+        "deletedAppointments": deleted_count,
+        "preservedAppointments": len(past_appointments),
+        "preservedRevenue": round(past_revenue, 2)
     }
 
 
