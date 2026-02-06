@@ -205,6 +205,7 @@ const LandingPage = () => {
             src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/syzj4nzu_1770417348108.png" 
             alt="Calendrax" 
             className="h-8"
+            style={{ filter: 'brightness(0.35) contrast(1.5) sepia(0.3)' }}
           />
           <div className="flex items-center gap-6 text-sm text-gray-500">
             <a href="/terms" className="hover:text-white transition-colors">Terms & Conditions</a>
