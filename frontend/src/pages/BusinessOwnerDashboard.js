@@ -1656,20 +1656,22 @@ const BusinessOwnerDashboard = () => {
         {activeView === 'analytics' && (
           <div className="space-y-6">
             {/* Sub-tabs */}
-            <div className="flex items-center gap-1 bg-zinc-900 border border-zinc-800 rounded-xl p-1">
+            <div className="flex items-center gap-1 bg-zinc-900 border border-zinc-800 rounded-xl p-1 overflow-x-auto">
               {[
                 { id: 'overview', label: 'Overview', icon: PieChart },
                 { id: 'revenue', label: 'Revenue', icon: DollarSign },
-                { id: 'payouts', label: 'Payouts', icon: Banknote }
+                { id: 'payouts', label: 'Payouts', icon: Banknote },
+                { id: 'billing', label: 'Billing', icon: Receipt }
               ].map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => setAnalyticsSubTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
                     analyticsSubTab === tab.id
                       ? 'bg-lime-500 text-black'
                       : 'text-gray-400 hover:text-white hover:bg-zinc-800'
                   }`}
+                  data-testid={`analytics-tab-${tab.id}`}
                 >
                   <tab.icon className="w-4 h-4" />
                   {tab.label}
