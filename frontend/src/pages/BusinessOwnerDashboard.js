@@ -46,6 +46,8 @@ const BusinessOwnerDashboard = () => {
   // Revenue state
   const [revenueSummary, setRevenueSummary] = useState(null);
   const [staffRevenue, setStaffRevenue] = useState(null);
+  const [serviceRevenue, setServiceRevenue] = useState(null);
+  const [monthlyRevenue, setMonthlyRevenue] = useState(null);
   const [revenueLoading, setRevenueLoading] = useState(false);
   
   // Payout History state
@@ -60,6 +62,11 @@ const BusinessOwnerDashboard = () => {
   const [billingInvoices, setBillingInvoices] = useState([]);
   const [billingUpcoming, setBillingUpcoming] = useState(null);
   const [billingLoading, setBillingLoading] = useState(false);
+  
+  // Customer detail state
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [showDeleteCustomerModal, setShowDeleteCustomerModal] = useState(false);
+  const [customerToDelete, setCustomerToDelete] = useState(null);
   
   // Service management state
   const [showServiceModal, setShowServiceModal] = useState(false);
