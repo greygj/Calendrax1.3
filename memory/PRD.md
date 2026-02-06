@@ -340,6 +340,21 @@ STRIPE_API_KEY=sk_test_emergent
   - Stores preference in localStorage
   - Responsive design for mobile and desktop
 
+### Phase 15: Billing History & Invoice System ✅ (December 2025)
+- [x] **Billing History Tab** - New sub-tab in Analytics section:
+  - Next Invoice preview with amount and description
+  - Invoice History list with download/view options
+  - Subscription Summary card (status, monthly cost, next payment date)
+- [x] **Stripe Invoice Integration**:
+  - Backend endpoints: `/api/billing/invoices`, `/api/billing/upcoming`
+  - Fetches invoices from Stripe API
+  - PDF download links for each invoice
+  - Hosted invoice page links
+- [x] **Automatic Invoice Emails**:
+  - Configured Stripe to send invoice emails automatically
+  - Customer footer message added to invoices
+  - Invoice settings applied during checkout session creation
+
 ## Upcoming Tasks (P1)
 1. Enable Stripe Connect on your Stripe account to activate business payout functionality
 2. Add Google Maps API for accurate business location display
