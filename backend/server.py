@@ -629,11 +629,15 @@ async def create_staff(staff_data: StaffCreate, user: dict = Depends(require_bus
     if existing_count >= 5:
         raise HTTPException(status_code=400, detail="Maximum 5 staff members allowed")
     
+    # Get all existing services for this business to auto-assign (opt-out basis)
+    existing_services = await db.services.find({"businessId": business["id"]}).to_list(100)
+    all_service_ids = [s["id"] for s in existing_services]
+    
     staff_doc = {
         "id": str(uuid.uuid4()),
         "businessId": business["id"],
         "name": staff_data.name,
-        "serviceIds": staff_data.serviceIds,
+        "serviceIds": all_service_ids,  # Auto-assign all services
         "active": True,
         "isOwner": False,
         "createdAt": datetime.now(timezone.utc).isoformat()
