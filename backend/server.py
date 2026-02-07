@@ -50,6 +50,9 @@ if not STRIPE_API_KEY:
     print("WARNING: STRIPE_API_KEY not set. Payments will not work!")
 stripe.api_key = STRIPE_API_KEY
 
+# Frontend URL for redirects (Stripe Connect, etc.)
+FRONTEND_URL = os.environ.get('FRONTEND_URL', '')
+
 # Offer codes for testing (bypass payment)
 VALID_OFFER_CODES = {
     "TESTFREE": {"type": "bypass", "description": "Testing - bypass payment"},
