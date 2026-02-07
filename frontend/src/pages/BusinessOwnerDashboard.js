@@ -193,7 +193,8 @@ const BusinessOwnerDashboard = () => {
       }
     } catch (error) {
       console.error('Stripe connect error:', error);
-      alert('Failed to start Stripe onboarding. Please try again.');
+      const errorMessage = error.response?.data?.detail || 'Failed to start Stripe onboarding. Please try again.';
+      alert(errorMessage);
     } finally {
       setStripeLoading(false);
     }
