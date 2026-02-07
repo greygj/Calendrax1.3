@@ -48,7 +48,7 @@ const LandingPage = () => {
             src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/tmj5ltm0_Calendrax%20Opaque.png" 
             alt="Calendrax" 
             className="h-12"
-            style={{ filter: 'brightness(0.35) contrast(1.5) sepia(0.3)' }}
+            
           />
           <div className="flex items-center gap-3">
             {user ? (
@@ -205,7 +205,7 @@ const LandingPage = () => {
             src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/tmj5ltm0_Calendrax%20Opaque.png" 
             alt="Calendrax" 
             className="h-8"
-            style={{ filter: 'brightness(0.35) contrast(1.5) sepia(0.3)' }}
+            
           />
           <div className="flex items-center gap-6 text-sm text-gray-500">
             <a href="/terms" className="hover:text-white transition-colors">Terms & Conditions</a>
