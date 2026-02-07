@@ -1136,7 +1136,10 @@ async def setup_subscription_payment(request: Request, user: dict = Depends(requ
         staff_count = 1
     
     price = calculate_subscription_price(staff_count)
-    origin_url = request.headers.get('origin', '')
+    origin_url = get_frontend_url(request)
+    
+    if not origin_url:
+        raise HTTPException(status_code=400, detail="Unable to determine redirect URL. Please try again.")
     
     try:
         # Create or get Stripe customer
