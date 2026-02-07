@@ -1155,15 +1155,6 @@ const BusinessOwnerDashboard = () => {
                   </button>
                   
                   <button
-                    onClick={() => setActiveView('staff')}
-                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-brand-500 px-4 py-4 rounded-xl transition-all group"
-                  >
-                    <Users className="w-8 h-8 text-brand-400 group-hover:scale-110 transition-transform" />
-                    <span className="text-white font-medium text-sm">Set Staff Services</span>
-                    <span className="text-gray-500 text-xs text-center">Assign services to staff</span>
-                  </button>
-                  
-                  <button
                     onClick={() => setActiveView('availability')}
                     className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-brand-500 px-4 py-4 rounded-xl transition-all group"
                   >
