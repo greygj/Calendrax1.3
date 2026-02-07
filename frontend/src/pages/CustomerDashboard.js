@@ -170,7 +170,7 @@ const CustomerDashboard = () => {
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           {/* Logo - Larger */}
           <img 
-            src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/syzj4nzu_1770417348108.png" 
+            src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/tmj5ltm0_Calendrax%20Opaque.png" 
             alt="Calendrax" 
             className="h-20 cursor-pointer"
             style={{ filter: 'brightness(0.35) contrast(1.5) sepia(0.3)' }}

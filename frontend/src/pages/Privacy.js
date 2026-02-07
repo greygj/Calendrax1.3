@@ -42,7 +42,7 @@ const Privacy = () => {
       {/* Logo */}
       <div className="text-center mb-8">
         <img 
-          src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/syzj4nzu_1770417348108.png" 
+          src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/tmj5ltm0_Calendrax%20Opaque.png" 
           alt="Calendrax" 
           className="h-16 mx-auto"
           style={{ filter: 'brightness(0.35) contrast(1.5) sepia(0.3)' }}
