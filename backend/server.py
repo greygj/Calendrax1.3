@@ -900,6 +900,24 @@ async def upload_business_photo(file: UploadFile = File(...), user: dict = Depen
 
 # ==================== STRIPE CONNECT ROUTES ====================
 
+def get_frontend_url(request: Request) -> str:
+    """Get the frontend URL for redirects, using origin header with fallback to FRONTEND_URL env var"""
+    origin = request.headers.get('origin', '')
+    if origin and origin.startswith('http'):
+        return origin
+    # Fallback to configured FRONTEND_URL
+    if FRONTEND_URL:
+        return FRONTEND_URL
+    # Last resort - try referer header
+    referer = request.headers.get('referer', '')
+    if referer:
+        # Extract origin from referer (https://example.com/path -> https://example.com)
+        from urllib.parse import urlparse
+        parsed = urlparse(referer)
+        if parsed.scheme and parsed.netloc:
+            return f"{parsed.scheme}://{parsed.netloc}"
+    return ''
+
 @api_router.post("/stripe-connect/create-account")
 async def create_stripe_connect_account(request: Request, user: dict = Depends(require_business_owner)):
     """Create a Stripe Connect account for the business owner"""
@@ -907,22 +925,40 @@ async def create_stripe_connect_account(request: Request, user: dict = Depends(r
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
     
+    # Get the frontend URL for redirects
+    frontend_url = get_frontend_url(request)
+    logger.info(f"Stripe Connect: Frontend URL for redirects: {frontend_url}")
+    
+    if not frontend_url:
+        logger.error("Stripe Connect: No frontend URL available for redirects")
+        raise HTTPException(status_code=400, detail="Unable to determine redirect URL. Please try again.")
+    
     # Check if already has a connect account
     if business.get("stripeConnectAccountId"):
         # Return the existing account link for onboarding completion
         try:
+            logger.info(f"Stripe Connect: Creating account link for existing account {business['stripeConnectAccountId']}")
             account_link = stripe.AccountLink.create(
                 account=business["stripeConnectAccountId"],
-                refresh_url=f"{request.headers.get('origin', '')}/dashboard?stripe_refresh=true",
-                return_url=f"{request.headers.get('origin', '')}/dashboard?stripe_connected=true",
+                refresh_url=f"{frontend_url}/dashboard?stripe_refresh=true",
+                return_url=f"{frontend_url}/dashboard?stripe_connected=true",
                 type="account_onboarding",
             )
             return {"url": account_link.url, "accountId": business["stripeConnectAccountId"]}
+        except stripe.error.InvalidRequestError as e:
+            # Account might be deleted or invalid, clear it and create a new one
+            logger.warning(f"Stripe Connect: Existing account invalid, will create new one. Error: {e}")
+            await db.businesses.update_one(
+                {"id": business["id"]},
+                {"$unset": {"stripeConnectAccountId": "", "stripeConnectOnboarded": ""}}
+            )
         except Exception as e:
-            logger.error(f"Error creating account link: {e}")
+            logger.error(f"Stripe Connect: Error creating account link: {e}")
+            raise HTTPException(status_code=500, detail=f"Failed to create account link: {str(e)}")
     
     try:
         # Create a new Express Connect account
+        logger.info(f"Stripe Connect: Creating new Express account for user {user['email']}")
         account = stripe.Account.create(
             type="express",
             country="GB",
@@ -938,6 +974,8 @@ async def create_stripe_connect_account(request: Request, user: dict = Depends(r
             }
         )
         
+        logger.info(f"Stripe Connect: Account created with ID {account.id}")
+        
         # Save the account ID to the business
         await db.businesses.update_one(
             {"id": business["id"]},
@@ -947,12 +985,19 @@ async def create_stripe_connect_account(request: Request, user: dict = Depends(r
         # Create an account link for onboarding
         account_link = stripe.AccountLink.create(
             account=account.id,
-            refresh_url=f"{request.headers.get('origin', '')}/dashboard?stripe_refresh=true",
-            return_url=f"{request.headers.get('origin', '')}/dashboard?stripe_connected=true",
+            refresh_url=f"{frontend_url}/dashboard?stripe_refresh=true",
+            return_url=f"{frontend_url}/dashboard?stripe_connected=true",
             type="account_onboarding",
         )
         
+        logger.info(f"Stripe Connect: Account link created, redirecting to Stripe onboarding")
         return {"url": account_link.url, "accountId": account.id}
+    except stripe.error.InvalidRequestError as e:
+        logger.error(f"Stripe Connect: Invalid request error: {str(e)}")
+        error_message = str(e)
+        if "email" in error_message.lower():
+            raise HTTPException(status_code=400, detail="This email is already associated with a Stripe account. Please use a different email or contact support.")
+        raise HTTPException(status_code=400, detail=f"Stripe error: {str(e)}")
     except Exception as e:
         logger.error(f"Stripe Connect error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to create Stripe account: {str(e)}")
