@@ -1167,6 +1167,39 @@ const BusinessOwnerDashboard = () => {
                 </div>
               </div>
             )}
+
+            {/* Reminder Messages */}
+            <div className="space-y-3">
+              {/* Bank Account Reminder - Yellow */}
+              {stripeStatus && !stripeStatus.accountEnabled && (
+                <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
+                  <div className="flex items-start gap-3">
+                    <Banknote className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-yellow-400 font-medium">Connect Your Bank Account</p>
+                      <p className="text-yellow-200/70 text-sm mt-1">
+                        Connect a bank account to receive customer deposit payments. Go to <button onClick={() => setActiveView('profile')} className="underline hover:text-yellow-300">Profile → Bank Account</button> to set this up.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Subscription Payment Reminder - Red (only if not on free access) */}
+              {subscription && !subscription.freeAccessOverride && subscription.status === 'trial' && !subscription.stripeSubscriptionId && (
+                <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
+                  <div className="flex items-start gap-3">
+                    <CreditCard className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-red-400 font-medium">Add Payment Method for Subscription</p>
+                      <p className="text-red-200/70 text-sm mt-1">
+                        Your free trial will end soon. Please add a payment method to continue using Calendrax after your trial. Go to <button onClick={() => setActiveView('profile')} className="underline hover:text-red-300">Profile → Subscription</button> to add your card.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
