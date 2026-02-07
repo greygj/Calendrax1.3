@@ -43,6 +43,9 @@ const BusinessOwnerDashboard = () => {
   // Analytics sub-tab state
   const [analyticsSubTab, setAnalyticsSubTab] = useState('overview');
   
+  // Services & Staff sub-tab state
+  const [servicesSubTab, setServicesSubTab] = useState('services');
+  
   // Revenue state
   const [revenueSummary, setRevenueSummary] = useState(null);
   const [staffRevenue, setStaffRevenue] = useState(null);
