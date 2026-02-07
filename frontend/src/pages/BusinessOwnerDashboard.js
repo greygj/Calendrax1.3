@@ -1517,169 +1517,235 @@ const BusinessOwnerDashboard = () => {
           </div>
         )}
 
-        {/* Services View */}
+        {/* Services & Staff View */}
         {activeView === 'services' && (
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-white text-xl font-semibold">Manage Services</h2>
-              <button
-                onClick={openAddService}
-                className="flex items-center gap-2 bg-brand-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
-              >
-                <Plus className="w-4 h-4" /> Add Service
-              </button>
+          <div className="space-y-6">
+            {/* Sub-tabs */}
+            <div className="flex items-center gap-1 bg-cardBg border border-zinc-800 rounded-xl p-1">
+              {[
+                { id: 'services', label: 'Services', icon: Settings },
+                { id: 'staff', label: 'Staff', icon: Users }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setServicesSubTab(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+                    servicesSubTab === tab.id
+                      ? 'bg-brand-500 text-black'
+                      : 'text-gray-400 hover:text-white hover:bg-zinc-800'
+                  }`}
+                  data-testid={`services-tab-${tab.id}`}
+                >
+                  <tab.icon className="w-4 h-4" />
+                  {tab.label}
+                </button>
+              ))}
             </div>
 
-            {businessServices.length > 0 ? (
-              <div className="space-y-3">
-                {businessServices.map(service => (
-                  <div key={service.id} className="bg-cardBg border border-zinc-800 rounded-xl p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <h4 className="text-white font-medium">{service.name}</h4>
-                          <span className={`px-2 py-0.5 rounded text-xs ${
-                            service.active !== false
-                              ? 'bg-brand-500/20 text-brand-400'
-                              : 'bg-gray-500/20 text-gray-400'
-                          }`}>
-                            {service.active !== false ? 'Active' : 'Inactive'}
-                          </span>
-                        </div>
-                        <p className="text-gray-400 text-sm mt-1">{service.description}</p>
-                        <div className="flex items-center gap-4 mt-2">
-                          <span className="text-brand-400 font-semibold">£{service.price}</span>
-                          <span className="text-gray-500 text-sm flex items-center gap-1">
-                            <Clock className="w-4 h-4" /> {service.duration} min
-                          </span>
+            {/* Services Sub-tab */}
+            {servicesSubTab === 'services' && (
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-white text-xl font-semibold">Manage Services</h2>
+                  <button
+                    onClick={openAddService}
+                    className="flex items-center gap-2 bg-brand-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
+                  >
+                    <Plus className="w-4 h-4" /> Add Service
+                  </button>
+                </div>
+
+                {/* Info banner about staff assignment */}
+                <div className="bg-brand-500/10 border border-brand-500/30 rounded-xl p-4 mb-6">
+                  <p className="text-brand-400 text-sm">
+                    <strong>Note:</strong> New services are automatically assigned to all staff members. You can change which staff perform each service in the Staff tab.
+                  </p>
+                </div>
+
+                {businessServices.length > 0 ? (
+                  <div className="space-y-3">
+                    {businessServices.map(service => (
+                      <div key={service.id} className="bg-cardBg border border-zinc-800 rounded-xl p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <h4 className="text-white font-medium">{service.name}</h4>
+                              <span className={`px-2 py-0.5 rounded text-xs ${
+                                service.active !== false
+                                  ? 'bg-brand-500/20 text-brand-400'
+                                  : 'bg-gray-500/20 text-gray-400'
+                              }`}>
+                                {service.active !== false ? 'Active' : 'Inactive'}
+                              </span>
+                            </div>
+                            <p className="text-gray-400 text-sm mt-1">{service.description}</p>
+                            <div className="flex items-center gap-4 mt-2">
+                              <span className="text-brand-400 font-semibold">£{service.price}</span>
+                              <span className="text-gray-500 text-sm flex items-center gap-1">
+                                <Clock className="w-4 h-4" /> {service.duration} min
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleToggleActive(service)}
+                              className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                                service.active !== false
+                                  ? 'bg-gray-500/20 text-gray-400 hover:bg-gray-500/30'
+                                  : 'bg-brand-500/20 text-brand-400 hover:bg-brand-500/30'
+                              }`}
+                            >
+                              {service.active !== false ? 'Deactivate' : 'Activate'}
+                            </button>
+                            <button
+                              onClick={() => openEditService(service)}
+                              className="p-2 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteService(service.id)}
+                              className="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors"
+                              data-testid={`delete-service-${service.id}`}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleToggleActive(service)}
-                          className={`px-3 py-1 rounded-lg text-sm transition-colors ${
-                            service.active !== false
-                              ? 'bg-gray-500/20 text-gray-400 hover:bg-gray-500/30'
-                              : 'bg-brand-500/20 text-brand-400 hover:bg-brand-500/30'
-                          }`}
-                        >
-                          {service.active !== false ? 'Deactivate' : 'Activate'}
-                        </button>
-                        <button
-                          onClick={() => openEditService(service)}
-                          className="p-2 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteService(service.id)}
-                          className="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors"
-                          data-testid={`delete-service-${service.id}`}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="bg-cardBg border border-zinc-800 rounded-xl p-8 text-center">
-                <Settings className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                <p className="text-gray-500 mb-4">No services yet</p>
-                <button
-                  onClick={openAddService}
-                  className="bg-brand-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
-                >
-                  Add Your First Service
-                </button>
+                ) : (
+                  <div className="bg-cardBg border border-zinc-800 rounded-xl p-8 text-center">
+                    <Settings className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                    <p className="text-gray-500 mb-4">No services yet</p>
+                    <button
+                      onClick={openAddService}
+                      className="bg-brand-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
+                    >
+                      Add Your First Service
+                    </button>
+                  </div>
+                )}
               </div>
             )}
-          </div>
-        )}
 
-        {/* Staff View */}
-        {activeView === 'staff' && (
-          <div>
-            <div className="flex items-center justify-between mb-6">
+            {/* Staff Sub-tab */}
+            {servicesSubTab === 'staff' && (
               <div>
-                <h2 className="text-white text-xl font-semibold">Staff Members</h2>
-                <p className="text-gray-500 text-sm">Manage up to 5 staff members for booking</p>
-              </div>
-              {staffMembers.length < 5 && (
-                <button
-                  onClick={openAddStaff}
-                  className="flex items-center gap-2 bg-brand-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
-                >
-                  <UserPlus className="w-4 h-4" /> Add Staff
-                </button>
-              )}
-            </div>
-
-            {staffMembers.length > 0 ? (
-              <div className="space-y-3">
-                {staffMembers.map(staff => (
-                  <div key={staff.id} className="bg-cardBg border border-zinc-800 rounded-xl p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <div className="w-10 h-10 rounded-full bg-brand-500/20 flex items-center justify-center">
-                            <User className="w-5 h-5 text-brand-400" />
-                          </div>
-                          <div>
-                            <h4 className="text-white font-medium">{staff.name}</h4>
-                            {staff.isOwner && (
-                              <span className="text-brand-400 text-xs">Business Owner</span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="mt-3">
-                          <p className="text-gray-500 text-sm mb-2">Services offered:</p>
-                          <div className="flex flex-wrap gap-2">
-                            {(staff.serviceIds || []).map(sid => {
-                              const service = businessServices.find(s => s.id === sid);
-                              return service ? (
-                                <span key={sid} className="px-2 py-1 bg-zinc-800 text-gray-300 text-xs rounded">
-                                  {service.name}
-                                </span>
-                              ) : null;
-                            })}
-                            {(!staff.serviceIds || staff.serviceIds.length === 0) && (
-                              <span className="text-gray-500 text-xs">No services assigned</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => openEditStaff(staff)}
-                          className="p-2 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        {!staff.isOwner && (
-                          <button
-                            onClick={() => handleDeleteStaff(staff.id)}
-                            className="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-white text-xl font-semibold">Staff Members</h2>
+                    <p className="text-gray-500 text-sm">Manage up to 5 staff members for booking</p>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="bg-cardBg border border-zinc-800 rounded-xl p-8 text-center">
-                <Users className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                <p className="text-gray-500 mb-4">No staff members yet</p>
-                <button
-                  onClick={openAddStaff}
-                  className="bg-brand-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
-                >
-                  Add Your First Staff Member
-                </button>
+                  {staffMembers.length < 5 && (
+                    <button
+                      onClick={openAddStaff}
+                      className="flex items-center gap-2 bg-brand-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
+                    >
+                      <UserPlus className="w-4 h-4" /> Add Staff
+                    </button>
+                  )}
+                </div>
+
+                {/* Info banner about service assignment */}
+                <div className="bg-brand-500/10 border border-brand-500/30 rounded-xl p-4 mb-6">
+                  <p className="text-brand-400 text-sm">
+                    <strong>Note:</strong> New staff members are automatically assigned to all services. You can customise which services each staff member performs below.
+                  </p>
+                </div>
+
+                {staffMembers.length > 0 ? (
+                  <div className="space-y-3">
+                    {staffMembers.map(staff => (
+                      <div key={staff.id} className="bg-cardBg border border-zinc-800 rounded-xl p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 bg-brand-500/20 rounded-full flex items-center justify-center">
+                              <User className="w-6 h-6 text-brand-400" />
+                            </div>
+                            <div>
+                              <h4 className="text-white font-medium">{staff.name}</h4>
+                              <p className="text-gray-500 text-sm">
+                                {staff.serviceIds?.length || 0} service(s) assigned
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => {
+                                setEditingStaff(staff);
+                                setShowStaffModal(true);
+                              }}
+                              className="p-2 rounded-lg bg-zinc-800 text-white hover:bg-zinc-700 transition-colors"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            {!staff.isOwner && (
+                              <button
+                                onClick={() => {
+                                  setStaffConfirmData({
+                                    type: 'remove',
+                                    staffId: staff.id,
+                                    staffName: staff.name
+                                  });
+                                  setShowStaffConfirmModal(true);
+                                }}
+                                className="p-2 rounded-lg bg-zinc-800 text-red-400 hover:bg-zinc-700 transition-colors"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                        
+                        {/* Services this staff can perform */}
+                        <div className="mt-4 pt-4 border-t border-zinc-700">
+                          <p className="text-gray-400 text-sm mb-2">Services:</p>
+                          <div className="flex flex-wrap gap-2">
+                            {businessServices.map(service => {
+                              const isAssigned = staff.serviceIds?.includes(service.id);
+                              return (
+                                <button
+                                  key={service.id}
+                                  onClick={async () => {
+                                    const newServiceIds = isAssigned
+                                      ? staff.serviceIds.filter(id => id !== service.id)
+                                      : [...(staff.serviceIds || []), service.id];
+                                    try {
+                                      await staffAPI.update(staff.id, { serviceIds: newServiceIds });
+                                      loadData();
+                                    } catch (error) {
+                                      console.error('Failed to update staff services:', error);
+                                    }
+                                  }}
+                                  className={`px-3 py-1 rounded-full text-sm transition-colors ${
+                                    isAssigned
+                                      ? 'bg-brand-500 text-black'
+                                      : 'bg-zinc-700 text-gray-400 hover:bg-zinc-600'
+                                  }`}
+                                >
+                                  {service.name}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="bg-cardBg border border-zinc-800 rounded-xl p-8 text-center">
+                    <Users className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                    <p className="text-gray-500 mb-4">No staff members yet</p>
+                    <button
+                      onClick={openAddStaff}
+                      className="bg-brand-500 text-black px-6 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
+                    >
+                      Add Your First Staff Member
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
