@@ -1023,8 +1023,7 @@ const BusinessOwnerDashboard = () => {
               { id: 'dashboard', label: 'Dashboard', icon: Building2 },
               { id: 'availability', label: 'Availability', icon: Calendar },
               { id: 'appointments', label: 'Appointments', icon: Clock, badge: pendingAppointments.length },
-              { id: 'services', label: 'Services', icon: Settings },
-              { id: 'staff', label: 'Staff', icon: Users },
+              { id: 'services', label: 'Services & Staff', icon: Settings },
               { id: 'analytics', label: 'Analytics', icon: BarChart3 },
               { id: 'customers', label: 'Customers', icon: User },
               { id: 'profile', label: 'Profile', icon: Building2 }
