@@ -520,14 +520,22 @@ async def create_service(service: ServiceCreate, user: dict = Depends(require_bu
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
     
+    service_id = str(uuid.uuid4())
     service_doc = {
-        "id": str(uuid.uuid4()),
+        "id": service_id,
         "businessId": business["id"],
         **service.model_dump(),
         "active": True,
         "createdAt": datetime.now(timezone.utc).isoformat()
     }
     await db.services.insert_one(service_doc)
+    
+    # Auto-assign this service to all existing staff members (opt-out basis)
+    await db.staff.update_many(
+        {"businessId": business["id"]},
+        {"$addToSet": {"serviceIds": service_id}}
+    )
+    
     return remove_mongo_id(service_doc)
 
 @api_router.get("/my-services")
