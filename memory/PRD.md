@@ -61,6 +61,12 @@ Create "Calendrax," a comprehensive booking application with:
   - Removed top tab bar
   - Logout button at bottom
   - Home button for sub-view navigation
+- [x] **Business Owner Dashboard Mobile Redesign** (Feb 2026)
+  - Full-width navigation buttons with subtitles
+  - Shows counts (appointments, services, staff, customers)
+  - Removed top tab bar
+  - Logout button at bottom
+  - Back to Dashboard button in header for sub-views
 
 ---
 
