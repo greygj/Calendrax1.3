@@ -1034,7 +1034,7 @@ const BusinessOwnerDashboard = () => {
             {/* Business Info Card */}
             <div className="bg-cardBg border border-zinc-800 rounded-xl p-6">
               <div className="flex items-start gap-4">
-                <div className="w-20 h-20 rounded-xl overflow-hidden bg-zinc-800">
+                <div className="w-16 h-16 rounded-xl overflow-hidden bg-zinc-800 flex-shrink-0">
                   {business?.logo ? (
                     <img src={business.logo} alt={business.businessName} className="w-full h-full object-cover" />
                   ) : (
@@ -1043,103 +1043,131 @@ const BusinessOwnerDashboard = () => {
                     </div>
                   )}
                 </div>
-                <div className="flex-1">
-                  <h2 className="text-white text-2xl font-bold">{business?.businessName}</h2>
-                  <p className="text-gray-400 mt-1">{business?.description}</p>
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-white text-xl font-bold truncate">{business?.businessName}</h2>
+                  <p className="text-gray-400 text-sm mt-1 line-clamp-2">{business?.description}</p>
                   {business?.postcode && (
                     <div className="flex items-center gap-1 mt-2">
                       <MapPin className="w-4 h-4 text-brand-400" />
-                      <span className="text-gray-500">{business.postcode}</span>
+                      <span className="text-gray-500 text-sm">{business.postcode}</span>
                     </div>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              <div className="bg-cardBg border border-zinc-800 rounded-xl p-4">
-                <p className="text-gray-500 text-sm">Pending</p>
-                <p className="text-white text-2xl font-bold mt-1">{pendingAppointments.length}</p>
-              </div>
-              <div className="bg-cardBg border border-zinc-800 rounded-xl p-4">
-                <p className="text-gray-500 text-sm">Confirmed</p>
-                <p className="text-brand-400 text-2xl font-bold mt-1">{confirmedAppointments.length}</p>
-              </div>
-              <div className="bg-cardBg border border-zinc-800 rounded-xl p-4">
-                <p className="text-gray-500 text-sm">Services</p>
-                <p className="text-white text-2xl font-bold mt-1">{businessServices.length}</p>
-              </div>
-              <div className="bg-cardBg border border-zinc-800 rounded-xl p-4">
-                <p className="text-gray-500 text-sm">Staff</p>
-                <p className="text-white text-2xl font-bold mt-1">{staffMembers.length}</p>
-              </div>
-              <div className="bg-cardBg border border-zinc-800 rounded-xl p-4">
-                <p className="text-gray-500 text-sm">Customers</p>
-                <p className="text-white text-2xl font-bold mt-1">{customers.length}</p>
-              </div>
-            </div>
-
             {/* Pending Appointments Alert */}
             {pendingAppointments.length > 0 && (
-              <div className="bg-yellow-500/10 border border-yellow-500/50 rounded-xl p-4">
+              <button
+                onClick={() => setActiveView('appointments')}
+                className="w-full bg-yellow-500/10 border border-yellow-500/50 rounded-xl p-4 text-left hover:bg-yellow-500/20 transition-colors"
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <Clock className="w-6 h-6 text-yellow-400" />
+                    <div className="w-10 h-10 rounded-lg bg-yellow-500/20 flex items-center justify-center">
+                      <Clock className="w-5 h-5 text-yellow-400" />
+                    </div>
                     <div>
                       <p className="text-yellow-400 font-medium">{pendingAppointments.length} Pending Booking{pendingAppointments.length > 1 ? 's' : ''}</p>
-                      <p className="text-yellow-400/70 text-sm">Review and respond to booking requests</p>
+                      <p className="text-yellow-400/70 text-sm">Tap to review requests</p>
                     </div>
                   </div>
-                  <button
-                    onClick={() => setActiveView('appointments')}
-                    className="bg-yellow-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-yellow-400 transition-colors"
-                  >
-                    View Requests
-                  </button>
+                  <ChevronRight className="w-5 h-5 text-yellow-400" />
                 </div>
-              </div>
+              </button>
             )}
 
-            {/* Quick Actions - Getting Started Checklist */}
-            {pendingAppointments.length === 0 && (
-              <div className="bg-cardBg border border-zinc-800 rounded-xl p-6">
-                <div className="text-center mb-6">
-                  <Calendar className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                  <p className="text-gray-500 mb-2">No appointments yet</p>
-                  <p className="text-brand-400 text-sm font-medium">Complete these steps to start receiving bookings:</p>
+            {/* Navigation Buttons - Full Width for Mobile */}
+            <div className="space-y-3">
+              <button
+                onClick={() => setActiveView('appointments')}
+                className="w-full bg-cardBg border border-zinc-800 text-white p-4 rounded-xl font-medium hover:bg-zinc-800 hover:border-brand-500/50 transition-all flex items-center gap-4"
+              >
+                <div className="w-10 h-10 rounded-lg bg-brand-500/10 flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-brand-400" />
                 </div>
-                
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <button
-                    onClick={() => setActiveView('profile')}
-                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-brand-500 px-4 py-4 rounded-xl transition-all group"
-                  >
-                    <User className="w-8 h-8 text-brand-400 group-hover:scale-110 transition-transform" />
-                    <span className="text-white font-medium text-sm">Complete Profile</span>
-                    <span className="text-gray-500 text-xs text-center">Add photos & details</span>
-                  </button>
-                  
-                  <button
-                    onClick={() => setActiveView('services')}
-                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-brand-500 px-4 py-4 rounded-xl transition-all group"
-                  >
-                    <Settings className="w-8 h-8 text-brand-400 group-hover:scale-110 transition-transform" />
-                    <span className="text-white font-medium text-sm">Add Your Menu</span>
-                    <span className="text-gray-500 text-xs text-center">Set up services & prices</span>
-                  </button>
-                  
-                  <button
-                    onClick={() => setActiveView('availability')}
-                    className="flex flex-col items-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-brand-500 px-4 py-4 rounded-xl transition-all group"
-                  >
-                    <Clock className="w-8 h-8 text-brand-400 group-hover:scale-110 transition-transform" />
-                    <span className="text-white font-medium text-sm">Set Availability</span>
-                    <span className="text-gray-500 text-xs text-center">Choose working hours</span>
-                  </button>
+                <div className="flex-1 text-left">
+                  <span className="block">Appointments</span>
+                  <span className="text-gray-500 text-sm">{confirmedAppointments.length} confirmed, {pendingAppointments.length} pending</span>
                 </div>
-              </div>
-            )}
+                {pendingAppointments.length > 0 && (
+                  <span className="bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full mr-2">
+                    {pendingAppointments.length}
+                  </span>
+                )}
+                <ChevronRight className="w-5 h-5 text-gray-500" />
+              </button>
+
+              <button
+                onClick={() => setActiveView('availability')}
+                className="w-full bg-cardBg border border-zinc-800 text-white p-4 rounded-xl font-medium hover:bg-zinc-800 hover:border-brand-500/50 transition-all flex items-center gap-4"
+              >
+                <div className="w-10 h-10 rounded-lg bg-brand-500/10 flex items-center justify-center">
+                  <Calendar className="w-5 h-5 text-brand-400" />
+                </div>
+                <div className="flex-1 text-left">
+                  <span className="block">Availability</span>
+                  <span className="text-gray-500 text-sm">Set your working hours</span>
+                </div>
+                <ChevronRight className="w-5 h-5 text-gray-500" />
+              </button>
+
+              <button
+                onClick={() => setActiveView('services')}
+                className="w-full bg-cardBg border border-zinc-800 text-white p-4 rounded-xl font-medium hover:bg-zinc-800 hover:border-brand-500/50 transition-all flex items-center gap-4"
+              >
+                <div className="w-10 h-10 rounded-lg bg-brand-500/10 flex items-center justify-center">
+                  <Settings className="w-5 h-5 text-brand-400" />
+                </div>
+                <div className="flex-1 text-left">
+                  <span className="block">Services & Staff</span>
+                  <span className="text-gray-500 text-sm">{businessServices.length} services, {staffMembers.length} staff</span>
+                </div>
+                <ChevronRight className="w-5 h-5 text-gray-500" />
+              </button>
+
+              <button
+                onClick={() => setActiveView('customers')}
+                className="w-full bg-cardBg border border-zinc-800 text-white p-4 rounded-xl font-medium hover:bg-zinc-800 hover:border-brand-500/50 transition-all flex items-center gap-4"
+              >
+                <div className="w-10 h-10 rounded-lg bg-brand-500/10 flex items-center justify-center">
+                  <Users className="w-5 h-5 text-brand-400" />
+                </div>
+                <div className="flex-1 text-left">
+                  <span className="block">Customers</span>
+                  <span className="text-gray-500 text-sm">{customers.length} customers</span>
+                </div>
+                <ChevronRight className="w-5 h-5 text-gray-500" />
+              </button>
+
+              <button
+                onClick={() => setActiveView('analytics')}
+                className="w-full bg-cardBg border border-zinc-800 text-white p-4 rounded-xl font-medium hover:bg-zinc-800 hover:border-brand-500/50 transition-all flex items-center gap-4"
+              >
+                <div className="w-10 h-10 rounded-lg bg-brand-500/10 flex items-center justify-center">
+                  <BarChart3 className="w-5 h-5 text-brand-400" />
+                </div>
+                <div className="flex-1 text-left">
+                  <span className="block">Analytics</span>
+                  <span className="text-gray-500 text-sm">Revenue & performance</span>
+                </div>
+                <ChevronRight className="w-5 h-5 text-gray-500" />
+              </button>
+
+              <button
+                onClick={() => setActiveView('profile')}
+                className="w-full bg-cardBg border border-zinc-800 text-white p-4 rounded-xl font-medium hover:bg-zinc-800 hover:border-brand-500/50 transition-all flex items-center gap-4"
+              >
+                <div className="w-10 h-10 rounded-lg bg-brand-500/10 flex items-center justify-center">
+                  <User className="w-5 h-5 text-brand-400" />
+                </div>
+                <div className="flex-1 text-left">
+                  <span className="block">Profile & Settings</span>
+                  <span className="text-gray-500 text-sm">Business info, payments, subscription</span>
+                </div>
+                <ChevronRight className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
 
             {/* Reminder Messages */}
             <div className="space-y-3">
@@ -1151,7 +1179,7 @@ const BusinessOwnerDashboard = () => {
                     <div className="flex-1">
                       <p className="text-yellow-400 font-medium">Connect Your Bank Account</p>
                       <p className="text-yellow-200/70 text-sm mt-1">
-                        Connect a bank account to receive customer deposit payments. Go to <button onClick={() => setActiveView('profile')} className="underline hover:text-yellow-300">Profile → Bank Account</button> to set this up.
+                        Connect a bank account to receive customer deposit payments. Go to <button onClick={() => setActiveView('profile')} className="underline hover:text-yellow-300">Profile</button> to set this up.
                       </p>
                     </div>
                   </div>
@@ -1164,15 +1192,24 @@ const BusinessOwnerDashboard = () => {
                   <div className="flex items-start gap-3">
                     <CreditCard className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
                     <div className="flex-1">
-                      <p className="text-red-400 font-medium">Add Payment Method for Subscription</p>
+                      <p className="text-red-400 font-medium">Add Payment Method</p>
                       <p className="text-red-200/70 text-sm mt-1">
-                        Your free trial will end soon. Please add a payment method to continue using Calendrax after your trial. Go to <button onClick={() => setActiveView('profile')} className="underline hover:text-red-300">Profile → Subscription</button> to add your card.
+                        Your free trial will end soon. Go to <button onClick={() => setActiveView('profile')} className="underline hover:text-red-300">Profile</button> to add your payment method.
                       </p>
                     </div>
                   </div>
                 </div>
               )}
             </div>
+
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="w-full bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl font-medium hover:bg-red-500/20 hover:border-red-500/50 transition-all flex items-center justify-center gap-3 mt-4"
+            >
+              <LogOut className="w-5 h-5" />
+              Logout
+            </button>
           </div>
         )}
 
