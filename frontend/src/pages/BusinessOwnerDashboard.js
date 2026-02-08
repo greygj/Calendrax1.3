@@ -2623,9 +2623,7 @@ const BusinessOwnerDashboard = () => {
                             <p className="text-gray-400 text-sm">{billingUpcoming.description || 'Calendrax Subscription'}</p>
                             {billingUpcoming.date && (
                               <p className="text-gray-500 text-xs mt-1">
-                                Due: {new Date(billingUpcoming.date).toLocaleDateString('en-GB', { 
-                                  day: 'numeric', month: 'long', year: 'numeric' 
-                                })}
+                                Due: {formatDate(billingUpcoming.date)}
                               </p>
                             )}
                             {billingUpcoming.status === 'pending_payment_setup' && (
