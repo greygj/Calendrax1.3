@@ -3730,6 +3730,90 @@ const BusinessOwnerDashboard = () => {
           </div>
         </div>
       )}
+
+      {/* New Customer Credentials Modal */}
+      {newCustomerCredentials && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-cardBg border border-zinc-800 rounded-xl w-full max-w-md">
+            <div className="flex items-center justify-between p-4 border-b border-zinc-800">
+              <h3 className="text-white text-lg font-semibold flex items-center gap-2">
+                <Check className="w-5 h-5 text-green-400" />
+                Booking Created - New Customer Account
+              </h3>
+              <button onClick={() => setNewCustomerCredentials(null)} className="text-gray-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4 mb-4">
+                <p className="text-green-400 text-sm">
+                  A new customer account has been created. Please share these login details with the customer so they can access their bookings.
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="bg-zinc-800 rounded-lg p-4">
+                  <label className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Email (Username)</label>
+                  <div className="flex items-center justify-between">
+                    <p className="text-white font-mono">{newCustomerCredentials.email}</p>
+                    <button 
+                      onClick={() => {
+                        navigator.clipboard.writeText(newCustomerCredentials.email);
+                        alert('Email copied!');
+                      }}
+                      className="text-brand-400 hover:text-brand-300 text-sm"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="bg-zinc-800 rounded-lg p-4">
+                  <label className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Temporary Password</label>
+                  <div className="flex items-center justify-between">
+                    <p className="text-white font-mono text-lg">{newCustomerCredentials.temporaryPassword}</p>
+                    <button 
+                      onClick={() => {
+                        navigator.clipboard.writeText(newCustomerCredentials.temporaryPassword);
+                        alert('Password copied!');
+                      }}
+                      className="text-brand-400 hover:text-brand-300 text-sm"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                <p className="text-yellow-400 text-xs">
+                  <strong>Note:</strong> The customer should change their password after first login for security.
+                </p>
+              </div>
+              
+              <button
+                onClick={() => {
+                  const text = `Your Calendrax Login Details:\n\nEmail: ${newCustomerCredentials.email}\nTemporary Password: ${newCustomerCredentials.temporaryPassword}\n\nPlease login at the Calendrax app and change your password.`;
+                  navigator.clipboard.writeText(text);
+                  alert('Login details copied to clipboard!');
+                }}
+                className="w-full mt-4 bg-brand-500 text-black font-semibold py-3 rounded-lg hover:bg-brand-400 transition-colors flex items-center justify-center gap-2"
+              >
+                <ExternalLink className="w-4 h-4" />
+                Copy All Details to Share
+              </button>
+              
+              <button
+                onClick={() => setNewCustomerCredentials(null)}
+                className="w-full mt-2 bg-zinc-800 text-white font-medium py-3 rounded-lg hover:bg-zinc-700 transition-colors"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
