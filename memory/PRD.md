@@ -1,394 +1,105 @@
-# Calendrax - Booking App PRD
+# Calendrax - Booking Application PRD
 
 ## Original Problem Statement
-Create a pixel-perfect clone of the "JG clinic app" (URL: https://bookingjg-production-a3e1.up.railway.app) and name it "Calendrax".
+Create "Calendrax," a comprehensive booking application with:
+- Business Owner features (dashboard, services, staff, customers, calendar, notifications)
+- Customer features (browse, book, manage bookings, profile)
+- Platform Admin system
+- Payments & Subscriptions (Stripe)
+- Legal & Onboarding compliance
+
+## User Personas
+1. **Business Owner** - Manages services, staff, bookings, receives deposits
+2. **Customer** - Browses businesses, books appointments
+3. **Platform Admin** - Oversees all businesses, manages platform
 
 ## Core Requirements
+- Multi-role authentication (JWT-based)
+- Service and staff management with auto-assignment
+- Calendar availability management (5am-11pm slots)
+- Booking system with deposits (Stripe Connect, 5% platform fee)
+- Subscription system (£10/month base + £5/additional staff, 30-day trial)
+- Notification system (WhatsApp sandbox)
+- GDPR-compliant cookie consent
 
-### Business Owner Features
-- Sign up with fields for business name, logo upload, postcode, and description
-- Dashboard with calendar (up to 6 months) to set availability in 15-minute slots
-- Manage services: Add, Edit, Delete, and set Active/Inactive status
-- View booking history per customer on a "Customers" page
-- Receive notifications for new booking requests and Approve/Decline them
-- **Multi-staff booking system** - up to 5 staff members per business
-- **Staff-based availability** - each staff member has their own availability calendar
-- **Book for Customer** - business owner can create bookings for customers directly
-- **Profile page** - edit business details (name, description, postcode, address, phone, email, website)
-
-### Customer Features
-- **Dashboard homepage** with welcome message, quick stats, upcoming bookings preview
-- **Browse Businesses** page listing all registered and approved businesses alphabetically
-- Business page with services, staff selection, and booking flow
-- **Booking confirmation** message on screen after successful booking request
-- **"My Bookings"** page for upcoming/pending bookings with cancel option
-- **"Booking History"** page for past/cancelled/completed bookings
-- **Profile page** with editable mandatory fields (Name, Email, Phone)
-- **Dashboard button** on all pages for easy navigation
-- Receive notifications when booking is requested and confirmed
-- **Staff selection** - when multiple staff offer a service, customer selects which staff member
-
-### Platform Admin System
-- Secure admin dashboard at `/admin` (platform_admin role only)
-- View all users and businesses, edit details, suspend/delete accounts
-- Approve new businesses before they become visible to customers
-- UI placeholders for managing subscriptions and payments
-
-### UI/UX Requirements
-- Dark theme with lime green accents
-- Responsive design for mobile devices
-- User accounts must persist after logout
-- **Calendrax branding** with large custom logo
-- Consistent navigation across all user pages
+## UI Theme
+- Background: `#313D4A`
+- Cards: `#202830`  
+- Accent: `#A69B90`
+- Logo: Transparent Calendrax logo
 
 ## Tech Stack
-- **Frontend**: React, React Router, Tailwind CSS, shadcn/ui, Axios
-- **Backend**: FastAPI, Python, MongoDB (motor for async)
-- **Authentication**: JWT with password hashing (hashlib)
-- **Notifications**: SendGrid (email), Twilio (SMS) - configured but pending API keys
-
-## Architecture
-```
-/app
-├── backend/
-│   ├── server.py         # All routes, models, and logic
-│   ├── notifications.py  # Email/SMS notification service
-│   └── tests/            # pytest test files
-├── frontend/
-│   └── src/
-│       ├── context/AuthContext.js
-│       ├── pages/
-│       │   ├── AdminDashboard.js
-│       │   ├── BusinessOwnerDashboard.js (multi-staff, profile, book for customer)
-│       │   ├── BusinessPage.js (staff selection, dashboard button)
-│       │   ├── CustomerDashboard.js (dashboard, profile, history)
-│       │   ├── Login.js
-│       │   └── Signup.js
-│       └── services/api.js
-```
-
-## Database Schema
-- **users**: `{id, fullName, email, mobile, password, role, suspended, createdAt}`
-- **businesses**: `{id, ownerId, businessName, description, logo, postcode, address, phone, email, website, photos[], approved, rejected, stripeConnectAccountId, stripeConnectOnboarded, depositLevel}`
-- **services**: `{id, businessId, name, description, duration, price, active}`
-- **staff**: `{id, businessId, name, serviceIds[], isOwner, active}`
-- **appointments**: `{id, userId, businessId, serviceId, serviceIds[], staffId, staffName, date, time, status, paymentStatus, bookedByOwner, totalPrice, totalDuration}`
-- **availability**: `{businessId, staffId, date, slots[]}`
-- **notifications**: `{id, userId, type, title, message, read}`
-- **subscriptions**: `{id, businessId, ownerId, staffCount, status, priceMonthly, trialStartDate, trialEndDate, freeAccessOverride}`
-- **payment_transactions**: `{id, userId, serviceIds[], businessId, amount, fullPrice, applicationFee, businessReceives, status, paymentStatus}`
-
-## Credentials
-- **Admin**: admin@booka.com / admin123
-- **Business Owner**: greygj@gmail.com / password123
-- **Customer**: testcustomer@test.com / test123
+- **Frontend:** React, Tailwind CSS, shadcn/ui
+- **Backend:** FastAPI, Python
+- **Database:** MongoDB
+- **Payments:** Stripe (Live keys)
+- **Deployment:** Railway
 
 ---
 
-## Completed Features (January 29, 2026)
+## Completed Features
 
-### Phase 1: Core Authentication ✅
-- [x] JWT-based authentication with three roles (Customer, Business Owner, Platform Admin)
-- [x] Separate signup flows for Customer and Business Owner
-- [x] Business owner signup includes: business name, logo upload, description, postcode
-- [x] Login functionality for all user types
-- [x] Data persistence after logout
-
-### Phase 2: Customer Portal ✅
-- [x] **Dashboard homepage** with welcome message and quick stats
-- [x] Customer dashboard with approved businesses list (alphabetical)
-- [x] Business page with services, staff selection, and booking flow
-- [x] **Booking confirmation** message after successful booking
-- [x] **"My Bookings"** page for upcoming/pending bookings
-- [x] **"Booking History"** page for past bookings (separated from active bookings)
-- [x] **Profile page** with editable Name, Email, Phone (all mandatory)
-- [x] **Dashboard button** on business pages for easy navigation
-- [x] **Larger Calendrax logo** on Browse Businesses screen
-
-### Phase 3: Business Owner Portal ✅
-- [x] Business owner dashboard with stats
-- [x] Service management (CRUD with delete fixed)
-- [x] Availability calendar (per staff member)
-- [x] Appointments management with approve/decline
-- [x] Customers page
-- [x] **Staff Management** - add, edit, delete staff (up to 5)
-- [x] **Staff-based availability** - each staff has own calendar
-- [x] **Profile Page** - edit business details
-- [x] **Book for Customer** - create bookings directly for customers
-
-### Phase 4: Admin Platform ✅
-- [x] Secure /admin route with role-based access
-- [x] Dashboard with stats (users, businesses, bookings)
-- [x] User management (view, edit, suspend, delete)
-- [x] Business management with approval/rejection workflow
-- [x] Pending approval notifications
-- [x] Subscriptions tab (UI placeholder - MOCKED)
-- [x] Bookings management tab
-
-### Phase 5: Notifications ✅
-- [x] In-app notifications for bookings
-- [x] Email notification templates (SendGrid) - **PENDING API KEY**
-- [x] SMS notification templates (Twilio) - **PENDING API KEY**
-- [x] Notification triggers: booking created, approved, declined, cancelled
-
-### Phase 6: Payment Integration ✅ (January 29, 2026)
-- [x] Stripe payment integration for booking deposits
-- [x] Offer code system for testing (TESTFREE, BOOKLE100, STAFF2025 bypass payment)
-- [x] Payment checkout session creation with Stripe
-- [x] Payment status verification and polling
-- [x] Booking completion after payment/bypass
-- [x] Frontend booking flow with payment summary
-- [x] "Complete Booking (Free)" option when valid offer code applied
-- [x] BookingSuccess page for post-payment confirmation
-
-### Phase 7: Stripe Connect & Subscription System ✅ (January 30, 2026)
-- [x] **Dual Stripe Payment System** - Refactored to support two separate payment flows:
-  - **Customer Deposits → Business Owners** via Stripe Connect (destination charges)
-  - **Platform Subscription Fees → Calendrax** via standard Stripe
-- [x] **Stripe Connect Integration** - Business owners can connect bank accounts to receive deposits directly
-- [x] **Configurable Deposit Levels** - Business owners choose: No deposit, 10%, 20% (default), 50%, Pay in Full
-- [x] **Staff-based Subscription Pricing**:
-  - 1 Staff: £12/month (base)
-  - 2 Staff: £20/month (+£8)
-  - 3 Staff: £28/month (+£8)
-  - 4 Staff: £36/month (+£8)
-  - 5 Staff: £44/month (+£8)
-- [x] **30-day Free Trial** - No payment required until trial ends
-- [x] **Subscription Notifications** - Confirmation dialog when adding/removing staff shows price change
-- [x] **Failed Payment Lockout** - Business owners blocked from login if subscription fails
-- [x] **Admin Free Access Override** - Admin can grant/revoke free access to any business
-
-### Phase 8: Revenue & Auto-Refunds ✅ (January 30, 2026)
-- [x] **Auto-Refund on Decline** - When business declines a booking, deposit is automatically refunded via Stripe
-- [x] **Staff Deletion Warning** - Shows count of future bookings that will be cancelled, refunds deposits automatically
-- [x] **Revenue Dashboard** - New tab for business owners showing:
-  - Total revenue for current week, month, and year
-  - Week-over-week comparison with percentage change
-  - Month-over-month comparison with percentage change
-  - Revenue breakdown by staff member (week/month/year)
-  - Booking counts for each period
-  - Trending indicators (up/down arrows)
-
-### Phase 9: Booking History ✅ (January 30, 2026)
-- [x] **Customer Booking History** - Past bookings automatically move from "My Bookings" to "Booking History" when date passes
-- [x] **Business Appointment History** - Added "Current" and "History" tabs to Appointments page
-  - Current tab shows pending and confirmed upcoming appointments
-  - History tab shows completed, cancelled, and declined appointments
-- [x] Past confirmed bookings automatically show as "Completed" status
-
-### Bug Fixes ✅
-- [x] Fixed MongoDB ObjectId serialization in all endpoints
-- [x] Fixed service delete button not working
-- [x] Fixed staff delete button not working
-- [x] Fixed data persistence on logout
-- [x] Updated branding from "Booka" to "Calendrax"
+### Dec 2025 - Feb 2026
+- [x] Full authentication system with role-based access
+- [x] Business owner dashboard with all management features
+- [x] Customer dashboard and booking flow
+- [x] Platform admin dashboard
+- [x] Stripe subscriptions with automatic invoicing
+- [x] Stripe Connect for business deposits
+- [x] Service/Staff auto-assignment (new service → all staff, new staff → all services)
+- [x] Revenue analytics (by service, by staff, monthly tables 2026-2030)
+- [x] Billing history and invoice viewing
+- [x] Customer management with alphabetical list and deletion
+- [x] Business profile with logo upload
+- [x] Extended availability (5am-11pm)
+- [x] Cookie consent banner (GDPR)
+- [x] Terms & Privacy pages with content
+- [x] Currency changed to GBP (£)
+- [x] Dashboard reminder banners (bank account, payment method)
+- [x] **Customer Dashboard Mobile Redesign** (Feb 2026)
+  - Full-width navigation buttons
+  - Removed top tab bar
+  - Logout button at bottom
+  - Home button for sub-view navigation
 
 ---
 
-## MOCKED Features (Not Yet Fully Implemented)
-- **Stripe Connect Onboarding** - Backend code is ready but the Stripe account needs to be enrolled in Stripe Connect program
-- **Google Maps API**: Basic embed without API key
-- **Email Notifications**: Code ready, awaiting SendGrid API key
-- **SMS Notifications**: Code ready, awaiting Twilio credentials
+## Prioritized Backlog
+
+### P0 - Critical (Blocked)
+- [ ] Forgot Password feature - **Blocked: Need SendGrid API key**
+- [ ] Trial expiration email reminders - **Blocked: Need SendGrid API key**
+
+### P1 - High Priority
+- [ ] Customer review and rating system
+- [ ] WhatsApp Business integration (production) - User applying for profile
+
+### P2 - Medium Priority
+- [ ] Google Maps API integration (currently basic embed)
+- [ ] Backend refactoring (server.py → modular routes/models/services)
+- [ ] Frontend refactoring (BusinessOwnerDashboard.js → smaller components)
+- [ ] Export analytics as CSV/PDF reports
+- [ ] Business owner mobile-friendly dashboard redesign
 
 ---
 
-## Environment Variables Needed
+## Technical Debt
+1. **BusinessOwnerDashboard.js** - 3000+ lines, needs component breakdown
+2. **server.py** - Monolithic, needs modular structure
+3. **Reviews section** - UI placeholder, no backend functionality
+
+## Environment Variables (Railway)
+Required for production:
 ```
-# SendGrid (for email notifications)
-SENDGRID_API_KEY=your_api_key
-SENDGRID_FROM_EMAIL=your_verified_email@domain.com
-
-# Twilio (for SMS notifications)
-TWILIO_ACCOUNT_SID=your_account_sid
-TWILIO_AUTH_TOKEN=your_auth_token
-TWILIO_FROM_NUMBER=+1234567890
-
-# Stripe (for payment processing) - Already configured
-STRIPE_API_KEY=sk_test_emergent
+FRONTEND_URL=https://calendrax13-production.up.railway.app
+MONGO_URL=<production_mongo_url>
+DB_NAME=<production_db>
+STRIPE_API_KEY=<live_stripe_key>
+SENDGRID_API_KEY=<pending>
+SENDGRID_FROM_EMAIL=<pending>
 ```
 
----
-
-## Subscription Pricing (Updated December 2025)
-| Staff Count | Monthly Price |
-|-------------|---------------|
-| 1 | £10.00 |
-| 2 | £15.00 |
-| 3 | £20.00 |
-| 4 | £25.00 |
-| 5 | £30.00 |
-
-*Note: £10 base + £5 per additional staff. No VAT (not VAT registered).*
-
-## Deposit Level Options
-| Setting | Customer Pays |
-|---------|---------------|
-| No Deposit | £0 (book without payment) |
-| 10% | 10% of service price |
-| 20% | 20% of service price (default) |
-| 50% | 50% of service price |
-| Pay in Full | 100% of service price |
-
-## Offer Codes for Testing
-| Code | Description |
-|------|-------------|
-| TESTFREE | Bypasses payment for testing |
-| BOOKLE100 | 100% discount for testing |
-| STAFF2025 | Staff testing code |
-
----
-
-### Phase 8: Payout History & Advanced Analytics ✅ (January 30, 2026)
-- [x] **Analytics Tab Consolidation** - Combined Revenue, Payouts, and Insights into a single Analytics tab with sub-navigation:
-  - **Overview**: Business insights (total bookings, avg. booking value, conversion rate, customer retention, popular services, peak hours, busiest days, status breakdown, 6-month trend)
-  - **Revenue**: Weekly, monthly, and yearly revenue with comparisons and staff breakdown
-  - **Payouts**: Deposit history, bank account connection status, transaction list with fee breakdown
-- [x] Menu bar tidied from 10 tabs to 8 tabs
-
-### Phase 9: Platform Fees & Signup Improvements ✅ (February 2, 2026)
-- [x] **5% Platform Application Fee** - Platform takes 5% of customer deposits to cover Stripe processing costs
-  - Business owners receive 95% of each deposit
-  - Fee breakdown displayed in Payouts dashboard
-- [x] **Payout Dashboard Fee Breakdown** - Shows:
-  - Customer Deposits vs Platform Fees vs Business Receives
-  - Monthly and yearly breakdown with fees
-  - Per-transaction fee details
-- [x] **Terms & Privacy Checkboxes on Signup** - Both customers and business owners must accept:
-  - Terms and Conditions
-  - Privacy Policy
-- [x] **Subscription Fee Notice for Business Owners** - Shows during signup:
-  - 30-day free trial
-  - £12/month for 1 staff, +£8/month each additional
-  - 5% platform fee on deposits
-- [x] **Terms and Privacy pages** - `/terms` and `/privacy` routes with full legal content
-- [x] **New Logo** - Updated Calendrax logo throughout app
-
-### Phase 10: Multi-Service Booking ✅ (February 2, 2026)
-- [x] **Multi-Service Selection** - Customers can select multiple treatments before booking:
-  - Checkbox-based selection with visual cart/basket
-  - Running total of selected services
-  - Combined duration calculation
-- [x] **Duration-Based Availability Blocking** - When booking is confirmed:
-  - Staff member's availability blocked for total combined duration
-  - Example: 60 min + 30 min services = 90 minutes blocked (3 x 30-min slots)
-- [x] **Updated Booking Flow**:
-  - Service summary shows all selected treatments
-  - Deposit calculated on total price
-  - Appointment record stores all service IDs
-
-### Phase 11: Public Landing Page ✅ (February 2, 2026)
-- [x] **Public Landing Page** at `/` - Visitors can browse businesses without logging in:
-  - Hero section with search bar
-  - Featured businesses grid with cards
-  - Business card shows: logo, name, description, location, service count
-  - "View & Book" button on each card
-- [x] **Login Redirect Flow**:
-  - Clicking "View & Book" when not logged in → Redirects to `/login?redirect=/business/{id}`
-  - After login/signup → Automatically redirects to the business page
-- [x] **Header Navigation**:
-  - Sign In / Sign Up buttons for visitors
-  - "Go to Dashboard" button for logged-in users
-- [x] **CTA Section** for business owners to sign up
-- [x] **Footer** with Terms & Privacy links
-
-### Phase 12: Business Photo Upload ✅ (February 4, 2026)
-- [x] **Business Photo Upload** - Business owners can upload up to 3 photos from their Profile tab:
-  - Photos stored as base64 data URLs in MongoDB
-  - Photo grid UI in Profile tab with upload/remove functionality
-  - File size validation (max 5MB)
-  - Image type validation
-- [x] **Public Business Page Photos**:
-  - First photo displayed as hero/cover image
-  - Photo gallery section (visible when multiple photos)
-  - Business logo overlay on hero when photos exist
-- [x] **Backend API**:
-  - `POST /api/upload-business-photo` - Converts image to base64 data URL
-  - `PUT /api/my-business` - Updates photos array (max 3 enforced)
-
-### Phase 13: Trial Expiration Reminders ✅ (February 4, 2026)
-- [x] **WhatsApp Notifications** - Integrated Twilio WhatsApp Sandbox for trial reminders
-- [x] **Trial Reminder System**:
-  - Sends reminders on days 5, 2, and 0 (last day) of trial
-  - Email template (pending SendGrid API key)
-  - SMS template (pending TWILIO_FROM_NUMBER)
-  - WhatsApp template (working with Twilio Sandbox)
-- [x] **Admin Endpoints**:
-  - `POST /api/admin/send-trial-reminders` - Cron job endpoint to check and send reminders
-  - `POST /api/admin/test-trial-reminder/{business_id}` - Test endpoint for sending reminders
-- [x] **Phone Number Formatting** - Automatic E.164 formatting for UK numbers (07xxx → +447xxx)
-
-### Phase 14: Legal Pages Content ✅ (December 2025)
-- [x] **Terms & Conditions** - Full professional content including:
-  - Business identity: Gareth Grey (Sole Trader) trading as Calendrax
-  - Subscription pricing: £10/month + £5/additional staff (no VAT)
-  - 5% platform fee on customer deposits
-  - 30-day free trial terms
-  - Cancellation and refund policies
-  - UK law governance
-- [x] **Privacy Policy** - UK GDPR compliant content including:
-  - Data controller information
-  - Information collection and usage
-  - Legal basis for processing
-  - User rights (access, rectification, erasure, portability)
-  - ICO complaints information
-  - Data retention and security
-- [x] **Cookie Consent Banner** - GDPR compliant cookie notice:
-  - Appears on first visit with 1-second delay
-  - Accept/Decline buttons
-  - Links to Privacy Policy and Terms & Conditions
-  - Stores preference in localStorage
-  - Responsive design for mobile and desktop
-
-### Phase 15: Billing History & Invoice System ✅ (December 2025)
-- [x] **Billing History Tab** - New sub-tab in Analytics section:
-  - Next Invoice preview with amount and description
-  - Invoice History list with download/view options
-  - Subscription Summary card (status, monthly cost, next payment date)
-- [x] **Stripe Invoice Integration**:
-  - Backend endpoints: `/api/billing/invoices`, `/api/billing/upcoming`
-  - Fetches invoices from Stripe API
-  - PDF download links for each invoice
-  - Hosted invoice page links
-- [x] **Automatic Invoice Emails**:
-  - Configured Stripe to send invoice emails automatically
-  - Customer footer message added to invoices
-  - Invoice settings applied during checkout session creation
-
-### Phase 16: Enhanced Revenue Analytics & Customers ✅ (December 2025)
-- [x] **Revenue Tab Enhancements**:
-  - Added note: "The figures below take into account all past and future bookings on your system"
-  - Revenue by Treatment breakdown (includes deleted services marked in red)
-  - Revenue by Staff Member (only shows if more than 1 staff)
-  - Monthly Revenue Breakdown table (current year + 2027-2030)
-  - Year Total row for each year
-- [x] **Customers Tab Redesign**:
-  - Alphabetically sorted customer list
-  - Click-to-expand for customer details
-  - Shows Email, Phone, and full Booking History
-  - Delete Customer Record functionality with confirmation modal
-- [x] **New Backend Endpoints**:
-  - `GET /api/revenue/by-service` - Revenue breakdown by treatment
-  - `GET /api/revenue/monthly` - Monthly revenue for multiple years
-  - `DELETE /api/business-customers/{customer_id}` - Delete customer record
-
-### Phase 17: Business Logo Management ✅ (December 2025)
-- [x] **Logo Upload/Edit in Business Profile**:
-  - Business Logo section in Business Details form
-  - Upload new logo or change existing logo
-  - Remove logo with red X button
-  - Max 2MB file size, recommends 200x200px square image
-  - Logo appears on business profile page and dashboard header
-  - Works for businesses that didn't upload logo during registration
-
-## Upcoming Tasks (P1)
-1. Enable Stripe Connect on your Stripe account to activate business payout functionality
-2. Add Google Maps API for accurate business location display
-3. Provide SendGrid API key for email notifications
-4. Set up Twilio production WhatsApp number (or configure sandbox)
-
-## Future/Backlog (P2)
-1. Customer reviews and ratings
-2. Refactor server.py into modular structure (routes/, models/, auth/)
-3. Refactor BusinessOwnerDashboard.js into smaller components
-4. Export analytics functionality (CSV/PDF reports)
+## Test Credentials
+- Admin: `admin@booka.com` / `admin123`
+- Business Owner: `greygj@gmail.com` / `password123`
+- Customer: `gareth.grey@tickety-moo.com` / `password123`
