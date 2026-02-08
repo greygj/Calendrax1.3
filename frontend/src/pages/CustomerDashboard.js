@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, Building2, MapPin, ChevronRight, Calendar, Bell, X, Clock, Home, User, History, Save } from 'lucide-react';
+import { LogOut, Building2, MapPin, ChevronRight, Calendar, Bell, X, Clock, Home, User, History, Save, Smartphone } from 'lucide-react';
 import { businessAPI, appointmentAPI, notificationAPI, authAPI } from '../services/api';
 import { formatDate } from '../utils/dateFormat';
+import InstallPrompt from '../components/InstallPrompt';
 
 const CustomerDashboard = () => {
   const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
   const [activeView, setActiveView] = useState('dashboard');
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [businesses, setBusinesses] = useState([]);
   const [myBookings, setMyBookings] = useState([]);
   const [notifications, setNotifications] = useState([]);
