@@ -2761,13 +2761,9 @@ const BusinessOwnerDashboard = () => {
                             </p>
                             <p className="text-white font-semibold">
                               {subscription.trialEndDate 
-                                ? new Date(subscription.trialEndDate).toLocaleDateString('en-GB', {
-                                    day: 'numeric', month: 'short', year: 'numeric'
-                                  })
+                                ? formatDate(subscription.trialEndDate)
                                 : subscription.nextPaymentDate 
-                                  ? new Date(subscription.nextPaymentDate).toLocaleDateString('en-GB', {
-                                      day: 'numeric', month: 'short', year: 'numeric'
-                                    })
+                                  ? formatDate(subscription.nextPaymentDate)
                                   : 'N/A'}
                             </p>
                           </div>
