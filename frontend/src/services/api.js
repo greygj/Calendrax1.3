@@ -38,7 +38,10 @@ export const authAPI = {
   register: (data) => apiClient.post('/auth/register', data),
   login: (data) => apiClient.post('/auth/login', data),
   getMe: () => apiClient.get('/auth/me'),
-  updateProfile: (data) => apiClient.put('/auth/profile', data)
+  updateProfile: (data) => apiClient.put('/auth/profile', data),
+  changePassword: (data) => apiClient.post('/auth/change-password', data),
+  getNotificationPreferences: () => apiClient.get('/auth/notification-preferences'),
+  updateNotificationPreferences: (data) => apiClient.put('/auth/notification-preferences', data)
 };
 
 // Businesses
