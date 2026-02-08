@@ -2708,76 +2708,170 @@ const BusinessOwnerDashboard = () => {
               <>
                 <div className="flex items-center justify-between">
                   <h2 className="text-white text-xl font-semibold">Billing History</h2>
-                  <button 
-                    onClick={loadBilling}
-                    disabled={billingLoading}
-                    className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
-                    data-testid="refresh-billing-btn"
-                  >
-                    <RefreshCw className={`w-4 h-4 ${billingLoading ? 'animate-spin' : ''}`} />
-                    {billingLoading ? 'Loading...' : 'Refresh'}
-                  </button>
+                  {!subscription?.freeAccessOverride && (
+                    <button 
+                      onClick={loadBilling}
+                      disabled={billingLoading}
+                      className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+                      data-testid="refresh-billing-btn"
+                    >
+                      <RefreshCw className={`w-4 h-4 ${billingLoading ? 'animate-spin' : ''}`} />
+                      {billingLoading ? 'Loading...' : 'Refresh'}
+                    </button>
+                  )}
                 </div>
 
-                {billingLoading && billingInvoices.length === 0 ? (
-                  <div className="bg-cardBg border border-zinc-800 rounded-xl p-8 text-center">
-                    <Loader2 className="w-8 h-8 text-brand-400 animate-spin mx-auto mb-3" />
-                    <p className="text-gray-400">Loading billing history...</p>
-                  </div>
-                ) : (
-                  <>
-                    {/* Upcoming Invoice */}
-                    {billingUpcoming && (
-                      <div className="bg-cardBg border border-zinc-800 rounded-xl p-6">
-                        <h3 className="text-white font-medium mb-4 flex items-center gap-2">
-                          <Clock className="w-5 h-5 text-brand-400" />
-                          Next Invoice
-                        </h3>
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-gray-400 text-sm">{billingUpcoming.description || 'Calendrax Subscription'}</p>
-                            {billingUpcoming.date && (
-                              <p className="text-gray-500 text-xs mt-1">
-                                Due: {formatDate(billingUpcoming.date)}
-                              </p>
-                            )}
-                            {billingUpcoming.status === 'pending_payment_setup' && (
-                              <p className="text-yellow-400 text-xs mt-1">Payment method required</p>
-                            )}
-                          </div>
-                          <p className="text-brand-400 text-2xl font-bold">£{billingUpcoming.amount?.toFixed(2) || '0.00'}</p>
-                        </div>
+                {/* Free Access Message */}
+                {subscription?.freeAccessOverride && (
+                  <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center">
+                        <Check className="w-6 h-6 text-green-400" />
                       </div>
-                    )}
-
-                    {/* Invoice Info */}
-                    <div className="bg-brand-500/10 border border-brand-500/20 rounded-xl p-4 flex items-start gap-3">
-                      <FileText className="w-5 h-5 text-brand-400 flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-brand-400 font-medium">Automatic Invoice Emails</p>
-                        <p className="text-brand-200 text-sm">
-                          Stripe automatically sends you an invoice email each time your subscription payment is processed.
-                          You can download PDF invoices below for your records.
-                        </p>
+                        <h3 className="text-green-400 text-lg font-semibold">Free Access Granted</h3>
+                        <p className="text-green-300/70 text-sm mt-1">No subscription payment is due. You have unlimited access to all Calendrax features.</p>
                       </div>
                     </div>
+                  </div>
+                )}
 
-                    {/* Invoice List */}
-                    <div className="bg-cardBg border border-zinc-800 rounded-xl overflow-hidden" data-testid="invoice-list">
-                      <div className="p-4 border-b border-zinc-800">
-                        <h3 className="text-white font-medium flex items-center gap-2">
-                          <Receipt className="w-5 h-5 text-brand-400" />
-                          Invoice History
-                        </h3>
+                {/* Billing content for paid users */}
+                {!subscription?.freeAccessOverride && (
+                  <>
+                    {billingLoading && billingInvoices.length === 0 ? (
+                      <div className="bg-cardBg border border-zinc-800 rounded-xl p-8 text-center">
+                        <Loader2 className="w-8 h-8 text-brand-400 animate-spin mx-auto mb-3" />
+                        <p className="text-gray-400">Loading billing history...</p>
                       </div>
-                      {billingInvoices.length > 0 ? (
-                        <div className="divide-y divide-zinc-800">
-                          {billingInvoices.map((invoice) => (
-                            <div key={invoice.id} className="p-4 hover:bg-zinc-800/50 transition-colors">
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                                    invoice.paid ? 'bg-brand-500/20 text-brand-400' : 'bg-yellow-500/20 text-yellow-400'
+                    ) : (
+                      <>
+                        {/* Next Payment / Upcoming Invoice */}
+                        <div className="bg-cardBg border border-zinc-800 rounded-xl p-6">
+                          <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                            <Clock className="w-5 h-5 text-brand-400" />
+                            Next Subscription Payment
+                          </h3>
+                          
+                          {subscription?.status === 'trial' ? (
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="text-white font-medium">Free Trial Period</p>
+                                <p className="text-gray-400 text-sm mt-1">
+                                  Your trial ends on: <span className="text-brand-400 font-medium">{subscription.trialEndDate ? formatDate(subscription.trialEndDate) : 'N/A'}</span>
+                                </p>
+                                {subscription.trialDaysLeft !== undefined && (
+                                  <p className="text-gray-500 text-xs mt-1">{subscription.trialDaysLeft} days remaining</p>
+                                )}
+                              </div>
+                              <div className="text-right">
+                                <p className="text-gray-400 text-sm">First payment</p>
+                                <p className="text-brand-400 text-xl font-bold">£{subscription.price?.toFixed(2) || '15.00'}</p>
+                              </div>
+                            </div>
+                          ) : billingUpcoming ? (
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="text-gray-400 text-sm">{billingUpcoming.description || 'Calendrax Subscription'}</p>
+                                {billingUpcoming.date && (
+                                  <p className="text-white font-medium mt-1">
+                                    Payment Date: <span className="text-brand-400">{formatDate(billingUpcoming.date)}</span>
+                                  </p>
+                                )}
+                                {billingUpcoming.status === 'pending_payment_setup' && (
+                                  <p className="text-yellow-400 text-xs mt-1">Payment method required</p>
+                                )}
+                              </div>
+                              <div className="text-right">
+                                <p className="text-gray-400 text-sm">Amount due</p>
+                                <p className="text-brand-400 text-2xl font-bold">£{billingUpcoming.amount?.toFixed(2) || '0.00'}</p>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="text-center py-4">
+                              <p className="text-gray-400">No upcoming payment scheduled</p>
+                              <p className="text-gray-500 text-sm mt-1">Set up your subscription to see billing details</p>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Invoice Info */}
+                        <div className="bg-brand-500/10 border border-brand-500/20 rounded-xl p-4 flex items-start gap-3">
+                          <FileText className="w-5 h-5 text-brand-400 flex-shrink-0 mt-0.5" />
+                          <div>
+                            <p className="text-brand-400 font-medium">Automatic Invoice Emails</p>
+                            <p className="text-brand-200 text-sm">
+                              Stripe automatically sends you an invoice email each time your subscription payment is processed.
+                              You can download PDF invoices below for your records.
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Invoice List */}
+                        <div className="bg-cardBg border border-zinc-800 rounded-xl overflow-hidden" data-testid="invoice-list">
+                          <div className="p-4 border-b border-zinc-800">
+                            <h3 className="text-white font-medium flex items-center gap-2">
+                              <Receipt className="w-5 h-5 text-brand-400" />
+                              Invoice History
+                            </h3>
+                          </div>
+                          {billingInvoices.length > 0 ? (
+                            <div className="divide-y divide-zinc-800">
+                              {billingInvoices.map((invoice) => (
+                                <div key={invoice.id} className="p-4 hover:bg-zinc-800/50 transition-colors">
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                                        invoice.paid ? 'bg-brand-500/20 text-brand-400' : 'bg-yellow-500/20 text-yellow-400'
+                                      }`}>
+                                        {invoice.paid ? <Check className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
+                                      </div>
+                                      <div>
+                                        <p className="text-white font-medium">{invoice.description || 'Subscription Payment'}</p>
+                                        <p className="text-gray-600 text-xs">
+                                          {formatDate(invoice.date)}
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                      <div className="text-right">
+                                        <p className={`font-semibold ${invoice.paid ? 'text-brand-400' : 'text-yellow-400'}`}>
+                                          £{invoice.amount?.toFixed(2) || '0.00'}
+                                        </p>
+                                        <p className={`text-xs ${invoice.paid ? 'text-gray-500' : 'text-yellow-400/70'}`}>
+                                          {invoice.paid ? 'Paid' : 'Pending'}
+                                        </p>
+                                      </div>
+                                      {invoice.pdfUrl && (
+                                        <a
+                                          href={invoice.pdfUrl}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="p-2 bg-zinc-800 rounded-lg text-gray-400 hover:text-white hover:bg-zinc-700 transition-colors"
+                                          title="Download PDF"
+                                        >
+                                          <Download className="w-4 h-4" />
+                                        </a>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="p-8 text-center">
+                              <Receipt className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                              <p className="text-gray-500">No invoices yet</p>
+                              <p className="text-gray-600 text-sm mt-1">Invoices will appear here after your first payment</p>
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
+              </>
+            )}
                                   }`}>
                                     {invoice.paid ? <Check className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
                                   </div>
