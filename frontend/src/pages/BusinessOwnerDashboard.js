@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { LogOut, Calendar, Clock, Users, Settings, ChevronRight, ChevronLeft, Building2, MapPin, X, Plus, Edit2, Trash2, Bell, Check, XCircle, User, UserPlus, Save, CreditCard, Banknote, ExternalLink, AlertCircle, TrendingUp, TrendingDown, PoundSterling, BarChart3, AlertTriangle, PieChart, Activity, RefreshCw, ArrowUpRight, ArrowDownRight, Image, Upload, Loader2, FileText, Download, Receipt, Home, Smartphone, Lock, Mail, MessageCircle, Eye, EyeOff } from 'lucide-react';
-import { serviceAPI, availabilityAPI, appointmentAPI, notificationAPI, staffAPI, businessAPI, stripeConnectAPI, subscriptionAPI, revenueAPI, payoutAPI, analyticsAPI, billingAPI } from '../services/api';
+import { serviceAPI, availabilityAPI, appointmentAPI, notificationAPI, staffAPI, businessAPI, stripeConnectAPI, subscriptionAPI, revenueAPI, payoutAPI, analyticsAPI, billingAPI, authAPI } from '../services/api';
 import { formatDate } from '../utils/dateFormat';
 import InstallPrompt from '../components/InstallPrompt';
 
