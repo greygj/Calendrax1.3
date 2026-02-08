@@ -708,7 +708,7 @@ const BusinessPage = () => {
                     )}
                     <div className="flex justify-between text-gray-400">
                       <span>Date & Time</span>
-                      <span className="text-white">{selectedDate.date} at {selectedTime}</span>
+                      <span className="text-white">{formatDate(selectedDate.date)} at {selectedTime}</span>
                     </div>
                     <div className="border-t border-zinc-800 my-2"></div>
                     <div className="flex justify-between text-gray-400">
