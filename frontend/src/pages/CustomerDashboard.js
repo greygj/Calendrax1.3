@@ -450,7 +450,7 @@ const CustomerDashboard = () => {
                             <div className="flex items-center gap-4 mt-3 text-gray-500 text-sm">
                               <span className="flex items-center gap-1">
                                 <Calendar className="w-4 h-4" />
-                                {booking.date}
+                                {formatDate(booking.date)}
                               </span>
                               <span className="flex items-center gap-1">
                                 <Clock className="w-4 h-4" />
