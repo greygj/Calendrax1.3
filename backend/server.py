@@ -149,7 +149,7 @@ class Business(BaseModel):
     stripeConnectAccountId: Optional[str] = None
     stripeConnectOnboarded: bool = False
     # Deposit level setting
-    depositLevel: str = "20"  # Options: "none", "10", "20", "50", "full"
+    depositLevel: str = "20"  # Options: "none", "20", "50", "full"
 
 class BusinessUpdate(BaseModel):
     businessName: Optional[str] = None
