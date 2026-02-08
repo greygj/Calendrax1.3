@@ -63,7 +63,6 @@ VALID_OFFER_CODES = {
 # Deposit level options (percentage of service price)
 DEPOSIT_LEVELS = {
     "none": 0,
-    "10": 10,
     "20": 20,  # Default
     "50": 50,
     "full": 100
