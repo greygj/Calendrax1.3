@@ -158,12 +158,6 @@ const PublicBusinessPage = () => {
                 {business.address || business.postcode}
               </span>
             )}
-            {business.phone && (
-              <span className="flex items-center gap-2 text-gray-400">
-                <Phone className="w-4 h-4 text-brand-400" />
-                {business.phone}
-              </span>
-            )}
             {business.email && (
               <span className="flex items-center gap-2 text-gray-400">
                 <Mail className="w-4 h-4 text-brand-400" />
