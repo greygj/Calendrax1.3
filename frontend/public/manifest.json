@@ -1,0 +1,26 @@
+{
+  "short_name": "Calendrax",
+  "name": "Calendrax - Appointment Booking",
+  "description": "Book appointments with local businesses",
+  "icons": [
+    {
+      "src": "https://customer-assets.emergentagent.com/job_appointly-24/artifacts/tmj5ltm0_Calendrax%20Opaque.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://customer-assets.emergentagent.com/job_appointly-24/artifacts/tmj5ltm0_Calendrax%20Opaque.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#313D4A",
+  "background_color": "#313D4A",
+  "orientation": "portrait",
+  "scope": "/",
+  "prefer_related_applications": false
+}
