@@ -59,7 +59,7 @@ const InstallPrompt = ({ onClose }) => {
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-2xl overflow-hidden bg-zinc-800">
             <img 
-              src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/tmj5ltm0_Calendrax%20Opaque.png" 
+              src="https://static.prod-images.emergentagent.com/jobs/0a8e5439-e27a-4cf4-ab80-2c407fb7f723/images/38321fb848a19e6af336cf5b047dd989bc23936e7d535cc24a459915ddad6505.png" 
               alt="Calendrax"
               className="w-full h-full object-contain"
             />
