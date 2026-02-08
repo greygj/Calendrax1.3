@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Check, Loader2, XCircle, Calendar, Clock, Building2, Home } from 'lucide-react';
 import { paymentAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { formatDate } from '../utils/dateFormat';
 
 const BookingSuccess = () => {
   const navigate = useNavigate();
