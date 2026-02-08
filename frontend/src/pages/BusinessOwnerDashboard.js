@@ -1322,14 +1322,14 @@ const BusinessOwnerDashboard = () => {
                     >
                       {dayInfo?.day}
                       {dayInfo?.hasSlots && selectedDate !== dayInfo.date && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-brand-400 mt-0.5"></span>
+                        <span className="w-2 h-2 rounded-full bg-white mt-0.5"></span>
                       )}
                     </button>
                   ))}
                 </div>
 
                 <p className="text-gray-500 text-sm mt-4 text-center">
-                  Select a date to manage availability • Green dots = slots set
+                  Select a date to manage availability • White dots = slots set
                 </p>
               </div>
 
