@@ -2561,7 +2561,7 @@ const BusinessOwnerDashboard = () => {
                                     </p>
                                   )}
                                   <p className="text-gray-500 text-xs">
-                                    {new Date(payout.date).toLocaleDateString()}
+                                    {formatDate(payout.date)}
                                   </p>
                                   {payout.status === 'refunded' && (
                                     <p className="text-red-400 text-xs">Refunded</p>
