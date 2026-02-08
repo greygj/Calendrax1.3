@@ -15,6 +15,7 @@ const BusinessOwnerDashboard = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   
   // Data state
   const [businessServices, setBusinessServices] = useState([]);
