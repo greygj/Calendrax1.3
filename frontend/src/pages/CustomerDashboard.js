@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { LogOut, Building2, MapPin, ChevronRight, Calendar, Bell, X, Clock, Home, User, History, Save } from 'lucide-react';
 import { businessAPI, appointmentAPI, notificationAPI, authAPI } from '../services/api';
+import { formatDate } from '../utils/dateFormat';
 
 const CustomerDashboard = () => {
   const { user, logout, updateUser } = useAuth();
