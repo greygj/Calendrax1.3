@@ -600,14 +600,14 @@ const BusinessPage = () => {
                       >
                         {dayInfo?.day}
                         {dayInfo?.hasSlots === true && selectedDate?.date !== dayInfo.date && (
-                          <span className="w-1 h-1 rounded-full bg-brand-400 mt-0.5"></span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-white mt-0.5"></span>
                         )}
                       </button>
                     ))}
                   </div>
                   
                   <p className="text-gray-500 text-xs mt-3 text-center">
-                    Green dots indicate available slots
+                    White dots indicate available slots
                   </p>
                 </div>
               </div>
