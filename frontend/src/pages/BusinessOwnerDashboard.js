@@ -949,7 +949,7 @@ const BusinessOwnerDashboard = () => {
       {/* Header */}
       <header className="bg-cardBg border-b border-zinc-800 px-4 py-3">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveView('dashboard')}>
             <div className="w-10 h-10 rounded-lg overflow-hidden bg-zinc-800">
               {business?.logo ? (
                 <img src={business.logo} alt={business.businessName} className="w-full h-full object-cover" />
@@ -965,7 +965,7 @@ const BusinessOwnerDashboard = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {/* Notifications */}
             <div className="relative">
               <button
@@ -1012,9 +1012,16 @@ const BusinessOwnerDashboard = () => {
               )}
             </div>
 
-            <button onClick={handleLogout} className="p-2 rounded-full bg-zinc-800 text-white hover:bg-zinc-700 transition-colors">
-              <LogOut className="w-5 h-5" />
-            </button>
+            {/* Back to Dashboard button - show on sub-views */}
+            {activeView !== 'dashboard' && (
+              <button
+                onClick={() => setActiveView('dashboard')}
+                className="p-2 rounded-full bg-zinc-800 text-white hover:bg-zinc-700 transition-colors"
+                title="Back to Dashboard"
+              >
+                <Building2 className="w-5 h-5" />
+              </button>
+            )}
           </div>
         </div>
       </header>
