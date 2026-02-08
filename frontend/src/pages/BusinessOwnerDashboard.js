@@ -972,6 +972,11 @@ const BusinessOwnerDashboard = () => {
 
   return (
     <div className="min-h-screen bg-appbg">
+      {/* Install Prompt Modal */}
+      {showInstallPrompt && (
+        <InstallPrompt onClose={() => setShowInstallPrompt(false)} />
+      )}
+
       {/* Header */}
       <header className="bg-cardBg border-b border-zinc-800 px-4 py-3">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
