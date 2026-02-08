@@ -78,6 +78,14 @@ const CustomerDashboard = () => {
       setBusinesses(sortedBusinesses);
       setMyBookings(bookingsRes.data || []);
       setNotifications(notificationsRes.data || []);
+      
+      // Load notification preferences
+      try {
+        const prefsRes = await authAPI.getNotificationPreferences();
+        setNotificationPrefs(prefsRes.data);
+      } catch (error) {
+        console.error('Failed to load notification preferences:', error);
+      }
     } catch (error) {
       console.error('Failed to load data:', error);
     } finally {
@@ -104,6 +112,52 @@ const CustomerDashboard = () => {
       } catch (error) {
         console.error('Failed to cancel booking:', error);
       }
+    }
+  };
+  
+  // Change password handler
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    setPasswordError('');
+    setPasswordSuccess(false);
+    
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordError('New passwords do not match');
+      return;
+    }
+    
+    if (passwordForm.newPassword.length < 6) {
+      setPasswordError('New password must be at least 6 characters');
+      return;
+    }
+    
+    setPasswordSaving(true);
+    try {
+      await authAPI.changePassword({
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword
+      });
+      setPasswordSuccess(true);
+      setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      setShowPasswordForm(false);
+    } catch (error) {
+      setPasswordError(error.response?.data?.detail || 'Failed to change password');
+    } finally {
+      setPasswordSaving(false);
+    }
+  };
+  
+  // Toggle notification preference
+  const handleToggleNotificationPref = async (key) => {
+    const newValue = !notificationPrefs[key];
+    setNotificationPrefs(prev => ({ ...prev, [key]: newValue }));
+    
+    try {
+      await authAPI.updateNotificationPreferences({ [key]: newValue });
+    } catch (error) {
+      // Revert on error
+      setNotificationPrefs(prev => ({ ...prev, [key]: !newValue }));
+      console.error('Failed to update notification preference:', error);
     }
   };
 
