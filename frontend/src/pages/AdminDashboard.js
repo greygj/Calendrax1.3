@@ -417,7 +417,7 @@ const AdminDashboard = () => {
                     <div>
                       <h4 className="text-white font-medium">{apt.serviceName}</h4>
                       <p className="text-gray-400 text-sm">{apt.businessName}</p>
-                      <p className="text-gray-500 text-sm mt-1">{apt.date} at {apt.time}</p>
+                      <p className="text-gray-500 text-sm mt-1">{formatDate(apt.date)} at {apt.time}</p>
                       <p className="text-gray-600 text-xs mt-1">Customer: {apt.customerName}</p>
                     </div>
                     <div className="text-right">
