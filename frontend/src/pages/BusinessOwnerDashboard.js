@@ -2674,9 +2674,7 @@ const BusinessOwnerDashboard = () => {
                                       {invoice.description || 'Calendrax Subscription'}
                                     </p>
                                     <p className="text-gray-600 text-xs">
-                                      {new Date(invoice.date).toLocaleDateString('en-GB', {
-                                        day: 'numeric', month: 'short', year: 'numeric'
-                                      })}
+                                      {formatDate(invoice.date)}
                                     </p>
                                   </div>
                                 </div>
