@@ -646,7 +646,7 @@ const BusinessPage = () => {
 
             {canShowCalendar && !selectedDate && (
               <p className="text-gray-500 text-sm text-center py-4">
-                Select a date with available slots (marked with green dots)
+                Select a date with available slots (marked with white dots)
               </p>
             )}
 
