@@ -616,6 +616,24 @@ const CustomerDashboard = () => {
                     </button>
                   </div>
                 </form>
+
+                {/* Add to Home Screen */}
+                <div className="bg-cardBg border border-zinc-800 rounded-xl p-6 mt-6">
+                  <h3 className="text-white font-medium flex items-center gap-2 mb-3">
+                    <Smartphone className="w-5 h-5 text-brand-400" />
+                    Add to Home Screen
+                  </h3>
+                  <p className="text-gray-400 text-sm mb-4">
+                    Get quick access to Calendrax right from your phone's home screen.
+                  </p>
+                  <button
+                    onClick={() => setShowInstallPrompt(true)}
+                    className="w-full bg-zinc-800 border border-zinc-700 text-white py-3 px-4 rounded-lg font-medium hover:bg-zinc-700 hover:border-brand-500/50 transition-all flex items-center justify-center gap-2"
+                  >
+                    <Smartphone className="w-5 h-5" />
+                    Add Calendrax to Home Screen
+                  </button>
+                </div>
               </div>
             )}
           </>
