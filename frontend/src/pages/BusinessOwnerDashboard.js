@@ -1019,7 +1019,7 @@ const BusinessOwnerDashboard = () => {
                 className="p-2 rounded-full bg-zinc-800 text-white hover:bg-zinc-700 transition-colors"
                 title="Back to Dashboard"
               >
-                <Building2 className="w-5 h-5" />
+                <Home className="w-5 h-5" />
               </button>
             )}
           </div>
