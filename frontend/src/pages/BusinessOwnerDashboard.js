@@ -182,6 +182,9 @@ const BusinessOwnerDashboard = () => {
       if ((staffRes.data || []).length === 0 && businessRes.data) {
         await createOwnerAsStaff(businessRes.data);
       }
+      
+      // Load notification preferences
+      await loadNotificationPreferences();
     } catch (error) {
       console.error('Failed to load data:', error);
     } finally {
