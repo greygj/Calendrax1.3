@@ -2305,7 +2305,17 @@ async def book_for_customer(appointment_data: dict, background_tasks: Background
         {"$pull": {"slots": appointment_data["time"]}}
     )
     
-    return remove_mongo_id(appointment_doc)
+    result = remove_mongo_id(appointment_doc)
+    
+    # Include new customer login details if a new account was created
+    if new_customer_created and temp_password:
+        result["newCustomerCreated"] = True
+        result["customerCredentials"] = {
+            "email": customer_email,
+            "temporaryPassword": temp_password
+        }
+    
+    return result
 
 @api_router.get("/business-customers")
 async def get_business_customers(user: dict = Depends(require_business_owner)):
