@@ -914,6 +914,29 @@ const BusinessOwnerDashboard = () => {
     isDatePassed(a.date)
   ).sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date descending
 
+  // Calculate today's and tomorrow's bookings
+  const getTodayDateStr = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  };
+  
+  const getTomorrowDateStr = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  };
+  
+  const todayStr = getTodayDateStr();
+  const tomorrowStr = getTomorrowDateStr();
+  
+  const bookingsToday = allAppointments.filter(a => 
+    a.date === todayStr && (a.status === 'confirmed' || a.status === 'pending')
+  ).length;
+  
+  const bookingsTomorrow = allAppointments.filter(a => 
+    a.date === tomorrowStr && (a.status === 'confirmed' || a.status === 'pending')
+  ).length;
+
   const unreadNotifications = notifications.filter(n => !n.read);
 
   const customers = allAppointments.reduce((acc, apt) => {
