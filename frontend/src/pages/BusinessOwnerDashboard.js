@@ -2975,10 +2975,9 @@ const BusinessOwnerDashboard = () => {
               <p className="text-gray-400 mb-4">
                 Choose how much deposit customers must pay when booking your services.
               </p>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {[
                   { value: 'none', label: 'No Deposit' },
-                  { value: '10', label: '10%' },
                   { value: '20', label: '20%' },
                   { value: '50', label: '50%' },
                   { value: 'full', label: 'Pay in Full' }
@@ -2998,7 +2997,6 @@ const BusinessOwnerDashboard = () => {
               </div>
               <p className="text-gray-500 text-sm mt-3">
                 {profileForm.depositLevel === 'none' && 'Customers can book without any upfront payment.'}
-                {profileForm.depositLevel === '10' && 'Customers pay 10% of the service price to confirm their booking.'}
                 {profileForm.depositLevel === '20' && 'Customers pay 20% of the service price to confirm their booking. (Recommended)'}
                 {profileForm.depositLevel === '50' && 'Customers pay 50% of the service price to confirm their booking.'}
                 {profileForm.depositLevel === 'full' && 'Customers pay the full service price upfront when booking.'}
