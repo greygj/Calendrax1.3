@@ -1026,43 +1026,8 @@ const BusinessOwnerDashboard = () => {
         </div>
       </header>
 
-      {/* Navigation Tabs */}
-      <div className="bg-cardBg/50 border-b border-zinc-800">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="flex gap-1 overflow-x-auto">
-            {[
-              { id: 'dashboard', label: 'Dashboard', icon: Building2 },
-              { id: 'availability', label: 'Availability', icon: Calendar },
-              { id: 'appointments', label: 'Appointments', icon: Clock, badge: pendingAppointments.length },
-              { id: 'services', label: 'Services & Staff', icon: Settings },
-              { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-              { id: 'customers', label: 'Customers', icon: User },
-              { id: 'profile', label: 'Profile', icon: Building2 }
-            ].map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveView(tab.id)}
-                className={`flex items-center gap-2 px-4 py-3 font-medium transition-colors whitespace-nowrap ${
-                  activeView === tab.id
-                    ? 'text-brand-400 border-b-2 border-brand-400'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <tab.icon className="w-4 h-4" />
-                {tab.label}
-                {tab.badge > 0 && (
-                  <span className="w-5 h-5 bg-brand-500 text-black text-xs font-bold rounded-full flex items-center justify-center">
-                    {tab.badge}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-4 py-6">
         {/* Dashboard View */}
         {activeView === 'dashboard' && (
           <div className="space-y-6">
