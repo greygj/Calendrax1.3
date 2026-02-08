@@ -246,7 +246,7 @@ const PublicBusinessPage = () => {
                         />
                       ))}
                     </div>
-                    <span className="text-gray-500 text-sm">{review.date}</span>
+                    <span className="text-gray-500 text-sm">{formatDate(review.date)}</span>
                   </div>
                   <p className="text-gray-300">{review.comment}</p>
                   <p className="text-gray-500 text-sm mt-2">— {review.customerName}</p>
