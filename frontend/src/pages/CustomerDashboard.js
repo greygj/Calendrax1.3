@@ -292,7 +292,7 @@ const CustomerDashboard = () => {
                               )}
                               <p className="text-gray-500 text-sm mt-2 flex items-center gap-1">
                                 <Calendar className="w-4 h-4" />
-                                {booking.date} at {booking.time}
+                                {formatDate(booking.date)} at {booking.time}
                               </p>
                             </div>
                             <span className={`px-3 py-1 rounded-full text-xs font-medium ${
