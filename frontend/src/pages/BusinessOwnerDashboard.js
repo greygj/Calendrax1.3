@@ -564,7 +564,7 @@ const BusinessOwnerDashboard = () => {
 
   const handleBookForCustomerSubmit = async () => {
     try {
-      await appointmentAPI.bookForCustomer({
+      const response = await appointmentAPI.bookForCustomer({
         serviceId: bookingForm.serviceId,
         staffId: bookingForm.staffId || null,
         date: bookingForm.date,
@@ -574,9 +574,16 @@ const BusinessOwnerDashboard = () => {
         customerEmail: bookingForm.customerEmail,
         customerPhone: bookingForm.customerPhone
       });
+      
       setShowBookingModal(false);
       loadData();
-      alert('Booking created successfully!');
+      
+      // Check if a new customer was created
+      if (response.data.newCustomerCreated && response.data.customerCredentials) {
+        setNewCustomerCredentials(response.data.customerCredentials);
+      } else {
+        alert('Booking created successfully!');
+      }
     } catch (error) {
       console.error('Failed to create booking:', error);
       alert(error.response?.data?.detail || 'Failed to create booking.');
