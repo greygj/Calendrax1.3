@@ -3,6 +3,7 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Clock, MapPin, Calendar, Check, Building2, ChevronLeft, ChevronRight, Info, User, Home, Tag, CreditCard, Loader2, ShoppingCart } from 'lucide-react';
 import { businessAPI, availabilityAPI, paymentAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { formatDate } from '../utils/dateFormat';
 
 const BusinessPage = () => {
   const { businessId } = useParams();
