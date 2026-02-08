@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, Building2, MapPin, ChevronRight, Calendar, Bell, X, Clock, Home, User, History, Save, Smartphone } from 'lucide-react';
+import { LogOut, Building2, MapPin, ChevronRight, Calendar, Bell, X, Clock, Home, User, History, Save, Smartphone, Lock, Mail, MessageCircle, Eye, EyeOff } from 'lucide-react';
 import { businessAPI, appointmentAPI, notificationAPI, authAPI } from '../services/api';
 import { formatDate } from '../utils/dateFormat';
 import InstallPrompt from '../components/InstallPrompt';
@@ -23,6 +23,26 @@ const CustomerDashboard = () => {
     email: '',
     mobile: ''
   });
+  
+  // Password change state
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  
+  // Notification preferences state
+  const [notificationPrefs, setNotificationPrefs] = useState({
+    emailReminders: true,
+    whatsappReminders: true
+  });
+  const [prefsLoading, setPrefsLoading] = useState(false);
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileError, setProfileError] = useState('');
   const [profileSuccess, setProfileSuccess] = useState(false);
