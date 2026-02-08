@@ -283,7 +283,7 @@ const CustomerDashboard = () => {
       </div>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-4xl mx-auto px-4 py-6">
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
@@ -292,7 +292,7 @@ const CustomerDashboard = () => {
           <>
             {/* Dashboard View */}
             {activeView === 'dashboard' && (
-              <div className="space-y-8">
+              <div className="space-y-6">
                 {/* Welcome Section */}
                 <div className="bg-cardBg border border-zinc-800 rounded-xl p-6">
                   <h1 className="text-white text-2xl font-bold mb-2">
@@ -301,36 +301,17 @@ const CustomerDashboard = () => {
                   <p className="text-gray-400">What would you like to do today?</p>
                 </div>
 
-                {/* Quick Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="bg-cardBg border border-zinc-800 rounded-xl p-4">
-                    <p className="text-gray-500 text-sm">Upcoming Bookings</p>
-                    <p className="text-brand-400 text-3xl font-bold mt-1">{upcomingBookings.length}</p>
-                  </div>
-                  <div className="bg-cardBg border border-zinc-800 rounded-xl p-4">
-                    <p className="text-gray-500 text-sm">Past Bookings</p>
-                    <p className="text-white text-3xl font-bold mt-1">{pastBookings.length}</p>
-                  </div>
-                  <div className="bg-cardBg border border-zinc-800 rounded-xl p-4">
-                    <p className="text-gray-500 text-sm">Available Businesses</p>
-                    <p className="text-white text-3xl font-bold mt-1">{businesses.length}</p>
-                  </div>
-                </div>
-
                 {/* Upcoming Bookings Preview */}
                 {upcomingBookings.length > 0 && (
                   <div>
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-white text-lg font-semibold">Upcoming Bookings</h2>
-                      <button
-                        onClick={() => setActiveView('bookings')}
-                        className="text-brand-400 text-sm hover:text-brand-300 flex items-center gap-1"
-                      >
-                        View all <ChevronRight className="w-4 h-4" />
-                      </button>
+                      <span className="bg-brand-500 text-black text-xs font-bold px-2 py-1 rounded-full">
+                        {upcomingBookings.length}
+                      </span>
                     </div>
                     <div className="space-y-3">
-                      {upcomingBookings.slice(0, 2).map(booking => (
+                      {upcomingBookings.slice(0, 3).map(booking => (
                         <div key={booking.id} className="bg-cardBg border border-zinc-800 rounded-xl p-4">
                           <div className="flex items-start justify-between">
                             <div>
@@ -358,26 +339,66 @@ const CustomerDashboard = () => {
                   </div>
                 )}
 
-                {/* Quick Actions */}
-                <div>
-                  <h2 className="text-white text-lg font-semibold mb-4">Quick Actions</h2>
-                  <div className="grid grid-cols-2 gap-4">
-                    <button
-                      onClick={() => setActiveView('businesses')}
-                      className="bg-brand-500 text-black p-4 rounded-xl font-medium hover:bg-brand-400 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <Building2 className="w-5 h-5" />
-                      Browse Businesses
-                    </button>
-                    <button
-                      onClick={() => setActiveView('bookings')}
-                      className="bg-cardBg border border-zinc-800 text-white p-4 rounded-xl font-medium hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <Calendar className="w-5 h-5" />
-                      My Bookings
-                    </button>
-                  </div>
+                {/* Navigation Buttons - Full Width for Mobile */}
+                <div className="space-y-3">
+                  <button
+                    onClick={() => setActiveView('businesses')}
+                    className="w-full bg-cardBg border border-zinc-800 text-white p-4 rounded-xl font-medium hover:bg-zinc-800 hover:border-brand-500/50 transition-all flex items-center gap-4"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-brand-500/10 flex items-center justify-center">
+                      <Building2 className="w-5 h-5 text-brand-400" />
+                    </div>
+                    <span className="flex-1 text-left">Browse Businesses</span>
+                    <ChevronRight className="w-5 h-5 text-gray-500" />
+                  </button>
+
+                  <button
+                    onClick={() => setActiveView('bookings')}
+                    className="w-full bg-cardBg border border-zinc-800 text-white p-4 rounded-xl font-medium hover:bg-zinc-800 hover:border-brand-500/50 transition-all flex items-center gap-4"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-brand-500/10 flex items-center justify-center">
+                      <Calendar className="w-5 h-5 text-brand-400" />
+                    </div>
+                    <span className="flex-1 text-left">My Bookings</span>
+                    {upcomingBookings.length > 0 && (
+                      <span className="bg-brand-500 text-black text-xs font-bold px-2 py-1 rounded-full mr-2">
+                        {upcomingBookings.length}
+                      </span>
+                    )}
+                    <ChevronRight className="w-5 h-5 text-gray-500" />
+                  </button>
+
+                  <button
+                    onClick={() => setActiveView('history')}
+                    className="w-full bg-cardBg border border-zinc-800 text-white p-4 rounded-xl font-medium hover:bg-zinc-800 hover:border-brand-500/50 transition-all flex items-center gap-4"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-brand-500/10 flex items-center justify-center">
+                      <History className="w-5 h-5 text-brand-400" />
+                    </div>
+                    <span className="flex-1 text-left">Booking History</span>
+                    <ChevronRight className="w-5 h-5 text-gray-500" />
+                  </button>
+
+                  <button
+                    onClick={() => setActiveView('profile')}
+                    className="w-full bg-cardBg border border-zinc-800 text-white p-4 rounded-xl font-medium hover:bg-zinc-800 hover:border-brand-500/50 transition-all flex items-center gap-4"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-brand-500/10 flex items-center justify-center">
+                      <User className="w-5 h-5 text-brand-400" />
+                    </div>
+                    <span className="flex-1 text-left">Profile</span>
+                    <ChevronRight className="w-5 h-5 text-gray-500" />
+                  </button>
                 </div>
+
+                {/* Logout Button */}
+                <button
+                  onClick={handleLogout}
+                  className="w-full bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl font-medium hover:bg-red-500/20 hover:border-red-500/50 transition-all flex items-center justify-center gap-3 mt-6"
+                >
+                  <LogOut className="w-5 h-5" />
+                  Logout
+                </button>
               </div>
             )}
 
