@@ -696,6 +696,154 @@ const CustomerDashboard = () => {
                   </div>
                 </form>
 
+                {/* Change Password */}
+                <div className="bg-cardBg border border-zinc-800 rounded-xl p-6 mt-6">
+                  <h3 className="text-white font-medium flex items-center gap-2 mb-3">
+                    <Lock className="w-5 h-5 text-brand-400" />
+                    Change Password
+                  </h3>
+                  
+                  {!showPasswordForm ? (
+                    <button
+                      onClick={() => setShowPasswordForm(true)}
+                      className="w-full bg-zinc-800 border border-zinc-700 text-white py-3 px-4 rounded-lg font-medium hover:bg-zinc-700 hover:border-brand-500/50 transition-all"
+                    >
+                      Change Password
+                    </button>
+                  ) : (
+                    <form onSubmit={handleChangePassword} className="space-y-4">
+                      {passwordError && (
+                        <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg text-sm">
+                          {passwordError}
+                        </div>
+                      )}
+                      {passwordSuccess && (
+                        <div className="bg-green-500/10 border border-green-500/50 text-green-400 px-4 py-3 rounded-lg text-sm">
+                          Password changed successfully!
+                        </div>
+                      )}
+                      
+                      <div className="relative">
+                        <input
+                          type={showCurrentPassword ? "text" : "password"}
+                          value={passwordForm.currentPassword}
+                          onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
+                          className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-500 pr-12"
+                          placeholder="Current Password"
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                        >
+                          {showCurrentPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
+                      </div>
+                      
+                      <div className="relative">
+                        <input
+                          type={showNewPassword ? "text" : "password"}
+                          value={passwordForm.newPassword}
+                          onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
+                          className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-500 pr-12"
+                          placeholder="New Password"
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowNewPassword(!showNewPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                        >
+                          {showNewPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
+                      </div>
+                      
+                      <input
+                        type="password"
+                        value={passwordForm.confirmPassword}
+                        onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
+                        className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-500"
+                        placeholder="Confirm New Password"
+                        required
+                      />
+                      
+                      <div className="flex gap-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowPasswordForm(false);
+                            setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                            setPasswordError('');
+                          }}
+                          className="flex-1 bg-zinc-800 text-white py-3 rounded-lg font-medium hover:bg-zinc-700 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={passwordSaving}
+                          className="flex-1 bg-brand-500 text-black py-3 rounded-lg font-medium hover:bg-brand-400 transition-colors disabled:opacity-50"
+                        >
+                          {passwordSaving ? 'Saving...' : 'Update Password'}
+                        </button>
+                      </div>
+                    </form>
+                  )}
+                </div>
+
+                {/* Notification Preferences */}
+                <div className="bg-cardBg border border-zinc-800 rounded-xl p-6 mt-6">
+                  <h3 className="text-white font-medium flex items-center gap-2 mb-4">
+                    <Bell className="w-5 h-5 text-brand-400" />
+                    Notification Preferences
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    {/* Email Reminders Toggle */}
+                    <div className="flex items-center justify-between p-4 bg-zinc-800 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <Mail className="w-5 h-5 text-gray-400" />
+                        <div>
+                          <p className="text-white font-medium">Email Reminders</p>
+                          <p className="text-gray-500 text-sm">Receive booking reminders via email</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleToggleNotificationPref('emailReminders')}
+                        className={`w-12 h-6 rounded-full transition-colors relative ${
+                          notificationPrefs.emailReminders ? 'bg-brand-500' : 'bg-zinc-600'
+                        }`}
+                      >
+                        <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
+                          notificationPrefs.emailReminders ? 'left-7' : 'left-1'
+                        }`} />
+                      </button>
+                    </div>
+                    
+                    {/* WhatsApp Reminders Toggle */}
+                    <div className="flex items-center justify-between p-4 bg-zinc-800 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <MessageCircle className="w-5 h-5 text-gray-400" />
+                        <div>
+                          <p className="text-white font-medium">WhatsApp Reminders</p>
+                          <p className="text-gray-500 text-sm">Receive booking reminders via WhatsApp</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleToggleNotificationPref('whatsappReminders')}
+                        className={`w-12 h-6 rounded-full transition-colors relative ${
+                          notificationPrefs.whatsappReminders ? 'bg-brand-500' : 'bg-zinc-600'
+                        }`}
+                      >
+                        <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
+                          notificationPrefs.whatsappReminders ? 'left-7' : 'left-1'
+                        }`} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Add to Home Screen */}
                 <div className="bg-cardBg border border-zinc-800 rounded-xl p-6 mt-6">
                   <h3 className="text-white font-medium flex items-center gap-2 mb-3">
