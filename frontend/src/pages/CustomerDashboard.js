@@ -172,12 +172,11 @@ const CustomerDashboard = () => {
           <img 
             src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/tmj5ltm0_Calendrax%20Opaque.png" 
             alt="Calendrax" 
-            className="h-20 cursor-pointer"
-            
+            className="h-16 cursor-pointer"
             onClick={() => setActiveView('dashboard')}
           />
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {/* User Info */}
             <div className="text-right hidden sm:block">
               <p className="text-white font-medium">{user?.fullName}</p>
@@ -238,13 +237,16 @@ const CustomerDashboard = () => {
               )}
             </div>
 
-            {/* Logout */}
-            <button
-              onClick={handleLogout}
-              className="p-2 rounded-full bg-zinc-800 text-white hover:bg-zinc-700 transition-colors"
-            >
-              <LogOut className="w-5 h-5" />
-            </button>
+            {/* Back to Dashboard button - show on sub-views */}
+            {activeView !== 'dashboard' && (
+              <button
+                onClick={() => setActiveView('dashboard')}
+                className="p-2 rounded-full bg-zinc-800 text-white hover:bg-zinc-700 transition-colors"
+                title="Back to Dashboard"
+              >
+                <Home className="w-5 h-5" />
+              </button>
+            )}
           </div>
         </div>
       </header>
