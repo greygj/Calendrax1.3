@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, User, Mail, Phone, Lock, Eye, EyeOff, Briefcase, Upload, MapPin, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import InstallPrompt from '../components/InstallPrompt';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
