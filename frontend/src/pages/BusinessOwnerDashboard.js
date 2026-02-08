@@ -89,6 +89,7 @@ const BusinessOwnerDashboard = () => {
   });
   const [bookingStep, setBookingStep] = useState(1);
   const [bookingAvailableSlots, setBookingAvailableSlots] = useState([]);
+  const [newCustomerCredentials, setNewCustomerCredentials] = useState(null);
   
   // Profile state
   const [profileForm, setProfileForm] = useState({
