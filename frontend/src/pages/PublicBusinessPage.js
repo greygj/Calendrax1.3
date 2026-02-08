@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, MapPin, Star, Building2, Phone, Mail, ChevronRight, Image as ImageIcon } from 'lucide-react';
 import { businessAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { formatDate } from '../utils/dateFormat';
 
 const PublicBusinessPage = () => {
   const { businessId } = useParams();
