@@ -2206,27 +2206,38 @@ async def book_for_customer(appointment_data: dict, background_tasks: Background
             customer_name = customer["fullName"]
             customer_email = customer["email"]
             customer_phone = customer.get("mobile")
-    elif customer_email:
+    
+    new_customer_created = False
+    temp_password = None
+    
+    if not customer_id and customer_email:
         # Check if customer exists by email
         existing = await db.users.find_one({"email": customer_email})
         if existing:
             customer_id = existing["id"]
             customer_name = existing["fullName"]
         else:
-            # Create a new customer account (with a random password they can reset)
+            # Create a new customer account with a temporary password
             import secrets
+            import string
             customer_id = str(uuid.uuid4())
+            # Generate a readable temporary password (8 chars, letters and numbers)
+            alphabet = string.ascii_letters + string.digits
+            temp_password = ''.join(secrets.choice(alphabet) for _ in range(8))
+            hashed_password = hashlib.sha256(temp_password.encode()).hexdigest()
+            
             new_customer = {
                 "id": customer_id,
                 "email": customer_email,
                 "fullName": customer_name or "Guest Customer",
                 "mobile": customer_phone or "",
-                "password": hashlib.sha256(secrets.token_hex(16).encode()).hexdigest(),
+                "password": hashed_password,
                 "role": "customer",
                 "suspended": False,
                 "createdAt": datetime.now(timezone.utc).isoformat()
             }
             await db.users.insert_one(new_customer)
+            new_customer_created = True
     
     # Get staff member if specified
     staff_id = appointment_data.get("staffId")
