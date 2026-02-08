@@ -502,7 +502,6 @@ async def get_business(business_id: str):
     result["depositPercentage"] = DEPOSIT_LEVELS.get(deposit_level, 20)
     result["depositLevelLabel"] = {
         "none": "No deposit required",
-        "10": "10% deposit",
         "20": "20% deposit",
         "50": "50% deposit",
         "full": "Full payment required"
