@@ -119,6 +119,8 @@ const Signup = () => {
     const result = await signup(userData);
     
     if (result.success) {
+      // Show install prompt after successful signup
+      setShowInstallPrompt(true);
       // The PublicRoute will handle the redirect using localStorage
       // No need to navigate here - React will re-render and PublicRoute will redirect
     } else {
@@ -129,8 +131,18 @@ const Signup = () => {
     setLoading(false);
   };
 
+  const handleInstallPromptClose = () => {
+    setShowInstallPrompt(false);
+    // Navigation will happen automatically via PublicRoute
+  };
+
   return (
     <div className="min-h-screen bg-appbg flex flex-col px-4 py-6">
+      {/* Install Prompt Modal */}
+      {showInstallPrompt && (
+        <InstallPrompt onClose={handleInstallPromptClose} />
+      )}
+
       {/* Back Button */}
       <button
         onClick={() => navigate('/')}
