@@ -251,39 +251,6 @@ const CustomerDashboard = () => {
         </div>
       </header>
 
-      {/* Navigation Tabs */}
-      <div className="bg-cardBg/50 border-b border-zinc-800">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="flex gap-1 overflow-x-auto">
-            {[
-              { id: 'dashboard', label: 'Dashboard', icon: Home },
-              { id: 'businesses', label: 'Browse Businesses', icon: Building2 },
-              { id: 'bookings', label: 'My Bookings', icon: Calendar, badge: upcomingBookings.length },
-              { id: 'history', label: 'Booking History', icon: History },
-              { id: 'profile', label: 'Profile', icon: User }
-            ].map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveView(tab.id)}
-                className={`flex items-center gap-2 px-4 py-3 font-medium transition-colors whitespace-nowrap ${
-                  activeView === tab.id
-                    ? 'text-brand-400 border-b-2 border-brand-400'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <tab.icon className="w-4 h-4" />
-                {tab.label}
-                {tab.badge > 0 && (
-                  <span className="w-5 h-5 bg-brand-500 text-black text-xs font-bold rounded-full flex items-center justify-center">
-                    {tab.badge}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-6">
         {loading ? (
