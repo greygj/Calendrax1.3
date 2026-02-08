@@ -98,6 +98,25 @@ const BusinessOwnerDashboard = () => {
   const [profileSaving, setProfileSaving] = useState(false);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [logoUploading, setLogoUploading] = useState(false);
+  
+  // Password change state
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  
+  // Notification preferences state
+  const [notificationPrefs, setNotificationPrefs] = useState({
+    emailReminders: true,
+    whatsappReminders: true
+  });
   const logoInputRef = useRef(null);
   
   const [showNotifications, setShowNotifications] = useState(false);
