@@ -1439,7 +1439,7 @@ const BusinessOwnerDashboard = () => {
                               <p className="text-brand-400 mt-2">{apt.serviceName}</p>
                               {apt.staffName && <p className="text-gray-500 text-sm">with {apt.staffName}</p>}
                               <p className="text-gray-500 text-sm mt-1">
-                                {apt.date} at {apt.time}
+                                {formatDate(apt.date)} at {apt.time}
                               </p>
                             </div>
                             <div className="flex gap-2">
@@ -1479,7 +1479,7 @@ const BusinessOwnerDashboard = () => {
                               <p className="text-brand-400">{apt.serviceName}</p>
                               {apt.staffName && <p className="text-gray-500 text-sm">with {apt.staffName}</p>}
                               <p className="text-gray-500 text-sm mt-1">
-                                {apt.date} at {apt.time}
+                                {formatDate(apt.date)} at {apt.time}
                               </p>
                             </div>
                             <span className="px-3 py-1 bg-brand-500/20 text-brand-400 text-sm rounded-full">
@@ -1525,7 +1525,7 @@ const BusinessOwnerDashboard = () => {
                             <p className="text-gray-400">{apt.serviceName}</p>
                             {apt.staffName && <p className="text-gray-500 text-sm">with {apt.staffName}</p>}
                             <p className="text-gray-500 text-sm mt-1">
-                              {apt.date} at {apt.time}
+                              {formatDate(apt.date)} at {apt.time}
                             </p>
                             {apt.depositRefunded && (
                               <p className="text-yellow-400 text-xs mt-1">
@@ -1864,7 +1864,7 @@ const BusinessOwnerDashboard = () => {
                                             {apt.staffName && <span className="text-gray-500 ml-2">with {apt.staffName}</span>}
                                           </div>
                                           <div className="flex items-center gap-3">
-                                            <span className="text-gray-400">{apt.date} at {apt.time}</span>
+                                            <span className="text-gray-400">{formatDate(apt.date)} at {apt.time}</span>
                                             <span className={`px-2 py-0.5 rounded text-xs ${
                                               apt.status === 'confirmed' ? 'bg-brand-500/20 text-brand-400'
                                               : apt.status === 'completed' ? 'bg-blue-500/20 text-blue-400'
