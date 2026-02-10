@@ -39,13 +39,14 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       setError('');
-      const [statsRes, usersRes, businessesRes, subsRes, appointmentsRes, reviewsRes] = await Promise.all([
+      const [statsRes, usersRes, businessesRes, subsRes, appointmentsRes, reviewsRes, trialsRes] = await Promise.all([
         adminAPI.getStats().catch(() => ({ data: {} })),
         adminAPI.getUsers().catch(() => ({ data: [] })),
         adminAPI.getBusinesses().catch(() => ({ data: [] })),
         adminAPI.getSubscriptions().catch(() => ({ data: [] })),
         adminAPI.getAppointments().catch(() => ({ data: [] })),
-        reviewAPI.adminGetAll().catch(() => ({ data: [] }))
+        reviewAPI.adminGetAll().catch(() => ({ data: [] })),
+        adminAPI.getTrialStatus().catch(() => ({ data: { trials: [] } }))
       ]);
       setStats(statsRes.data || {});
       setUsers(usersRes.data || []);
@@ -53,6 +54,7 @@ const AdminDashboard = () => {
       setSubscriptions(subsRes.data || []);
       setAppointments(appointmentsRes.data || []);
       setReviews(reviewsRes.data || []);
+      setTrials(trialsRes.data?.trials || []);
     } catch (err) {
       console.error('Load data error:', err);
       setError('Failed to load some data');
