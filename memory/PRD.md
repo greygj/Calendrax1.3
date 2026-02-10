@@ -96,7 +96,7 @@ Create "Calendrax," a comprehensive booking application with:
 - None - all critical features implemented!
 
 ### P1 - High Priority
-- [ ] Trial expiration email reminders (scheduled task)
+- [ ] Appointment reminders (24h before booking) - scheduled task
 
 ### P2 - Medium Priority
 - [ ] Google Maps API integration (currently basic embed)
