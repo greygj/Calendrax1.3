@@ -2628,6 +2628,22 @@ async def get_external_notification_status():
     """Check if email and SMS notifications are configured"""
     return get_notification_status()
 
+@api_router.post("/notifications/test-whatsapp")
+async def test_whatsapp_notification(data: dict, user: dict = Depends(require_admin)):
+    """Send a test WhatsApp message (admin only)"""
+    phone = data.get("phone")
+    if not phone:
+        raise HTTPException(status_code=400, detail="Phone number is required")
+    
+    message = data.get("message", "🧪 *Test Message from Calendrax*\n\nIf you receive this, WhatsApp notifications are working correctly!")
+    
+    success = send_whatsapp(phone, message)
+    
+    if success:
+        return {"success": True, "message": f"Test WhatsApp message sent to {phone}"}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to send WhatsApp message. Check logs for details.")
+
 # ==================== REVENUE ROUTES ====================
 
 def get_week_range(date: datetime):
