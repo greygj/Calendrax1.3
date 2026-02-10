@@ -41,7 +41,9 @@ export const authAPI = {
   updateProfile: (data) => apiClient.put('/auth/profile', data),
   changePassword: (data) => apiClient.post('/auth/change-password', data),
   getNotificationPreferences: () => apiClient.get('/auth/notification-preferences'),
-  updateNotificationPreferences: (data) => apiClient.put('/auth/notification-preferences', data)
+  updateNotificationPreferences: (data) => apiClient.put('/auth/notification-preferences', data),
+  forgotPassword: (email) => apiClient.post('/auth/forgot-password', { email }),
+  resetPassword: (token, newPassword) => apiClient.post('/auth/reset-password', { token, newPassword })
 };
 
 // Businesses
