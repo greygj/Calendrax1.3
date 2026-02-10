@@ -120,6 +120,8 @@ function AppRoutes() {
           </PublicRoute>
         } 
       />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       
       {/* Protected routes */}
       <Route 
