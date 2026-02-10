@@ -6,7 +6,7 @@ import { formatDate } from '../utils/dateFormat';
 import { 
   LogOut, Users, Building2, Calendar, CreditCard, BarChart3, 
   ChevronRight, Check, X, Edit2, Trash2, Eye, AlertTriangle,
-  PoundSterling, RefreshCw, Shield, Clock, Star
+  PoundSterling, RefreshCw, Shield, Clock, Star, Bell, Send
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -20,10 +20,12 @@ const AdminDashboard = () => {
   const [subscriptions, setSubscriptions] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [trials, setTrials] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('');
   const [error, setError] = useState('');
+  const [sendingReminders, setSendingReminders] = useState(false);
 
   useEffect(() => {
     if (user?.role !== 'platform_admin') {
