@@ -3725,6 +3725,147 @@ async def admin_refund_appointment(appointment_id: str, amount: float, admin: di
     
     return {"success": True}
 
+# ==================== TRIAL REMINDER SYSTEM ====================
+
+async def check_and_send_trial_reminders():
+    """
+    Check for businesses with expiring trials and send reminders.
+    Sends reminders at 7 days, 3 days, and 1 day before expiry.
+    """
+    from notifications import send_trial_reminder
+    
+    reminder_days = [7, 3, 1]  # Days before expiry to send reminders
+    results = {"sent": 0, "errors": 0, "details": []}
+    
+    for days in reminder_days:
+        # Calculate the target date
+        target_date = datetime.now(timezone.utc) + timedelta(days=days)
+        target_date_start = target_date.replace(hour=0, minute=0, second=0, microsecond=0)
+        target_date_end = target_date.replace(hour=23, minute=59, second=59, microsecond=999999)
+        
+        # Find subscriptions expiring on this date
+        # Look for trials that haven't been reminded for this day count
+        subscriptions = await db.subscriptions.find({
+            "status": "trialing",
+            "trialEndDate": {
+                "$gte": target_date_start.isoformat(),
+                "$lte": target_date_end.isoformat()
+            }
+        }).to_list(None)
+        
+        for subscription in subscriptions:
+            # Check if we already sent a reminder for this day count
+            reminders_sent = subscription.get("remindersSent", [])
+            if days in reminders_sent:
+                continue
+            
+            # Get business and owner
+            business = await db.businesses.find_one({"id": subscription["businessId"]})
+            if not business:
+                continue
+                
+            owner = await db.users.find_one({"id": business["ownerId"]})
+            if not owner:
+                continue
+            
+            # Check owner's notification preferences
+            email_enabled = owner.get("emailReminders", True)
+            whatsapp_enabled = owner.get("whatsappReminders", True)
+            
+            if not email_enabled and not whatsapp_enabled:
+                continue  # User has disabled all notifications
+            
+            try:
+                # Send the reminder
+                reminder_result = await send_trial_reminder(
+                    owner_email=owner["email"] if email_enabled else None,
+                    owner_phone=owner.get("mobile") if whatsapp_enabled else None,
+                    owner_name=owner["fullName"],
+                    business_name=business["businessName"],
+                    days_remaining=days,
+                    monthly_price=subscription.get("monthlyPrice", 10.00)
+                )
+                
+                # Mark this reminder as sent
+                await db.subscriptions.update_one(
+                    {"id": subscription["id"]},
+                    {"$push": {"remindersSent": days}}
+                )
+                
+                results["sent"] += 1
+                results["details"].append({
+                    "business": business["businessName"],
+                    "owner": owner["email"],
+                    "days_remaining": days,
+                    "result": reminder_result
+                })
+                
+                logger.info(f"Trial reminder sent: {business['businessName']} ({days} days remaining)")
+                
+            except Exception as e:
+                results["errors"] += 1
+                logger.error(f"Failed to send trial reminder for {business['businessName']}: {str(e)}")
+    
+    return results
+
+@api_router.post("/admin/send-trial-reminders")
+async def trigger_trial_reminders(user: dict = Depends(require_admin)):
+    """
+    Manually trigger trial reminder check (admin only).
+    This endpoint can also be called by a cron job.
+    """
+    results = await check_and_send_trial_reminders()
+    return {
+        "success": True,
+        "reminders_sent": results["sent"],
+        "errors": results["errors"],
+        "details": results["details"]
+    }
+
+@api_router.get("/admin/trial-status")
+async def get_trial_status(user: dict = Depends(require_admin)):
+    """
+    Get overview of all trials and their status (admin only).
+    """
+    now = datetime.now(timezone.utc)
+    
+    # Get all trialing subscriptions
+    trialing = await db.subscriptions.find({"status": "trialing"}).to_list(None)
+    
+    trial_info = []
+    for sub in trialing:
+        business = await db.businesses.find_one({"id": sub["businessId"]})
+        owner = await db.users.find_one({"id": business["ownerId"]}) if business else None
+        
+        # Calculate days remaining
+        trial_end = sub.get("trialEndDate")
+        if trial_end:
+            if isinstance(trial_end, str):
+                trial_end_dt = datetime.fromisoformat(trial_end.replace('Z', '+00:00'))
+            else:
+                trial_end_dt = trial_end
+            days_remaining = (trial_end_dt - now).days
+        else:
+            days_remaining = None
+        
+        trial_info.append({
+            "businessId": sub["businessId"],
+            "businessName": business["businessName"] if business else "Unknown",
+            "ownerEmail": owner["email"] if owner else "Unknown",
+            "trialEndDate": sub.get("trialEndDate"),
+            "daysRemaining": days_remaining,
+            "remindersSent": sub.get("remindersSent", []),
+            "hasPaymentMethod": sub.get("hasPaymentMethod", False)
+        })
+    
+    # Sort by days remaining
+    trial_info.sort(key=lambda x: x["daysRemaining"] if x["daysRemaining"] is not None else 999)
+    
+    return {
+        "totalTrials": len(trial_info),
+        "trials": trial_info
+    }
+
 # ==================== APP SETUP ====================
 
 app.include_router(api_router)
