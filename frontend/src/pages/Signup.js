@@ -154,7 +154,7 @@ const Signup = () => {
       {/* Logo */}
       <div className="text-center mb-6">
         <img 
-          src="https://customer-assets.emergentagent.com/job_3f85dde5-1e91-4759-bd85-f441b993a550/artifacts/6d6uguuw_Calendrax1.3%20Logo%20Opaque.png" 
+          src="https://customer-assets.emergentagent.com/job_3f85dde5-1e91-4759-bd85-f441b993a550/artifacts/s4024gg5_Calendrax1.3%20Logo%20Opaque%20%282%29.png" 
           alt="Calendrax" 
           className="h-32 mx-auto"
           
