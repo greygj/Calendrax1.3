@@ -939,6 +939,75 @@ const CustomerDashboard = () => {
           </>
         )}
       </main>
+
+      {/* Review Modal */}
+      {showReviewModal && reviewBooking && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-cardBg border border-zinc-800 rounded-xl w-full max-w-md">
+            <div className="flex items-center justify-between p-4 border-b border-zinc-800">
+              <h3 className="text-white text-lg font-semibold">Leave a Review</h3>
+              <button onClick={() => setShowReviewModal(false)} className="text-gray-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <div className="mb-4">
+                <p className="text-white font-medium">{reviewBooking.businessName}</p>
+                <p className="text-gray-400 text-sm">{reviewBooking.serviceName}</p>
+                <p className="text-gray-500 text-xs mt-1">{formatDate(reviewBooking.date)}</p>
+              </div>
+              
+              {/* Star Rating */}
+              <div className="mb-4">
+                <label className="text-gray-400 text-sm block mb-2">Your Rating</label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setReviewForm({...reviewForm, rating: star})}
+                      className="p-1 transition-transform hover:scale-110"
+                    >
+                      <Star 
+                        className={`w-8 h-8 ${star <= reviewForm.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`} 
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Comment */}
+              <div className="mb-6">
+                <label className="text-gray-400 text-sm block mb-2">Your Review (optional)</label>
+                <textarea
+                  value={reviewForm.comment}
+                  onChange={(e) => setReviewForm({...reviewForm, comment: e.target.value})}
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-500 resize-none"
+                  rows={4}
+                  placeholder="Tell others about your experience..."
+                />
+              </div>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowReviewModal(false)}
+                  className="flex-1 bg-zinc-800 text-white py-3 rounded-lg font-medium hover:bg-zinc-700 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSubmitReview}
+                  disabled={reviewSubmitting}
+                  className="flex-1 bg-brand-500 text-black py-3 rounded-lg font-medium hover:bg-brand-400 transition-colors disabled:opacity-50"
+                >
+                  {reviewSubmitting ? 'Submitting...' : 'Submit Review'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
