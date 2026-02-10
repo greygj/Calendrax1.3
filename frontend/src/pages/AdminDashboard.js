@@ -37,18 +37,20 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       setError('');
-      const [statsRes, usersRes, businessesRes, subsRes, appointmentsRes] = await Promise.all([
+      const [statsRes, usersRes, businessesRes, subsRes, appointmentsRes, reviewsRes] = await Promise.all([
         adminAPI.getStats().catch(() => ({ data: {} })),
         adminAPI.getUsers().catch(() => ({ data: [] })),
         adminAPI.getBusinesses().catch(() => ({ data: [] })),
         adminAPI.getSubscriptions().catch(() => ({ data: [] })),
-        adminAPI.getAppointments().catch(() => ({ data: [] }))
+        adminAPI.getAppointments().catch(() => ({ data: [] })),
+        reviewAPI.adminGetAll().catch(() => ({ data: [] }))
       ]);
       setStats(statsRes.data || {});
       setUsers(usersRes.data || []);
       setBusinesses(businessesRes.data || []);
       setSubscriptions(subsRes.data || []);
       setAppointments(appointmentsRes.data || []);
+      setReviews(reviewsRes.data || []);
     } catch (err) {
       console.error('Load data error:', err);
       setError('Failed to load some data');
@@ -60,6 +62,19 @@ const AdminDashboard = () => {
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+  
+  // Delete review
+  const handleDeleteReview = async (reviewId) => {
+    if (!window.confirm('Are you sure you want to delete this review?')) return;
+    
+    try {
+      await reviewAPI.delete(reviewId);
+      setReviews(reviews.filter(r => r.id !== reviewId));
+    } catch (err) {
+      console.error('Delete review error:', err);
+      alert('Failed to delete review');
+    }
   };
 
   // User actions
