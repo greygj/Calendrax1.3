@@ -684,7 +684,7 @@ const AdminDashboard = () => {
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img 
-              src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/tmj5ltm0_Calendrax%20Opaque.png" 
+              src="https://customer-assets.emergentagent.com/job_3f85dde5-1e91-4759-bd85-f441b993a550/artifacts/6d6uguuw_Calendrax1.3%20Logo%20Opaque.png" 
               alt="Calendrax" 
               className="h-16"
               
