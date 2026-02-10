@@ -412,19 +412,27 @@ async def notify_booking_created(
     customer_name: str,
     service_name: str,
     date: str,
-    time: str
+    time: str,
+    email_enabled: bool = True,
+    whatsapp_enabled: bool = True
 ):
     """Send notifications when a new booking is created"""
-    # Send email to business owner
-    subject, html_content = get_booking_created_email(
-        business_name, customer_name, service_name, date, time
-    )
-    send_email(business_owner_email, subject, html_content)
+    results = {"email": False, "whatsapp": False}
     
-    # Send SMS to business owner if phone number is available
-    if business_owner_phone:
-        sms_message = get_booking_created_sms(customer_name, service_name, date, time)
-        send_sms(business_owner_phone, sms_message)
+    # Send email to business owner
+    if email_enabled:
+        subject, html_content = get_booking_created_email(
+            business_name, customer_name, service_name, date, time
+        )
+        results["email"] = send_email(business_owner_email, subject, html_content)
+    
+    # Send WhatsApp to business owner if phone number is available
+    if business_owner_phone and whatsapp_enabled:
+        whatsapp_message = get_booking_created_whatsapp(customer_name, service_name, date, time)
+        results["whatsapp"] = send_whatsapp(business_owner_phone, whatsapp_message)
+    
+    logger.info(f"Booking created notifications sent: {results}")
+    return results
 
 
 async def notify_booking_approved(
@@ -434,19 +442,27 @@ async def notify_booking_approved(
     business_name: str,
     service_name: str,
     date: str,
-    time: str
+    time: str,
+    email_enabled: bool = True,
+    whatsapp_enabled: bool = True
 ):
     """Send notifications when a booking is approved"""
-    # Send email to customer
-    subject, html_content = get_booking_approved_email(
-        customer_name, business_name, service_name, date, time
-    )
-    send_email(customer_email, subject, html_content)
+    results = {"email": False, "whatsapp": False}
     
-    # Send SMS to customer if phone number is available
-    if customer_phone:
-        sms_message = get_booking_approved_sms(business_name, service_name, date, time)
-        send_sms(customer_phone, sms_message)
+    # Send email to customer
+    if email_enabled:
+        subject, html_content = get_booking_approved_email(
+            customer_name, business_name, service_name, date, time
+        )
+        results["email"] = send_email(customer_email, subject, html_content)
+    
+    # Send WhatsApp to customer if phone number is available
+    if customer_phone and whatsapp_enabled:
+        whatsapp_message = get_booking_approved_whatsapp(business_name, service_name, date, time)
+        results["whatsapp"] = send_whatsapp(customer_phone, whatsapp_message)
+    
+    logger.info(f"Booking approved notifications sent: {results}")
+    return results
 
 
 async def notify_booking_declined(
@@ -456,19 +472,27 @@ async def notify_booking_declined(
     business_name: str,
     service_name: str,
     date: str,
-    time: str
+    time: str,
+    email_enabled: bool = True,
+    whatsapp_enabled: bool = True
 ):
     """Send notifications when a booking is declined"""
-    # Send email to customer
-    subject, html_content = get_booking_declined_email(
-        customer_name, business_name, service_name, date, time
-    )
-    send_email(customer_email, subject, html_content)
+    results = {"email": False, "whatsapp": False}
     
-    # Send SMS to customer if phone number is available
-    if customer_phone:
-        sms_message = get_booking_declined_sms(business_name, service_name, date, time)
-        send_sms(customer_phone, sms_message)
+    # Send email to customer
+    if email_enabled:
+        subject, html_content = get_booking_declined_email(
+            customer_name, business_name, service_name, date, time
+        )
+        results["email"] = send_email(customer_email, subject, html_content)
+    
+    # Send WhatsApp to customer if phone number is available
+    if customer_phone and whatsapp_enabled:
+        whatsapp_message = get_booking_declined_whatsapp(business_name, service_name, date, time)
+        results["whatsapp"] = send_whatsapp(customer_phone, whatsapp_message)
+    
+    logger.info(f"Booking declined notifications sent: {results}")
+    return results
 
 
 async def notify_booking_cancelled(
@@ -478,19 +502,74 @@ async def notify_booking_cancelled(
     customer_name: str,
     service_name: str,
     date: str,
-    time: str
+    time: str,
+    email_enabled: bool = True,
+    whatsapp_enabled: bool = True
 ):
     """Send notifications when a booking is cancelled"""
-    # Send email to business owner
-    subject, html_content = get_booking_cancelled_email(
-        business_name, customer_name, service_name, date, time
-    )
-    send_email(business_owner_email, subject, html_content)
+    results = {"email": False, "whatsapp": False}
     
-    # Send SMS to business owner if phone number is available
-    if business_owner_phone:
-        sms_message = get_booking_cancelled_sms(customer_name, service_name, date, time)
-        send_sms(business_owner_phone, sms_message)
+    # Send email to business owner
+    if email_enabled:
+        subject, html_content = get_booking_cancelled_email(
+            business_name, customer_name, service_name, date, time
+        )
+        results["email"] = send_email(business_owner_email, subject, html_content)
+    
+    # Send WhatsApp to business owner if phone number is available
+    if business_owner_phone and whatsapp_enabled:
+        whatsapp_message = get_booking_cancelled_whatsapp(customer_name, service_name, date, time)
+        results["whatsapp"] = send_whatsapp(business_owner_phone, whatsapp_message)
+    
+    logger.info(f"Booking cancelled notifications sent: {results}")
+    return results
+
+
+async def send_appointment_reminder(
+    customer_email: str,
+    customer_phone: Optional[str],
+    customer_name: str,
+    business_name: str,
+    service_name: str,
+    date: str,
+    time: str,
+    email_enabled: bool = True,
+    whatsapp_enabled: bool = True
+):
+    """Send appointment reminder to customer"""
+    results = {"email": False, "whatsapp": False}
+    
+    # Send email reminder
+    if email_enabled:
+        subject = f"Reminder: Your appointment at {business_name} tomorrow"
+        html_content = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; background-color: #1a1a1a; color: #ffffff; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #2a2a2a; border-radius: 10px; padding: 30px;">
+                <h1 style="color: #a3e635; margin-bottom: 20px;">⏰ Appointment Reminder</h1>
+                <p>Hello {customer_name},</p>
+                <p>This is a reminder about your upcoming appointment:</p>
+                <div style="background-color: #333; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <p><strong style="color: #a3e635;">Business:</strong> {business_name}</p>
+                    <p><strong style="color: #a3e635;">Service:</strong> {service_name}</p>
+                    <p><strong style="color: #a3e635;">Date:</strong> {date}</p>
+                    <p><strong style="color: #a3e635;">Time:</strong> {time}</p>
+                </div>
+                <p>We look forward to seeing you!</p>
+                <p style="color: #888; margin-top: 30px; font-size: 12px;">This is an automated reminder from Calendrax.</p>
+            </div>
+        </body>
+        </html>
+        """
+        results["email"] = send_email(customer_email, subject, html_content)
+    
+    # Send WhatsApp reminder
+    if customer_phone and whatsapp_enabled:
+        whatsapp_message = get_booking_reminder_whatsapp(business_name, service_name, date, time)
+        results["whatsapp"] = send_whatsapp(customer_phone, whatsapp_message)
+    
+    logger.info(f"Appointment reminder sent: {results}")
+    return results
 
 
 # ==================== STATUS CHECK ====================
