@@ -19,7 +19,7 @@ Create "Calendrax," a comprehensive booking application with:
 - Calendar availability management (5am-11pm slots)
 - Booking system with deposits (Stripe Connect, 5% platform fee)
 - Subscription system (£10/month base + £5/additional staff, 30-day trial)
-- Notification system (WhatsApp sandbox)
+- Notification system (Email, WhatsApp)
 - GDPR-compliant cookie consent
 
 ## UI Theme
@@ -33,6 +33,7 @@ Create "Calendrax," a comprehensive booking application with:
 - **Backend:** FastAPI, Python
 - **Database:** MongoDB
 - **Payments:** Stripe (Live keys)
+- **Notifications:** Twilio (WhatsApp)
 - **Deployment:** Railway
 
 ---
@@ -67,6 +68,16 @@ Create "Calendrax," a comprehensive booking application with:
   - Removed top tab bar
   - Logout button at bottom
   - Back to Dashboard button in header for sub-views
+- [x] **PWA "Add to Home Screen"** - InstallPrompt component, manifest.json
+- [x] **Profile Enhancements** - Change password, email/WhatsApp notification toggles
+- [x] **Customer Reviews System** - Full review submission, admin deletion, ratings display
+- [x] **Auto Customer Account Creation** - Business owner booking creates customer with temp password
+- [x] **Date Formatting** - All dates in dd-mm-yyyy format using dateUtils.js
+- [x] **WhatsApp Notifications** (Feb 2026)
+  - Twilio integration for WhatsApp messaging
+  - Notification templates for booking events
+  - User preferences respected (email/whatsapp toggles)
+  - Test endpoint for admin verification
 
 ---
 
@@ -77,22 +88,19 @@ Create "Calendrax," a comprehensive booking application with:
 - [ ] Trial expiration email reminders - **Blocked: Need SendGrid API key**
 
 ### P1 - High Priority
-- [ ] Customer review and rating system
-- [ ] WhatsApp Business integration (production) - User applying for profile
+- [ ] SendGrid integration for transactional emails
 
 ### P2 - Medium Priority
 - [ ] Google Maps API integration (currently basic embed)
 - [ ] Backend refactoring (server.py → modular routes/models/services)
 - [ ] Frontend refactoring (BusinessOwnerDashboard.js → smaller components)
 - [ ] Export analytics as CSV/PDF reports
-- [ ] Business owner mobile-friendly dashboard redesign
 
 ---
 
 ## Technical Debt
 1. **BusinessOwnerDashboard.js** - 3000+ lines, needs component breakdown
 2. **server.py** - Monolithic, needs modular structure
-3. **Reviews section** - UI placeholder, no backend functionality
 
 ## Environment Variables (Railway)
 Required for production:
@@ -101,6 +109,9 @@ FRONTEND_URL=https://calendrax13-production.up.railway.app
 MONGO_URL=<production_mongo_url>
 DB_NAME=<production_db>
 STRIPE_API_KEY=<live_stripe_key>
+TWILIO_ACCOUNT_SID=<twilio_sid>
+TWILIO_AUTH_TOKEN=<twilio_token>
+TWILIO_WHATSAPP_NUMBER=<whatsapp_number>
 SENDGRID_API_KEY=<pending>
 SENDGRID_FROM_EMAIL=<pending>
 ```
