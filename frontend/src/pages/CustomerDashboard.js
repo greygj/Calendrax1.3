@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, Building2, MapPin, ChevronRight, Calendar, Bell, X, Clock, Home, User, History, Save, Smartphone, Lock, Mail, MessageCircle, Eye, EyeOff } from 'lucide-react';
-import { businessAPI, appointmentAPI, notificationAPI, authAPI } from '../services/api';
+import { LogOut, Building2, MapPin, ChevronRight, Calendar, Bell, X, Clock, Home, User, History, Save, Smartphone, Lock, Mail, MessageCircle, Eye, EyeOff, Star } from 'lucide-react';
+import { businessAPI, appointmentAPI, notificationAPI, authAPI, reviewAPI } from '../services/api';
 import { formatDate } from '../utils/dateFormat';
 import InstallPrompt from '../components/InstallPrompt';
 
