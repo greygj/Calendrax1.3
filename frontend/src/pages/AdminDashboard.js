@@ -481,6 +481,56 @@ const AdminDashboard = () => {
           </div>
         );
 
+      case 'reviews':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-white text-xl font-semibold">All Reviews</h2>
+              <span className="text-gray-400">{reviews.length} total reviews</span>
+            </div>
+            
+            <div className="space-y-4">
+              {reviews.map(review => (
+                <div key={review.id} className="bg-cardBg border border-zinc-800 rounded-xl p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="flex">
+                          {[...Array(5)].map((_, i) => (
+                            <Star 
+                              key={i} 
+                              className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`} 
+                            />
+                          ))}
+                        </div>
+                        <span className="text-white font-medium">{review.customerName}</span>
+                      </div>
+                      <p className="text-brand-400 text-sm mb-1">{review.businessName}</p>
+                      {review.comment && (
+                        <p className="text-gray-300 mt-2">{review.comment}</p>
+                      )}
+                      <p className="text-gray-500 text-xs mt-2">{formatDate(review.createdAt)}</p>
+                    </div>
+                    <button
+                      onClick={() => handleDeleteReview(review.id)}
+                      className="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors"
+                      title="Delete Review"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+              {reviews.length === 0 && (
+                <div className="bg-cardBg border border-zinc-800 rounded-xl p-8 text-center">
+                  <Star className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                  <p className="text-gray-500">No reviews yet</p>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+
       default:
         return (
           <>
