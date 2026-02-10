@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { adminAPI } from '../services/api';
+import { adminAPI, reviewAPI } from '../services/api';
 import { formatDate } from '../utils/dateFormat';
 import { 
   LogOut, Users, Building2, Calendar, CreditCard, BarChart3, 
   ChevronRight, Check, X, Edit2, Trash2, Eye, AlertTriangle,
-  PoundSterling, RefreshCw, Shield, Clock
+  PoundSterling, RefreshCw, Shield, Clock, Star
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -19,6 +19,7 @@ const AdminDashboard = () => {
   const [businesses, setBusinesses] = useState([]);
   const [subscriptions, setSubscriptions] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('');
