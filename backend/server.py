@@ -2581,6 +2581,9 @@ async def cancel_appointment(appointment_id: str, background_tasks: BackgroundTa
         
         # Send email/SMS notification to business owner (in background)
         if business_owner:
+            # Get business owner's notification preferences
+            bo_email_enabled = business_owner.get("emailReminders", True)
+            bo_whatsapp_enabled = business_owner.get("whatsappReminders", True)
             background_tasks.add_task(
                 notify_booking_cancelled,
                 business_owner_email=business_owner["email"],
@@ -2589,7 +2592,9 @@ async def cancel_appointment(appointment_id: str, background_tasks: BackgroundTa
                 customer_name=user["fullName"],
                 service_name=appointment["serviceName"],
                 date=appointment["date"],
-                time=appointment["time"]
+                time=appointment["time"],
+                email_enabled=bo_email_enabled,
+                whatsapp_enabled=bo_whatsapp_enabled
             )
     
     return {"success": True}
