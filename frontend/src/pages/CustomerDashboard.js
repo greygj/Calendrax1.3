@@ -638,7 +638,7 @@ const CustomerDashboard = () => {
                     {pastBookings.map(booking => (
                       <div key={booking.id} className="bg-cardBg/50 border border-zinc-800 rounded-xl p-4">
                         <div className="flex items-start justify-between">
-                          <div>
+                          <div className="flex-1">
                             <h4 className="text-white font-medium">{booking.serviceName}</h4>
                             <p className="text-gray-400">{booking.businessName}</p>
                             {booking.staffName && (
@@ -655,17 +655,35 @@ const CustomerDashboard = () => {
                               </span>
                             </div>
                           </div>
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            booking.status === 'completed' || (booking.status === 'confirmed' && isDatePassed(booking.date))
-                              ? 'bg-brand-500/20 text-brand-400'
-                              : booking.status === 'cancelled'
-                              ? 'bg-gray-500/20 text-gray-400'
-                              : 'bg-red-500/20 text-red-400'
-                          }`}>
-                            {(booking.status === 'confirmed' && isDatePassed(booking.date)) 
-                              ? 'Completed' 
-                              : booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                          </span>
+                          <div className="flex flex-col items-end gap-2">
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                              booking.status === 'completed' || (booking.status === 'confirmed' && isDatePassed(booking.date))
+                                ? 'bg-brand-500/20 text-brand-400'
+                                : booking.status === 'cancelled'
+                                ? 'bg-gray-500/20 text-gray-400'
+                                : 'bg-red-500/20 text-red-400'
+                            }`}>
+                              {(booking.status === 'confirmed' && isDatePassed(booking.date)) 
+                                ? 'Completed' 
+                                : booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                            </span>
+                            
+                            {/* Review button - only for completed bookings */}
+                            {(booking.status === 'completed' || (booking.status === 'confirmed' && isDatePassed(booking.date))) && (
+                              hasReviewedBusiness(booking.businessId) ? (
+                                <span className="text-brand-400 text-xs flex items-center gap-1">
+                                  <Star className="w-3 h-3 fill-brand-400" /> Reviewed
+                                </span>
+                              ) : (
+                                <button
+                                  onClick={() => openReviewModal(booking)}
+                                  className="text-yellow-400 text-xs font-medium flex items-center gap-1 hover:text-yellow-300 transition-colors"
+                                >
+                                  <Star className="w-3 h-3" /> Leave Review
+                                </button>
+                              )
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
