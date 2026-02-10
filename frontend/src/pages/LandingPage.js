@@ -117,55 +117,80 @@ const LandingPage = () => {
             {filteredBusinesses.map(business => (
               <div
                 key={business.id}
-                className="bg-cardBg border border-zinc-800 rounded-xl overflow-hidden hover:border-zinc-700 transition-all group"
+                onClick={() => handleViewBusiness(business.id)}
+                className="bg-cardBg border border-zinc-800 rounded-xl overflow-hidden hover:border-brand-500/50 transition-all group cursor-pointer"
               >
-                {/* Business Image/Logo */}
-                <div className="h-40 bg-zinc-800 flex items-center justify-center">
-                  {business.logo ? (
+                {/* Top Half - Hero Image */}
+                <div className="h-40 bg-zinc-800 relative overflow-hidden">
+                  {business.photos && business.photos.length > 0 ? (
+                    <img 
+                      src={business.photos[0]} 
+                      alt={business.businessName}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : business.logo ? (
                     <img 
                       src={business.logo} 
                       alt={business.businessName}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (
-                    <Building2 className="w-16 h-16 text-zinc-600" />
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Building2 className="w-16 h-16 text-zinc-600" />
+                    </div>
                   )}
                 </div>
 
-                {/* Business Info */}
-                <div className="p-5">
-                  <h3 className="text-white text-lg font-semibold mb-2 group-hover:text-brand-400 transition-colors">
-                    {business.businessName}
-                  </h3>
+                {/* Bottom Half - Logo & Business Info */}
+                <div className="p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    {/* Business Logo */}
+                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-zinc-800 flex-shrink-0">
+                      {business.logo ? (
+                        <img 
+                          src={business.logo} 
+                          alt={business.businessName}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Building2 className="w-6 h-6 text-zinc-600" />
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Business Name & Location */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-white font-semibold truncate group-hover:text-brand-400 transition-colors">
+                        {business.businessName}
+                      </h3>
+                      {business.postcode && (
+                        <p className="text-gray-500 text-sm flex items-center gap-1">
+                          <MapPin className="w-3 h-3" />
+                          {business.postcode}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                   
                   {business.description && (
-                    <p className="text-gray-500 text-sm mb-3 line-clamp-2">
+                    <p className="text-gray-500 text-sm line-clamp-2 mb-3">
                       {business.description}
                     </p>
                   )}
 
-                  <div className="flex items-center gap-4 text-sm text-gray-400 mb-4">
-                    {business.postcode && (
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" />
-                        {business.postcode}
-                      </span>
-                    )}
+                  <div className="flex items-center justify-between">
                     {business.serviceCount > 0 && (
-                      <span className="flex items-center gap-1">
+                      <span className="text-gray-400 text-sm flex items-center gap-1">
                         <Clock className="w-4 h-4" />
                         {business.serviceCount} services
                       </span>
                     )}
+                    <span className="text-brand-400 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                      View & Book
+                      <ArrowRight className="w-4 h-4" />
+                    </span>
                   </div>
-
-                  <button
-                    onClick={() => handleViewBusiness(business.id)}
-                    className="w-full bg-zinc-800 text-white py-3 rounded-lg font-medium hover:bg-brand-500 hover:text-black transition-all flex items-center justify-center gap-2 group-hover:bg-brand-500 group-hover:text-black"
-                  >
-                    View & Book
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
                 </div>
               </div>
             ))}
