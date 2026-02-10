@@ -152,6 +152,23 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleSendTrialReminders = async () => {
+    try {
+      setSendingReminders(true);
+      const result = await adminAPI.sendTrialReminders();
+      if (result.data.reminders_sent > 0) {
+        alert(`Successfully sent ${result.data.reminders_sent} reminder(s)!`);
+      } else {
+        alert('No reminders needed to be sent at this time.');
+      }
+      loadData();
+    } catch (err) {
+      setError('Failed to send trial reminders');
+    } finally {
+      setSendingReminders(false);
+    }
+  };
+
   // Refund action
   const handleRefund = async (appointmentId, amount) => {
     try {
