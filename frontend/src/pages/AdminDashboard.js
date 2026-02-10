@@ -552,6 +552,88 @@ const AdminDashboard = () => {
           </div>
         );
 
+      case 'trials':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <h2 className="text-white text-xl font-semibold">Trial Management</h2>
+              <button
+                onClick={handleSendTrialReminders}
+                disabled={sendingReminders}
+                className="flex items-center gap-2 bg-brand-500 text-black px-4 py-2 rounded-lg font-semibold hover:bg-brand-400 transition-colors disabled:opacity-50"
+              >
+                {sendingReminders ? (
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4" />
+                )}
+                Send Reminders Now
+              </button>
+            </div>
+
+            <div className="bg-cardBg border border-zinc-800 rounded-xl p-4 mb-4">
+              <div className="flex items-center gap-3 text-gray-400 text-sm">
+                <Bell className="w-4 h-4" />
+                <span>Automatic reminders are sent daily at 9:00 AM UTC for trials expiring in 7, 3, and 1 day(s).</span>
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              {trials.length > 0 ? (
+                trials.map(trial => (
+                  <div 
+                    key={trial.businessId} 
+                    className={`bg-cardBg border rounded-xl p-4 ${
+                      trial.daysRemaining <= 1 ? 'border-red-500/50' :
+                      trial.daysRemaining <= 3 ? 'border-yellow-500/50' :
+                      trial.daysRemaining <= 7 ? 'border-orange-500/50' :
+                      'border-zinc-800'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="text-white font-semibold">{trial.businessName}</h3>
+                        <p className="text-gray-400 text-sm">{trial.ownerEmail}</p>
+                        <div className="flex items-center gap-4 mt-2">
+                          <span className={`text-sm ${
+                            trial.daysRemaining <= 1 ? 'text-red-400' :
+                            trial.daysRemaining <= 3 ? 'text-yellow-400' :
+                            trial.daysRemaining <= 7 ? 'text-orange-400' :
+                            'text-green-400'
+                          }`}>
+                            <Clock className="w-4 h-4 inline mr-1" />
+                            {trial.daysRemaining} day{trial.daysRemaining !== 1 ? 's' : ''} remaining
+                          </span>
+                          <span className="text-gray-500 text-sm">
+                            Expires: {formatDate(trial.trialEndDate)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className={`px-3 py-1 rounded-full text-xs ${
+                          trial.hasPaymentMethod ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                        }`}>
+                          {trial.hasPaymentMethod ? 'Payment method added' : 'No payment method'}
+                        </div>
+                        {trial.remindersSent?.length > 0 && (
+                          <p className="text-gray-500 text-xs mt-2">
+                            Reminders sent: {trial.remindersSent.join(', ')} day(s)
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="bg-cardBg border border-zinc-800 rounded-xl p-8 text-center">
+                  <Clock className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                  <p className="text-gray-500">No active trials</p>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+
       default:
         return (
           <>
