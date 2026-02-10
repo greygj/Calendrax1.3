@@ -337,6 +337,72 @@ def get_booking_cancelled_sms(customer_name: str, service_name: str, date: str, 
     return f"Calendrax: {customer_name} cancelled their booking for {service_name} on {date} at {time}."
 
 
+# ==================== WHATSAPP TEMPLATES ====================
+
+def get_booking_created_whatsapp(customer_name: str, service_name: str, date: str, time: str) -> str:
+    """Returns WhatsApp message for new booking notification to business owner"""
+    return f"""📅 *New Booking Request*
+
+Customer: *{customer_name}*
+Service: *{service_name}*
+Date: *{date}*
+Time: *{time}*
+
+Log in to your Calendrax dashboard to approve or decline."""
+
+
+def get_booking_approved_whatsapp(business_name: str, service_name: str, date: str, time: str) -> str:
+    """Returns WhatsApp message for booking approved notification to customer"""
+    return f"""✅ *Booking Confirmed!*
+
+Your appointment at *{business_name}* has been confirmed:
+
+Service: *{service_name}*
+Date: *{date}*
+Time: *{time}*
+
+We look forward to seeing you!"""
+
+
+def get_booking_declined_whatsapp(business_name: str, service_name: str, date: str, time: str) -> str:
+    """Returns WhatsApp message for booking declined notification to customer"""
+    return f"""❌ *Booking Not Available*
+
+Unfortunately, your booking request at *{business_name}* could not be accommodated:
+
+Service: *{service_name}*
+Date: *{date}*
+Time: *{time}*
+
+Please try booking a different time slot."""
+
+
+def get_booking_cancelled_whatsapp(customer_name: str, service_name: str, date: str, time: str) -> str:
+    """Returns WhatsApp message for booking cancelled notification to business owner"""
+    return f"""🚫 *Booking Cancelled*
+
+*{customer_name}* has cancelled their booking:
+
+Service: *{service_name}*
+Date: *{date}*
+Time: *{time}*
+
+The time slot is now available for other bookings."""
+
+
+def get_booking_reminder_whatsapp(business_name: str, service_name: str, date: str, time: str) -> str:
+    """Returns WhatsApp message for appointment reminder to customer"""
+    return f"""⏰ *Appointment Reminder*
+
+Don't forget your upcoming appointment at *{business_name}*:
+
+Service: *{service_name}*
+Date: *{date}*
+Time: *{time}*
+
+See you soon!"""
+
+
 # ==================== NOTIFICATION DISPATCHER ====================
 
 async def notify_booking_created(
