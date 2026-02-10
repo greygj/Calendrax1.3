@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
-import { authAPI } from '../api/authAPI';
+import { authAPI } from '../services/api';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
