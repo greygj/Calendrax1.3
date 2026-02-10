@@ -87,6 +87,12 @@ Create "Calendrax," a comprehensive booking application with:
   - Secure token-based reset (1 hour expiry)
   - Beautiful email template with Calendrax branding
   - Reset password page with confirmation
+- [x] **Trial Expiration Reminders** (Feb 2026)
+  - Automatic daily check at 9:00 AM UTC
+  - Reminders sent at 7, 3, and 1 day(s) before expiry
+  - Email and WhatsApp notifications (based on user preferences)
+  - Admin dashboard "Trials" tab for monitoring
+  - Manual "Send Reminders Now" button for admin
 
 ---
 
