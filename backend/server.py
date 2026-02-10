@@ -210,6 +210,23 @@ class Subscription(BaseModel):
     freeAccessGrantedAt: Optional[datetime] = None
     createdAt: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class Review(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    businessId: str
+    businessName: str
+    customerId: str
+    customerName: str
+    appointmentId: Optional[str] = None
+    rating: int  # 1-5 stars
+    comment: str = ""
+    createdAt: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ReviewCreate(BaseModel):
+    businessId: str
+    appointmentId: Optional[str] = None
+    rating: int  # 1-5 stars
+    comment: str = ""
+
 class Appointment(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     userId: str
