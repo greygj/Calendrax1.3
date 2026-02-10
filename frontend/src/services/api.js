@@ -193,7 +193,11 @@ export const adminAPI = {
   
   // Appointments
   getAppointments: () => apiClient.get('/admin/appointments'),
-  refundAppointment: (id, amount) => apiClient.put(`/admin/appointments/${id}/refund?amount=${amount}`)
+  refundAppointment: (id, amount) => apiClient.put(`/admin/appointments/${id}/refund?amount=${amount}`),
+  
+  // Trials
+  getTrialStatus: () => apiClient.get('/admin/trial-status'),
+  sendTrialReminders: () => apiClient.post('/admin/send-trial-reminders')
 };
 
 export default apiClient;
