@@ -1725,11 +1725,11 @@ const BusinessOwnerDashboard = () => {
                   <div className="space-y-3">
                     {businessServices.map(service => (
                       <div key={service.id} className="bg-cardBg border border-zinc-800 rounded-xl p-4">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <h4 className="text-white font-medium">{service.name}</h4>
-                              <span className={`px-2 py-0.5 rounded text-xs ${
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h4 className="text-white font-medium text-base">{service.name}</h4>
+                              <span className={`px-2 py-0.5 rounded text-xs whitespace-nowrap ${
                                 service.active !== false
                                   ? 'bg-brand-500/20 text-brand-400'
                                   : 'bg-gray-500/20 text-gray-400'
@@ -1737,7 +1737,7 @@ const BusinessOwnerDashboard = () => {
                                 {service.active !== false ? 'Active' : 'Inactive'}
                               </span>
                             </div>
-                            <p className="text-gray-400 text-sm mt-1">{service.description}</p>
+                            <p className="text-gray-400 text-sm mt-1 line-clamp-2">{service.description}</p>
                             <div className="flex items-center gap-4 mt-2">
                               <span className="text-brand-400 font-semibold">£{service.price}</span>
                               <span className="text-gray-500 text-sm flex items-center gap-1">
@@ -1745,10 +1745,10 @@ const BusinessOwnerDashboard = () => {
                               </span>
                             </div>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 flex-shrink-0">
                             <button
                               onClick={() => handleToggleActive(service)}
-                              className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                              className={`px-3 py-1.5 rounded-lg text-sm transition-colors whitespace-nowrap ${
                                 service.active !== false
                                   ? 'bg-gray-500/20 text-gray-400 hover:bg-gray-500/30'
                                   : 'bg-brand-500/20 text-brand-400 hover:bg-brand-500/30'
