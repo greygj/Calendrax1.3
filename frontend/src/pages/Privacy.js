@@ -44,7 +44,7 @@ const Privacy = () => {
         <img 
           src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/tmj5ltm0_Calendrax%20Opaque.png" 
           alt="Calendrax" 
-          className="h-16 mx-auto"
+          className="h-24 mx-auto"
           
         />
       </div>
