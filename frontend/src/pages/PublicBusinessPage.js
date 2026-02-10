@@ -228,27 +228,49 @@ const PublicBusinessPage = () => {
 
         {/* Reviews Section */}
         <div className="mb-8">
-          <h2 className="text-white text-xl font-semibold mb-4 flex items-center gap-2">
-            <Star className="w-5 h-5 text-brand-400" />
-            Reviews
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-white text-xl font-semibold flex items-center gap-2">
+              <Star className="w-5 h-5 text-brand-400" />
+              Reviews
+              {reviewStats.totalReviews > 0 && (
+                <span className="text-gray-500 text-base font-normal">({reviewStats.totalReviews})</span>
+              )}
+            </h2>
+            {reviewStats.averageRating > 0 && (
+              <div className="flex items-center gap-2">
+                <div className="flex">
+                  {[...Array(5)].map((_, i) => (
+                    <Star 
+                      key={i} 
+                      className={`w-4 h-4 ${i < Math.round(reviewStats.averageRating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`} 
+                    />
+                  ))}
+                </div>
+                <span className="text-white font-semibold">{reviewStats.averageRating}</span>
+              </div>
+            )}
+          </div>
           {reviews.length > 0 ? (
             <div className="space-y-4">
-              {reviews.map((review, index) => (
-                <div key={index} className="bg-cardBg border border-zinc-800 rounded-xl p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <Star 
-                          key={i} 
-                          className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`} 
-                        />
-                      ))}
+              {reviews.map((review) => (
+                <div key={review.id} className="bg-cardBg border border-zinc-800 rounded-xl p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <Star 
+                            key={i} 
+                            className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`} 
+                          />
+                        ))}
+                      </div>
+                      <span className="text-white font-medium">{review.customerName}</span>
                     </div>
-                    <span className="text-gray-500 text-sm">{formatDate(review.date)}</span>
+                    <span className="text-gray-500 text-sm">{formatDate(review.createdAt)}</span>
                   </div>
-                  <p className="text-gray-300">{review.comment}</p>
-                  <p className="text-gray-500 text-sm mt-2">— {review.customerName}</p>
+                  {review.comment && (
+                    <p className="text-gray-300 mt-2">{review.comment}</p>
+                  )}
                 </div>
               ))}
             </div>
