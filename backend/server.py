@@ -2242,6 +2242,9 @@ async def create_appointment(appointment_data: dict, background_tasks: Backgroun
     
     # Send email/SMS notification to business owner (in background)
     if business_owner:
+        # Get business owner's notification preferences
+        bo_email_enabled = business_owner.get("emailReminders", True)
+        bo_whatsapp_enabled = business_owner.get("whatsappReminders", True)
         background_tasks.add_task(
             notify_booking_created,
             business_owner_email=business_owner["email"],
@@ -2250,7 +2253,9 @@ async def create_appointment(appointment_data: dict, background_tasks: Backgroun
             customer_name=user["fullName"],
             service_name=service["name"],
             date=appointment_data["date"],
-            time=appointment_data["time"]
+            time=appointment_data["time"],
+            email_enabled=bo_email_enabled,
+            whatsapp_enabled=bo_whatsapp_enabled
         )
     
     # Remove slot from availability (for specific staff if applicable)
