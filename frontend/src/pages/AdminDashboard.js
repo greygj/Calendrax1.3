@@ -831,7 +831,7 @@ const AdminDashboard = () => {
       <div className="bg-cardBg/50 border-b border-zinc-800">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex gap-1 overflow-x-auto">
-            {['overview', 'users', 'businesses', 'subscriptions', 'bookings', 'reviews'].map(view => (
+            {['overview', 'users', 'businesses', 'subscriptions', 'bookings', 'trials', 'reviews'].map(view => (
               <button
                 key={view}
                 onClick={() => setActiveView(view)}
@@ -842,6 +842,11 @@ const AdminDashboard = () => {
                 }`}
               >
                 {view.charAt(0).toUpperCase() + view.slice(1)}
+                {view === 'trials' && trials.length > 0 && (
+                  <span className="ml-1 px-1.5 py-0.5 text-xs bg-yellow-500/20 text-yellow-400 rounded-full">
+                    {trials.length}
+                  </span>
+                )}
               </button>
             ))}
           </div>
