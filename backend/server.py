@@ -3900,6 +3900,39 @@ async def startup():
         }
         await db.users.insert_one(admin_doc)
         logger.info("Default admin created: admin@booka.com / admin123")
+    
+    # Start background task for daily trial reminders
+    import asyncio
+    asyncio.create_task(daily_trial_reminder_task())
+
+async def daily_trial_reminder_task():
+    """Background task that runs trial reminder check once per day"""
+    import asyncio
+    while True:
+        try:
+            # Wait until next check (run at 9 AM UTC daily)
+            now = datetime.now(timezone.utc)
+            next_run = now.replace(hour=9, minute=0, second=0, microsecond=0)
+            if now >= next_run:
+                next_run += timedelta(days=1)
+            
+            wait_seconds = (next_run - now).total_seconds()
+            logger.info(f"Trial reminder task: next run in {wait_seconds/3600:.1f} hours at {next_run.isoformat()}")
+            
+            await asyncio.sleep(wait_seconds)
+            
+            # Run the reminder check
+            logger.info("Running scheduled trial reminder check...")
+            results = await check_and_send_trial_reminders()
+            logger.info(f"Trial reminder check complete: {results['sent']} sent, {results['errors']} errors")
+            
+        except asyncio.CancelledError:
+            logger.info("Trial reminder task cancelled")
+            break
+        except Exception as e:
+            logger.error(f"Error in trial reminder task: {str(e)}")
+            # Wait an hour before retrying on error
+            await asyncio.sleep(3600)
 
 @app.on_event("shutdown")
 async def shutdown():
