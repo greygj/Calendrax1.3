@@ -2521,6 +2521,10 @@ async def update_appointment_status(appointment_id: str, status: str, background
     
     # Send email/SMS notification to customer (in background)
     if customer:
+        # Get customer's notification preferences
+        cust_email_enabled = customer.get("emailReminders", True)
+        cust_whatsapp_enabled = customer.get("whatsappReminders", True)
+        
         if status == "confirmed":
             background_tasks.add_task(
                 notify_booking_approved,
@@ -2530,7 +2534,9 @@ async def update_appointment_status(appointment_id: str, status: str, background
                 business_name=appointment["businessName"],
                 service_name=appointment["serviceName"],
                 date=appointment["date"],
-                time=appointment["time"]
+                time=appointment["time"],
+                email_enabled=cust_email_enabled,
+                whatsapp_enabled=cust_whatsapp_enabled
             )
         elif status == "declined":
             background_tasks.add_task(
@@ -2541,7 +2547,9 @@ async def update_appointment_status(appointment_id: str, status: str, background
                 business_name=appointment["businessName"],
                 service_name=appointment["serviceName"],
                 date=appointment["date"],
-                time=appointment["time"]
+                time=appointment["time"],
+                email_enabled=cust_email_enabled,
+                whatsapp_enabled=cust_whatsapp_enabled
             )
     
     return {"success": True, "refund": refund_result}
