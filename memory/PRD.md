@@ -78,17 +78,25 @@ Create "Calendrax," a comprehensive booking application with:
   - Notification templates for booking events
   - User preferences respected (email/whatsapp toggles)
   - Test endpoint for admin verification
+- [x] **SendGrid Email Integration** (Feb 2026)
+  - SendGrid API configured for transactional emails
+  - Booking confirmations, reminders, and notifications
+  - From address: bookings@calendrax.co.uk
+- [x] **Forgot Password Feature** (Feb 2026)
+  - Password reset via email link
+  - Secure token-based reset (1 hour expiry)
+  - Beautiful email template with Calendrax branding
+  - Reset password page with confirmation
 
 ---
 
 ## Prioritized Backlog
 
 ### P0 - Critical (Blocked)
-- [ ] Forgot Password feature - **Blocked: Need SendGrid API key**
-- [ ] Trial expiration email reminders - **Blocked: Need SendGrid API key**
+- None - all critical features implemented!
 
 ### P1 - High Priority
-- [ ] SendGrid integration for transactional emails
+- [ ] Trial expiration email reminders (scheduled task)
 
 ### P2 - Medium Priority
 - [ ] Google Maps API integration (currently basic embed)
