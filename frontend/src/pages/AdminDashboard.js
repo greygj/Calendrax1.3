@@ -669,7 +669,7 @@ const AdminDashboard = () => {
       <div className="bg-cardBg/50 border-b border-zinc-800">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex gap-1 overflow-x-auto">
-            {['overview', 'users', 'businesses', 'subscriptions', 'bookings'].map(view => (
+            {['overview', 'users', 'businesses', 'subscriptions', 'bookings', 'reviews'].map(view => (
               <button
                 key={view}
                 onClick={() => setActiveView(view)}
