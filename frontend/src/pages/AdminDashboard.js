@@ -756,6 +756,15 @@ const AdminDashboard = () => {
                 </div>
                 <span className="text-white font-medium">Bookings</span>
               </button>
+              <button 
+                onClick={() => setActiveView('trials')}
+                className="bg-cardBg border border-zinc-800 rounded-xl p-4 text-center hover:bg-zinc-800 hover:border-yellow-500/50 transition-all group"
+              >
+                <div className="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-yellow-500/30">
+                  <Clock className="w-6 h-6 text-yellow-400" />
+                </div>
+                <span className="text-white font-medium">Trials ({trials.length})</span>
+              </button>
             </div>
           </>
         );
