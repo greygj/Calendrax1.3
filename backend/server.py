@@ -3210,6 +3210,121 @@ async def get_advanced_analytics(user: dict = Depends(require_business_owner)):
     }
 
 
+# ==================== REVIEW ROUTES ====================
+
+@api_router.post("/reviews")
+async def create_review(review_data: ReviewCreate, user: dict = Depends(get_current_user)):
+    """Create a review for a business (customers only)"""
+    if user.get("role") != "customer":
+        raise HTTPException(status_code=403, detail="Only customers can leave reviews")
+    
+    # Validate rating
+    if review_data.rating < 1 or review_data.rating > 5:
+        raise HTTPException(status_code=400, detail="Rating must be between 1 and 5")
+    
+    # Get business
+    business = await db.businesses.find_one({"id": review_data.businessId})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    # Check if customer has had an appointment with this business
+    has_appointment = await db.appointments.find_one({
+        "userId": user["id"],
+        "businessId": review_data.businessId,
+        "status": {"$in": ["confirmed", "completed"]}
+    })
+    
+    if not has_appointment:
+        raise HTTPException(status_code=400, detail="You can only review businesses you have booked with")
+    
+    # Check if customer has already reviewed this business
+    existing_review = await db.reviews.find_one({
+        "customerId": user["id"],
+        "businessId": review_data.businessId
+    })
+    
+    if existing_review:
+        raise HTTPException(status_code=400, detail="You have already reviewed this business")
+    
+    # Create review
+    review = Review(
+        businessId=review_data.businessId,
+        businessName=business["businessName"],
+        customerId=user["id"],
+        customerName=user["fullName"],
+        appointmentId=review_data.appointmentId,
+        rating=review_data.rating,
+        comment=review_data.comment
+    )
+    
+    await db.reviews.insert_one(review.dict())
+    
+    return remove_mongo_id(review.dict())
+
+@api_router.get("/businesses/{business_id}/reviews")
+async def get_business_reviews(business_id: str):
+    """Get all reviews for a business (public)"""
+    reviews = await db.reviews.find({"businessId": business_id}).sort("createdAt", -1).to_list(100)
+    
+    # Calculate average rating
+    total_rating = sum(r["rating"] for r in reviews) if reviews else 0
+    avg_rating = total_rating / len(reviews) if reviews else 0
+    
+    return {
+        "reviews": [remove_mongo_id(r) for r in reviews],
+        "totalReviews": len(reviews),
+        "averageRating": round(avg_rating, 1)
+    }
+
+@api_router.get("/my-reviews")
+async def get_my_reviews(user: dict = Depends(get_current_user)):
+    """Get reviews written by the current customer"""
+    reviews = await db.reviews.find({"customerId": user["id"]}).sort("createdAt", -1).to_list(100)
+    return [remove_mongo_id(r) for r in reviews]
+
+@api_router.get("/business/reviews")
+async def get_business_owner_reviews(user: dict = Depends(require_business_owner)):
+    """Get all reviews for the business owner's business"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    reviews = await db.reviews.find({"businessId": business["id"]}).sort("createdAt", -1).to_list(100)
+    
+    total_rating = sum(r["rating"] for r in reviews) if reviews else 0
+    avg_rating = total_rating / len(reviews) if reviews else 0
+    
+    return {
+        "reviews": [remove_mongo_id(r) for r in reviews],
+        "totalReviews": len(reviews),
+        "averageRating": round(avg_rating, 1)
+    }
+
+@api_router.delete("/reviews/{review_id}")
+async def delete_review(review_id: str, user: dict = Depends(get_current_user)):
+    """Delete a review (admin only or own review)"""
+    review = await db.reviews.find_one({"id": review_id})
+    if not review:
+        raise HTTPException(status_code=404, detail="Review not found")
+    
+    # Allow deletion if admin or if it's the customer's own review
+    is_admin = user.get("role") == "platform_admin"
+    is_owner = review["customerId"] == user["id"]
+    
+    if not is_admin and not is_owner:
+        raise HTTPException(status_code=403, detail="You can only delete your own reviews")
+    
+    await db.reviews.delete_one({"id": review_id})
+    
+    return {"success": True, "message": "Review deleted"}
+
+@api_router.get("/admin/reviews")
+async def admin_get_all_reviews(admin: dict = Depends(require_admin)):
+    """Get all reviews (admin only)"""
+    reviews = await db.reviews.find({}).sort("createdAt", -1).to_list(500)
+    return [remove_mongo_id(r) for r in reviews]
+
+
 # ==================== ADMIN ROUTES ====================
 
 @api_router.get("/admin/stats")
