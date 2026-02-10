@@ -2371,6 +2371,11 @@ async def book_for_customer(appointment_data: dict, background_tasks: Background
         }
         await db.notifications.insert_one(notification_doc)
         
+        # Get customer notification preferences
+        customer_user = await db.users.find_one({"id": customer_id})
+        cust_email_enabled = customer_user.get("emailReminders", True) if customer_user else True
+        cust_whatsapp_enabled = customer_user.get("whatsappReminders", True) if customer_user else True
+        
         # Send email notification
         background_tasks.add_task(
             notify_booking_approved,
@@ -2380,7 +2385,9 @@ async def book_for_customer(appointment_data: dict, background_tasks: Background
             business_name=business["businessName"],
             service_name=service["name"],
             date=appointment_data["date"],
-            time=appointment_data["time"]
+            time=appointment_data["time"],
+            email_enabled=cust_email_enabled,
+            whatsapp_enabled=cust_whatsapp_enabled
         )
     
     # Remove slot from availability
