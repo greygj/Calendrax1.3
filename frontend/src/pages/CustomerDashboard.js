@@ -309,7 +309,7 @@ const CustomerDashboard = () => {
           <img 
             src="https://customer-assets.emergentagent.com/job_appointly-24/artifacts/tmj5ltm0_Calendrax%20Opaque.png" 
             alt="Calendrax" 
-            className="h-16 cursor-pointer"
+            className="h-24 cursor-pointer"
             onClick={() => setActiveView('dashboard')}
           />
 
