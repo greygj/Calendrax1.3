@@ -528,6 +528,110 @@ async def change_password(data: dict, user: dict = Depends(get_current_user)):
     
     return {"success": True, "message": "Password changed successfully"}
 
+@api_router.post("/auth/forgot-password")
+async def forgot_password(data: dict):
+    """Request a password reset email"""
+    email = data.get("email")
+    if not email:
+        raise HTTPException(status_code=400, detail="Email is required")
+    
+    # Find user by email
+    user = await db.users.find_one({"email": email.lower().strip()})
+    
+    # Always return success to prevent email enumeration attacks
+    if not user:
+        logger.info(f"Password reset requested for non-existent email: {email}")
+        return {"success": True, "message": "If an account exists with this email, you will receive a password reset link."}
+    
+    # Generate reset token
+    import secrets
+    reset_token = secrets.token_urlsafe(32)
+    reset_expiry = datetime.now(timezone.utc) + timedelta(hours=1)  # Token valid for 1 hour
+    
+    # Store reset token in database
+    await db.users.update_one(
+        {"id": user["id"]},
+        {"$set": {
+            "resetToken": reset_token,
+            "resetTokenExpiry": reset_expiry.isoformat()
+        }}
+    )
+    
+    # Send reset email
+    frontend_url = FRONTEND_URL or "https://calendrax.co.uk"
+    reset_link = f"{frontend_url}/reset-password?token={reset_token}"
+    
+    from notifications import send_email
+    
+    subject = "Reset Your Calendrax Password"
+    html_content = f"""
+    <html>
+    <body style="font-family: Arial, sans-serif; background-color: #1a1a1a; color: #ffffff; padding: 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #2a2a2a; border-radius: 10px; padding: 30px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <img src="https://customer-assets.emergentagent.com/job_3f85dde5-1e91-4759-bd85-f441b993a550/artifacts/s4024gg5_Calendrax1.3%20Logo%20Opaque%20%282%29.png" alt="Calendrax" style="height: 60px;">
+            </div>
+            <h1 style="color: #a3e635; margin-bottom: 20px; text-align: center;">Password Reset Request</h1>
+            <p>Hello {user['fullName']},</p>
+            <p>We received a request to reset your password. Click the button below to create a new password:</p>
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="{reset_link}" style="display: inline-block; background-color: #a3e635; color: #000000; padding: 14px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">Reset Password</a>
+            </div>
+            <p style="color: #888; font-size: 14px;">This link will expire in 1 hour.</p>
+            <p style="color: #888; font-size: 14px;">If you didn't request this password reset, you can safely ignore this email. Your password will remain unchanged.</p>
+            <hr style="border: none; border-top: 1px solid #444; margin: 30px 0;">
+            <p style="color: #666; font-size: 12px; text-align: center;">This is an automated message from Calendrax. Please do not reply to this email.</p>
+        </div>
+    </body>
+    </html>
+    """
+    
+    email_sent = send_email(user["email"], subject, html_content)
+    if not email_sent:
+        logger.error(f"Failed to send password reset email to {email}")
+    
+    return {"success": True, "message": "If an account exists with this email, you will receive a password reset link."}
+
+@api_router.post("/auth/reset-password")
+async def reset_password(data: dict):
+    """Reset password using token from email"""
+    token = data.get("token")
+    new_password = data.get("newPassword")
+    
+    if not token or not new_password:
+        raise HTTPException(status_code=400, detail="Token and new password are required")
+    
+    if len(new_password) < 6:
+        raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
+    
+    # Find user with this reset token
+    user = await db.users.find_one({"resetToken": token})
+    
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid or expired reset link")
+    
+    # Check if token has expired
+    expiry = user.get("resetTokenExpiry")
+    if expiry:
+        expiry_dt = datetime.fromisoformat(expiry.replace('Z', '+00:00')) if isinstance(expiry, str) else expiry
+        if datetime.now(timezone.utc) > expiry_dt:
+            raise HTTPException(status_code=400, detail="Reset link has expired. Please request a new one.")
+    
+    # Hash and save new password
+    hashed_password = hashlib.sha256(new_password.encode()).hexdigest()
+    
+    # Update password and clear reset token
+    await db.users.update_one(
+        {"id": user["id"]},
+        {
+            "$set": {"password": hashed_password},
+            "$unset": {"resetToken": "", "resetTokenExpiry": ""}
+        }
+    )
+    
+    logger.info(f"Password reset successful for user: {user['email']}")
+    return {"success": True, "message": "Password has been reset successfully. You can now log in with your new password."}
+
 @api_router.get("/auth/notification-preferences")
 async def get_notification_preferences(user: dict = Depends(get_current_user)):
     """Get user notification preferences"""
