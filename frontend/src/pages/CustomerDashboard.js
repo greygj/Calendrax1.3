@@ -46,6 +46,13 @@ const CustomerDashboard = () => {
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileError, setProfileError] = useState('');
   const [profileSuccess, setProfileSuccess] = useState(false);
+  
+  // Review state
+  const [myReviews, setMyReviews] = useState([]);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewBooking, setReviewBooking] = useState(null);
+  const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '' });
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
 
   useEffect(() => {
     loadData();
