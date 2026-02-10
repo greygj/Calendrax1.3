@@ -21,7 +21,8 @@ from notifications import (
     notify_booking_declined, 
     notify_booking_cancelled,
     get_notification_status,
-    send_trial_reminder
+    send_trial_reminder,
+    send_whatsapp
 )
 
 # Stripe SDK - using native stripe for Connect support
