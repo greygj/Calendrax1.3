@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, MapPin, Star, Building2, Mail, ChevronRight, Image as ImageIcon } from 'lucide-react';
-import { businessAPI } from '../services/api';
+import { businessAPI, reviewAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { formatDate } from '../utils/dateFormat';
 
@@ -12,6 +12,7 @@ const PublicBusinessPage = () => {
   const [business, setBusiness] = useState(null);
   const [services, setServices] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [reviewStats, setReviewStats] = useState({ totalReviews: 0, averageRating: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,14 +21,18 @@ const PublicBusinessPage = () => {
 
   const loadBusinessData = async () => {
     try {
-      const [businessRes, servicesRes] = await Promise.all([
+      const [businessRes, servicesRes, reviewsRes] = await Promise.all([
         businessAPI.getById(businessId),
-        businessAPI.getServices(businessId)
+        businessAPI.getServices(businessId),
+        reviewAPI.getForBusiness(businessId).catch(() => ({ data: { reviews: [], totalReviews: 0, averageRating: 0 } }))
       ]);
       setBusiness(businessRes.data);
       setServices(servicesRes.data || []);
-      // Reviews will be loaded when implemented
-      setReviews([]);
+      setReviews(reviewsRes.data.reviews || []);
+      setReviewStats({
+        totalReviews: reviewsRes.data.totalReviews || 0,
+        averageRating: reviewsRes.data.averageRating || 0
+      });
     } catch (error) {
       console.error('Failed to load business:', error);
     } finally {
