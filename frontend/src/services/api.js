@@ -122,6 +122,16 @@ export const appointmentAPI = {
   cancel: (id) => apiClient.put(`/appointments/${id}/cancel`)
 };
 
+// Reviews
+export const reviewAPI = {
+  create: (data) => apiClient.post('/reviews', data),
+  getForBusiness: (businessId) => apiClient.get(`/businesses/${businessId}/reviews`),
+  getMyReviews: () => apiClient.get('/my-reviews'),
+  getBusinessOwnerReviews: () => apiClient.get('/business/reviews'),
+  delete: (reviewId) => apiClient.delete(`/reviews/${reviewId}`),
+  adminGetAll: () => apiClient.get('/admin/reviews')
+};
+
 // Payments
 export const paymentAPI = {
   validateOfferCode: (code) => apiClient.post('/payments/validate-offer-code', { code }),
