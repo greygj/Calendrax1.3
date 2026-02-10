@@ -1287,8 +1287,8 @@ const BusinessOwnerDashboard = () => {
 
             {/* Reminder Messages */}
             <div className="space-y-3">
-              {/* Bank Account Reminder - Yellow */}
-              {stripeStatus && !stripeStatus.accountEnabled && (
+              {/* Bank Account Reminder - Yellow (only show if not connected or not fully enabled) */}
+              {stripeStatus && (!stripeStatus.connected || !stripeStatus.chargesEnabled) && (
                 <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
                   <div className="flex items-start gap-3">
                     <Banknote className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
