@@ -93,10 +93,58 @@ const CustomerDashboard = () => {
       } catch (error) {
         console.error('Failed to load notification preferences:', error);
       }
+      
+      // Load my reviews
+      try {
+        const reviewsRes = await reviewAPI.getMyReviews();
+        setMyReviews(reviewsRes.data || []);
+      } catch (error) {
+        console.error('Failed to load reviews:', error);
+      }
     } catch (error) {
       console.error('Failed to load data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+  
+  // Check if user has already reviewed a business
+  const hasReviewedBusiness = (businessId) => {
+    return myReviews.some(r => r.businessId === businessId);
+  };
+  
+  // Open review modal
+  const openReviewModal = (booking) => {
+    setReviewBooking(booking);
+    setReviewForm({ rating: 5, comment: '' });
+    setShowReviewModal(true);
+  };
+  
+  // Submit review
+  const handleSubmitReview = async () => {
+    if (!reviewBooking) return;
+    
+    setReviewSubmitting(true);
+    try {
+      await reviewAPI.create({
+        businessId: reviewBooking.businessId,
+        appointmentId: reviewBooking.id,
+        rating: reviewForm.rating,
+        comment: reviewForm.comment
+      });
+      
+      // Reload reviews
+      const reviewsRes = await reviewAPI.getMyReviews();
+      setMyReviews(reviewsRes.data || []);
+      
+      setShowReviewModal(false);
+      setReviewBooking(null);
+      alert('Thank you for your review!');
+    } catch (error) {
+      console.error('Failed to submit review:', error);
+      alert(error.response?.data?.detail || 'Failed to submit review. Please try again.');
+    } finally {
+      setReviewSubmitting(false);
     }
   };
 
