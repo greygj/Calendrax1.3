@@ -28,12 +28,16 @@ from notifications import (
 # Stripe SDK - using native stripe for Connect support
 import stripe
 
+# SSL certificates for MongoDB Atlas
+import certifi
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
+# Use certifi for SSL certificate verification (required for MongoDB Atlas)
+client = AsyncIOMotorClient(mongo_url, tlsCAFile=certifi.where())
 db = client[os.environ['DB_NAME']]
 
 # JWT Configuration
