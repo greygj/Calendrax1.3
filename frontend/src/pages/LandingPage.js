@@ -47,7 +47,7 @@ const LandingPage = () => {
           <img 
             src="https://customer-assets.emergentagent.com/job_3f85dde5-1e91-4759-bd85-f441b993a550/artifacts/s4024gg5_Calendrax1.3%20Logo%20Opaque%20%282%29.png" 
             alt="Calendrax" 
-            className="h-20"
+            className="h-16"
             
           />
           <div className="flex items-center gap-3">
