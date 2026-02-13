@@ -4,6 +4,7 @@ import { ArrowLeft, Clock, MapPin, Calendar, Check, Building2, ChevronLeft, Chev
 import { businessAPI, availabilityAPI, paymentAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { formatDate } from '../utils/dateFormat';
+import ExpandableText from '../components/ExpandableText';
 
 const BusinessPage = () => {
   const { businessId } = useParams();
