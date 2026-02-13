@@ -893,27 +893,6 @@ const CustomerDashboard = () => {
                         }`} />
                       </button>
                     </div>
-                    
-                    {/* WhatsApp Reminders Toggle */}
-                    <div className="flex items-center justify-between p-4 bg-zinc-800 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <MessageCircle className="w-5 h-5 text-gray-400" />
-                        <div>
-                          <p className="text-white font-medium">WhatsApp Reminders</p>
-                          <p className="text-gray-500 text-sm">Receive booking reminders via WhatsApp</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => handleToggleNotificationPref('whatsappReminders')}
-                        className={`w-12 h-6 rounded-full transition-colors relative ${
-                          notificationPrefs.whatsappReminders ? 'bg-brand-500' : 'bg-zinc-600'
-                        }`}
-                      >
-                        <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
-                          notificationPrefs.whatsappReminders ? 'left-7' : 'left-1'
-                        }`} />
-                      </button>
-                    </div>
                   </div>
                 </div>
 
