@@ -207,9 +207,7 @@ const PublicBusinessPage = () => {
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="text-white font-medium">{service.name}</h3>
-                      {service.description && (
-                        <p className="text-gray-500 text-sm mt-1">{service.description}</p>
-                      )}
+                      <ExpandableText text={service.description} maxLines={2} />
                       <span className="text-gray-400 text-sm flex items-center gap-1 mt-2">
                         <Clock className="w-4 h-4" />
                         {service.duration} min
