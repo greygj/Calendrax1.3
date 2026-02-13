@@ -252,10 +252,6 @@ const CustomerDashboard = () => {
       setProfileError('Email is required');
       return;
     }
-    if (!profileForm.mobile.trim()) {
-      setProfileError('Phone number is required');
-      return;
-    }
     
     setProfileSaving(true);
     try {
