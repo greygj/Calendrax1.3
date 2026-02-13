@@ -367,6 +367,8 @@ async def register(user_data: UserCreate):
             "logo": user_data.logo,
             "postcode": user_data.postcode or "",
             "address": "",
+            "phone": user_data.mobile or "",
+            "email": user_data.email or "",
             "approved": False,  # Requires admin approval
             "rejected": False,
             "createdAt": datetime.now(timezone.utc).isoformat()
