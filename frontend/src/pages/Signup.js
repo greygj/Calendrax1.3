@@ -408,8 +408,14 @@ const Signup = () => {
               <li>Each additional staff: <span className="text-white">+£5/month</span></li>
               <li>Example: 3 staff = £20/month</li>
             </ul>
-            <p className="text-gray-400 text-xs mt-2">
-              A 5% platform fee applies to customer deposits to cover payment processing.
+            <p className="text-gray-400 text-sm mt-3">
+              A 5% platform fee applies to customer deposits paid through the platform. Please add your bank account details in your <span className="text-white">Profile</span> to automatically receive the customer Deposits / Payments.
+            </p>
+            <p className="text-gray-400 text-sm mt-2">
+              In your Profile you have the option of setting customer Deposit / Payment of:
+            </p>
+            <p className="text-white text-sm mt-1">
+              No Deposit  •  20% Payment  •  50% Payment  •  100% Payment
             </p>
             
             {/* No Card Trial Info */}
