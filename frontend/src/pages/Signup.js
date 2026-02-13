@@ -411,6 +411,21 @@ const Signup = () => {
             <p className="text-gray-400 text-xs mt-2">
               A 5% platform fee applies to customer deposits to cover payment processing.
             </p>
+            
+            {/* No Card Trial Info */}
+            <div className="mt-4 pt-3 border-t border-brand-500/20">
+              <p className="text-brand-400 font-medium text-sm mb-2">This is a 'No Card' trial.</p>
+              <ul className="text-gray-400 text-sm space-y-1.5">
+                <li className="flex items-start gap-2">
+                  <span className="text-green-400 mt-0.5">✓</span>
+                  <span>To opt out of subscription you do not need to do anything.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-brand-400 mt-0.5">→</span>
+                  <span>Please add your card information in your <span className="text-white">Profile</span> before your 30 day trial ends to continue using the application.</span>
+                </li>
+              </ul>
+            </div>
           </div>
         )}
 
