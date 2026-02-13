@@ -183,6 +183,8 @@ const Signup = () => {
     const result = await signup(userData);
     
     if (result.success) {
+      // Clear saved form data on successful signup
+      clearSavedFormData();
       // Show install prompt after successful signup
       setShowInstallPrompt(true);
       // The PublicRoute will handle the redirect using localStorage
