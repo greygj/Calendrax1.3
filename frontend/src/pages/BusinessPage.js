@@ -350,19 +350,31 @@ const BusinessPage = () => {
     <div className="min-h-screen bg-appbg">
       {/* Header */}
       <header className="bg-cardBg border-b border-zinc-800 px-4 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-white hover:bg-zinc-700 transition-colors"
-              title="Back to Dashboard"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
+        <div className="max-w-4xl mx-auto">
+          {/* Mobile Layout */}
+          <div className="flex flex-col gap-4 sm:hidden">
+            {/* Top row - Back button and Dashboard */}
+            <div className="flex items-center justify-between">
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-white hover:bg-zinc-700 transition-colors"
+                title="Back to Dashboard"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+              
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="flex items-center gap-2 bg-brand-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
+              >
+                <Home className="w-4 h-4" />
+                Dashboard
+              </button>
+            </div>
             
-            {/* Business Logo & Name */}
+            {/* Business info row */}
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-lg overflow-hidden bg-zinc-800">
+              <div className="w-14 h-14 rounded-lg overflow-hidden bg-zinc-800 flex-shrink-0">
                 {business.logo ? (
                   <img
                     src={business.logo}
@@ -371,25 +383,61 @@ const BusinessPage = () => {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <Building2 className="w-6 h-6 text-gray-500" />
+                    <Building2 className="w-7 h-7 text-gray-500" />
                   </div>
                 )}
               </div>
-              <div>
-                <h1 className="text-white text-xl font-bold">{business.businessName}</h1>
-                <p className="text-gray-500 text-sm">{business.description}</p>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-white text-lg font-bold truncate">{business.businessName}</h1>
+                {business.description && (
+                  <p className="text-gray-500 text-sm line-clamp-2">{business.description}</p>
+                )}
               </div>
             </div>
           </div>
+          
+          {/* Desktop Layout */}
+          <div className="hidden sm:flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-white hover:bg-zinc-700 transition-colors"
+                title="Back to Dashboard"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+              
+              {/* Business Logo & Name */}
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-lg overflow-hidden bg-zinc-800">
+                  {business.logo ? (
+                    <img
+                      src={business.logo}
+                      alt={`${business.businessName} logo`}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Building2 className="w-6 h-6 text-gray-500" />
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <h1 className="text-white text-xl font-bold">{business.businessName}</h1>
+                  <p className="text-gray-500 text-sm">{business.description}</p>
+                </div>
+              </div>
+            </div>
 
-          {/* Home Button */}
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="flex items-center gap-2 bg-brand-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
-          >
-            <Home className="w-4 h-4" />
-            Dashboard
-          </button>
+            {/* Home Button */}
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="flex items-center gap-2 bg-brand-500 text-black px-4 py-2 rounded-lg font-medium hover:bg-brand-400 transition-colors"
+            >
+              <Home className="w-4 h-4" />
+              Dashboard
+            </button>
+          </div>
         </div>
       </header>
 
