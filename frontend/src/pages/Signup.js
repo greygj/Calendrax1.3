@@ -1,35 +1,99 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, User, Mail, Phone, Lock, Eye, EyeOff, Briefcase, Upload, MapPin, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import InstallPrompt from '../components/InstallPrompt';
+
+const STORAGE_KEY = 'calendrax_signup_form';
 
 const Signup = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectUrl = searchParams.get('redirect');
   const { signup } = useAuth();
-  const [activeTab, setActiveTab] = useState('customer');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const fileInputRef = useRef(null);
 
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    mobile: '',
-    password: '',
-    confirmPassword: '',
-    businessName: '',
-    businessDescription: '',
-    postcode: '',
-    logo: null,
-    logoPreview: null,
-    acceptTerms: false,
-    acceptPrivacy: false
-  });
+  // Load saved form data from localStorage on mount
+  const getSavedFormData = () => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return {
+          fullName: parsed.fullName || '',
+          email: parsed.email || '',
+          mobile: parsed.mobile || '',
+          password: '',
+          confirmPassword: '',
+          businessName: parsed.businessName || '',
+          businessDescription: parsed.businessDescription || '',
+          postcode: parsed.postcode || '',
+          logo: null,
+          logoPreview: parsed.logoPreview || null,
+          acceptTerms: parsed.acceptTerms || false,
+          acceptPrivacy: parsed.acceptPrivacy || false
+        };
+      }
+    } catch (e) {
+      console.error('Error loading saved form data:', e);
+    }
+    return {
+      fullName: '',
+      email: '',
+      mobile: '',
+      password: '',
+      confirmPassword: '',
+      businessName: '',
+      businessDescription: '',
+      postcode: '',
+      logo: null,
+      logoPreview: null,
+      acceptTerms: false,
+      acceptPrivacy: false
+    };
+  };
+
+  const getSavedTab = () => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed.activeTab || 'customer';
+      }
+    } catch (e) {
+      console.error('Error loading saved tab:', e);
+    }
+    return 'customer';
+  };
+
+  const [activeTab, setActiveTab] = useState(getSavedTab);
+  const [formData, setFormData] = useState(getSavedFormData);
+
+  // Save form data to localStorage whenever it changes
+  useEffect(() => {
+    const dataToSave = {
+      activeTab,
+      fullName: formData.fullName,
+      email: formData.email,
+      mobile: formData.mobile,
+      businessName: formData.businessName,
+      businessDescription: formData.businessDescription,
+      postcode: formData.postcode,
+      logoPreview: formData.logoPreview,
+      acceptTerms: formData.acceptTerms,
+      acceptPrivacy: formData.acceptPrivacy
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+  }, [formData, activeTab]);
+
+  // Clear saved form data
+  const clearSavedFormData = () => {
+    localStorage.removeItem(STORAGE_KEY);
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
