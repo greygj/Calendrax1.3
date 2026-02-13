@@ -113,7 +113,7 @@ class UserRole:
 class UserBase(BaseModel):
     email: EmailStr
     fullName: str
-    mobile: str
+    mobile: Optional[str] = None
     role: str = UserRole.CUSTOMER
 
 class UserCreate(UserBase):
