@@ -3818,14 +3818,14 @@ const BusinessOwnerDashboard = () => {
                   />
                   <input
                     type="email"
-                    placeholder="Customer Email"
+                    placeholder="Customer Email *"
                     value={bookingForm.customerEmail}
                     onChange={(e) => setBookingForm({...bookingForm, customerEmail: e.target.value})}
                     className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-brand-500"
                   />
                   <input
                     type="tel"
-                    placeholder="Customer Phone"
+                    placeholder="Customer Phone (Optional)"
                     value={bookingForm.customerPhone}
                     onChange={(e) => setBookingForm({...bookingForm, customerPhone: e.target.value})}
                     className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-brand-500"
