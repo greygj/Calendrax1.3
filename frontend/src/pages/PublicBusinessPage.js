@@ -4,6 +4,7 @@ import { ArrowLeft, Clock, MapPin, Star, Building2, Mail, ChevronRight, Image as
 import { businessAPI, reviewAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { formatDate } from '../utils/dateFormat';
+import ExpandableText from '../components/ExpandableText';
 
 const PublicBusinessPage = () => {
   const { businessId } = useParams();
