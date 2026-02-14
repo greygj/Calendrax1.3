@@ -906,15 +906,39 @@ const BusinessOwnerDashboard = () => {
 
   const loadMonthAvailability = async () => {
     const { daysInMonth } = getDaysInMonth(currentMonth);
+    const newCacheEntries = {};
     
+    // Collect all dates that need to be fetched
+    const datesToFetch = [];
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
       const dateStr = date.toISOString().split('T')[0];
       const key = getAvailabilityKey(dateStr, selectedStaff?.id);
       
       if (availabilityCache[key] === undefined) {
-        await getAvailabilityForDate(dateStr, selectedStaff?.id);
+        datesToFetch.push({ dateStr, key });
       }
+    }
+    
+    // Fetch all dates in parallel for better performance
+    const results = await Promise.all(
+      datesToFetch.map(async ({ dateStr, key }) => {
+        try {
+          const res = await availabilityAPI.get(business.id, dateStr, selectedStaff?.id);
+          return { key, slots: res.data?.slots || [] };
+        } catch {
+          return { key, slots: [] };
+        }
+      })
+    );
+    
+    // Batch update the cache
+    results.forEach(({ key, slots }) => {
+      newCacheEntries[key] = slots;
+    });
+    
+    if (Object.keys(newCacheEntries).length > 0) {
+      setAvailabilityCache(prev => ({ ...prev, ...newCacheEntries }));
     }
   };
 
