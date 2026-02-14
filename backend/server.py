@@ -1004,9 +1004,10 @@ async def delete_staff(staff_id: str, user: dict = Depends(require_business_owne
     
     # Get current staff count for subscription calculation
     current_staff_count = await db.staff.count_documents({"businessId": business["id"]})
-    old_price = calculate_subscription_price(current_staff_count)
+    pricing_tier = await get_business_pricing_tier(business["id"])
+    old_price = calculate_subscription_price(current_staff_count, pricing_tier)
     new_staff_count = max(1, current_staff_count - 1)
-    new_price = calculate_subscription_price(new_staff_count)
+    new_price = calculate_subscription_price(new_staff_count, pricing_tier)
     
     # Find and delete future bookings for this staff member
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
