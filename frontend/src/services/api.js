@@ -53,6 +53,11 @@ export const centurionAPI = {
   getPricing: () => apiClient.get('/centurions/pricing')
 };
 
+// Stripe
+export const stripeAPI = {
+  createSetupIntent: () => apiClient.post('/stripe/create-setup-intent')
+};
+
 // Businesses
 export const businessAPI = {
   getAll: () => apiClient.get('/businesses'),
