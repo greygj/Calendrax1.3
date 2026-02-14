@@ -358,6 +358,11 @@ async def register(user_data: UserCreate):
     if user_data.role == UserRole.PLATFORM_ADMIN:
         raise HTTPException(status_code=403, detail="Cannot register as admin")
     
+    # For business owners, require Stripe payment method
+    if user_data.role == UserRole.BUSINESS_OWNER:
+        if not user_data.stripePaymentMethodId:
+            raise HTTPException(status_code=400, detail="Card details are required for business registration")
+    
     user_id = str(uuid.uuid4())
     user_doc = {
         "id": user_id,
@@ -376,6 +381,19 @@ async def register(user_data: UserCreate):
     business = None
     if user_data.role == UserRole.BUSINESS_OWNER:
         business_id = str(uuid.uuid4())
+        
+        # Check if can be Centurion
+        centurion_count = await db.businesses.count_documents({"isCenturion": True})
+        is_centurion = user_data.joinCenturion and centurion_count < MAX_CENTURIONS
+        
+        # Determine pricing tier
+        if is_centurion:
+            base_price = CENTURION_BASE_PRICE
+            pricing_tier = "centurion"
+        else:
+            base_price = STANDARD_BASE_PRICE
+            pricing_tier = "standard"
+        
         business_doc = {
             "id": business_id,
             "ownerId": user_id,
@@ -388,9 +406,45 @@ async def register(user_data: UserCreate):
             "email": user_data.email or "",
             "approved": False,  # Requires admin approval
             "rejected": False,
+            "isCenturion": is_centurion,
+            "centurionJoinedAt": datetime.now(timezone.utc).isoformat() if is_centurion else None,
             "createdAt": datetime.now(timezone.utc).isoformat()
         }
         await db.businesses.insert_one(business_doc)
+        
+        # Create Stripe customer and attach payment method
+        stripe_customer_id = None
+        try:
+            # Create Stripe customer
+            customer = stripe.Customer.create(
+                email=user_data.email,
+                name=user_data.fullName,
+                metadata={
+                    "business_id": business_id,
+                    "user_id": user_id
+                }
+            )
+            stripe_customer_id = customer.id
+            
+            # Attach payment method to customer
+            stripe.PaymentMethod.attach(
+                user_data.stripePaymentMethodId,
+                customer=stripe_customer_id
+            )
+            
+            # Set as default payment method
+            stripe.Customer.modify(
+                stripe_customer_id,
+                invoice_settings={
+                    "default_payment_method": user_data.stripePaymentMethodId
+                }
+            )
+        except stripe.error.StripeError as e:
+            logger.error(f"Stripe error during registration: {e}")
+            # Clean up user and business if Stripe fails
+            await db.users.delete_one({"id": user_id})
+            await db.businesses.delete_one({"id": business_id})
+            raise HTTPException(status_code=400, detail=f"Failed to save card details: {str(e)}")
         
         # Create subscription with 30-day trial
         trial_end = datetime.now(timezone.utc) + timedelta(days=TRIAL_PERIOD_DAYS)
@@ -400,11 +454,14 @@ async def register(user_data: UserCreate):
             "ownerId": user_id,
             "staffCount": 1,
             "status": "trial",
-            "priceMonthly": SUBSCRIPTION_BASE_PRICE,
+            "priceMonthly": base_price,
+            "pricingTier": pricing_tier,
             "trialStartDate": datetime.now(timezone.utc).isoformat(),
             "trialEndDate": trial_end.isoformat(),
             "lastPaymentStatus": "pending",
             "failedPayments": 0,
+            "stripeCustomerId": stripe_customer_id,
+            "stripePaymentMethodId": user_data.stripePaymentMethodId,
             "freeAccessOverride": False,
             "createdAt": datetime.now(timezone.utc).isoformat()
         }
