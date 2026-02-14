@@ -1431,16 +1431,18 @@ async def get_my_subscription(user: dict = Depends(require_business_owner)):
 async def get_subscription_pricing():
     """Get subscription pricing information"""
     return {
-        "basePrice": SUBSCRIPTION_BASE_PRICE,
-        "additionalStaffPrice": SUBSCRIPTION_ADDITIONAL_STAFF,
+        "centurion": {
+            "basePrice": CENTURION_BASE_PRICE,
+            "additionalStaffPrice": CENTURION_ADDITIONAL_STAFF,
+            "name": "Centurion (Founding Member)"
+        },
+        "standard": {
+            "basePrice": STANDARD_BASE_PRICE,
+            "additionalStaffPrice": STANDARD_ADDITIONAL_STAFF,
+            "name": "Standard"
+        },
         "trialDays": TRIAL_PERIOD_DAYS,
-        "pricing": [
-            {"staffCount": 1, "price": 14.00},
-            {"staffCount": 2, "price": 23.00},
-            {"staffCount": 3, "price": 32.00},
-            {"staffCount": 4, "price": 41.00},
-            {"staffCount": 5, "price": 50.00}
-        ]
+        "maxCenturions": MAX_CENTURIONS
     }
 
 @api_router.post("/subscription/setup-payment")
