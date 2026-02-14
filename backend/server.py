@@ -1364,11 +1364,25 @@ async def get_stripe_dashboard_link(user: dict = Depends(require_business_owner)
 
 # ==================== SUBSCRIPTION ROUTES ====================
 
-def calculate_subscription_price(staff_count: int) -> float:
-    """Calculate monthly subscription price based on staff count"""
+def calculate_subscription_price(staff_count: int, pricing_tier: str = "centurion") -> float:
+    """Calculate monthly subscription price based on staff count and pricing tier"""
+    if pricing_tier == "centurion":
+        base_price = CENTURION_BASE_PRICE
+        additional_price = CENTURION_ADDITIONAL_STAFF
+    else:
+        base_price = STANDARD_BASE_PRICE
+        additional_price = STANDARD_ADDITIONAL_STAFF
+    
     if staff_count <= 1:
-        return SUBSCRIPTION_BASE_PRICE
-    return SUBSCRIPTION_BASE_PRICE + (SUBSCRIPTION_ADDITIONAL_STAFF * (staff_count - 1))
+        return base_price
+    return base_price + (additional_price * (staff_count - 1))
+
+async def get_business_pricing_tier(business_id: str) -> str:
+    """Get the pricing tier for a business"""
+    subscription = await db.subscriptions.find_one({"businessId": business_id})
+    if subscription:
+        return subscription.get("pricingTier", "centurion")
+    return "centurion"
 
 @api_router.get("/my-subscription")
 async def get_my_subscription(user: dict = Depends(require_business_owner)):
