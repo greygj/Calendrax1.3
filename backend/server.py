@@ -789,6 +789,21 @@ async def get_pricing_info():
         "maxCenturions": MAX_CENTURIONS
     }
 
+@api_router.post("/stripe/create-setup-intent")
+async def create_setup_intent():
+    """Create a Stripe SetupIntent for collecting card details during registration"""
+    try:
+        setup_intent = stripe.SetupIntent.create(
+            usage='off_session',  # Allow charging later
+            payment_method_types=['card']
+        )
+        return {
+            "clientSecret": setup_intent.client_secret
+        }
+    except stripe.error.StripeError as e:
+        logger.error(f"Stripe error creating setup intent: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
 # ==================== BUSINESS ROUTES ====================
 
 @api_router.get("/businesses")
