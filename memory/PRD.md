@@ -1,136 +1,144 @@
-# Calendrax - Booking Application PRD
+# Calendrax PRD (Product Requirements Document)
 
-## Original Problem Statement
-Create "Calendrax," a comprehensive booking application with:
-- Business Owner features (dashboard, services, staff, customers, calendar, notifications)
-- Customer features (browse, book, manage bookings, profile)
-- Platform Admin system
-- Payments & Subscriptions (Stripe)
-- Legal & Onboarding compliance
-
-## User Personas
-1. **Business Owner** - Manages services, staff, bookings, receives deposits
-2. **Customer** - Browses businesses, books appointments
-3. **Platform Admin** - Oversees all businesses, manages platform
-
-## Core Requirements
-- Multi-role authentication (JWT-based)
-- Service and staff management with auto-assignment
-- Calendar availability management (5am-11pm slots)
-- Booking system with deposits (Stripe Connect, 5% platform fee)
-- Subscription system (£10/month base + £5/additional staff, 30-day trial)
-- Notification system (Email, WhatsApp)
-- GDPR-compliant cookie consent
-
-## UI Theme
-- Background: `#313D4A`
-- Cards: `#202830`  
-- Accent: `#A69B90`
-- Logo: Transparent Calendrax logo
+## Overview
+Calendrax is a full-stack booking platform for service-based businesses. It enables business owners to manage appointments, services, staff, and accept payments, while customers can browse businesses and book services.
 
 ## Tech Stack
-- **Frontend:** React, Tailwind CSS, shadcn/ui
-- **Backend:** FastAPI, Python
-- **Database:** MongoDB
-- **Payments:** Stripe (Live keys)
-- **Notifications:** Twilio (WhatsApp)
-- **Deployment:** Railway
+- **Frontend**: React.js, Tailwind CSS, Stripe Elements
+- **Backend**: Python FastAPI, Motor (async MongoDB driver)
+- **Database**: MongoDB Atlas
+- **Payments**: Stripe Connect
+- **Notifications**: Twilio (WhatsApp), SendGrid (Email)
+- **Deployment**: Railway
 
----
+## Core Features
 
-## Completed Features
+### 1. User Roles
+- **Customers**: Browse businesses, book services, manage appointments
+- **Business Owners**: Manage services, staff, availability, accept payments
+- **Platform Admin**: Approve businesses, manage users, grant free access
 
-### Dec 2025 - Feb 2026
-- [x] Full authentication system with role-based access
-- [x] Business owner dashboard with all management features
-- [x] Customer dashboard and booking flow
-- [x] Platform admin dashboard
-- [x] Stripe subscriptions with automatic invoicing
-- [x] Stripe Connect for business deposits
-- [x] Service/Staff auto-assignment (new service → all staff, new staff → all services)
-- [x] Revenue analytics (by service, by staff, monthly tables 2026-2030)
-- [x] Billing history and invoice viewing
-- [x] Customer management with alphabetical list and deletion
-- [x] Business profile with logo upload
-- [x] Extended availability (5am-11pm)
-- [x] Cookie consent banner (GDPR)
-- [x] Terms & Privacy pages with content
-- [x] Currency changed to GBP (£)
-- [x] Dashboard reminder banners (bank account, payment method)
-- [x] **Customer Dashboard Mobile Redesign** (Feb 2026)
-  - Full-width navigation buttons
-  - Removed top tab bar
-  - Logout button at bottom
-  - Home button for sub-view navigation
-- [x] **Business Owner Dashboard Mobile Redesign** (Feb 2026)
-  - Full-width navigation buttons with subtitles
-  - Shows counts (appointments, services, staff, customers)
-  - Removed top tab bar
-  - Logout button at bottom
-  - Back to Dashboard button in header for sub-views
-- [x] **PWA "Add to Home Screen"** - InstallPrompt component, manifest.json
-- [x] **Profile Enhancements** - Change password, email/WhatsApp notification toggles
-- [x] **Customer Reviews System** - Full review submission, admin deletion, ratings display
-- [x] **Auto Customer Account Creation** - Business owner booking creates customer with temp password
-- [x] **Date Formatting** - All dates in dd-mm-yyyy format using dateUtils.js
-- [x] **WhatsApp Notifications** (Feb 2026)
-  - Twilio integration for WhatsApp messaging
-  - Notification templates for booking events
-  - User preferences respected (email/whatsapp toggles)
-  - Test endpoint for admin verification
-- [x] **SendGrid Email Integration** (Feb 2026)
-  - SendGrid API configured for transactional emails
-  - Booking confirmations, reminders, and notifications
-  - From address: bookings@calendrax.co.uk
-- [x] **Forgot Password Feature** (Feb 2026)
-  - Password reset via email link
-  - Secure token-based reset (1 hour expiry)
-  - Beautiful email template with Calendrax branding
-  - Reset password page with confirmation
-- [x] **Trial Expiration Reminders** (Feb 2026)
-  - Automatic daily check at 9:00 AM UTC
-  - Reminders sent at 7, 3, and 1 day(s) before expiry
-  - Email and WhatsApp notifications (based on user preferences)
-  - Admin dashboard "Trials" tab for monitoring
-  - Manual "Send Reminders Now" button for admin
+### 2. Calendrax Centurions (Founding Members Program)
+First 100 business signups get special "Centurion" status with lifetime benefits:
 
----
+**Pricing**:
+- **Centurion**: £10/month (1 staff) + £5/month per additional staff
+- **Standard**: £16/month (1 staff) + £8/month per additional staff
 
-## Prioritized Backlog
+**Benefits**:
+- Lifetime protected pricing
+- Referral discount (TBD)
+- Influence over future features
+- Early access to new tools
+- Free onboarding support
+- Public founding member recognition (badge on public page + Founding Members page)
 
-### P0 - Critical (Blocked)
-- None - all critical features implemented!
+**Implementation**:
+- Landing page counter showing current Centurion count
+- Opt-in checkbox during business signup (hidden after 100)
+- Mandatory card capture at signup (30-day free trial, auto-billing after)
+- `/founding-members` page listing all Centurion businesses
 
-### P1 - High Priority
-- [ ] Appointment reminders (24h before booking) - scheduled task
+### 3. Booking System
+- Service selection with duration and pricing
+- Staff member selection
+- Real-time availability checking
+- Deposit/payment options (None, 20%, 50%, 100%)
+- 5% platform fee on deposits
 
-### P2 - Medium Priority
-- [ ] Google Maps API integration (currently basic embed)
-- [ ] Backend refactoring (server.py → modular routes/models/services)
-- [ ] Frontend refactoring (BusinessOwnerDashboard.js → smaller components)
-- [ ] Export analytics as CSV/PDF reports
+### 4. Notifications
+- Email reminders (booking confirmation, 24h reminder)
+- WhatsApp notifications (via Twilio - requires business verification)
 
----
+## Database Schema
 
-## Technical Debt
-1. **BusinessOwnerDashboard.js** - 3000+ lines, needs component breakdown
-2. **server.py** - Monolithic, needs modular structure
-
-## Environment Variables (Railway)
-Required for production:
+### Users
 ```
-FRONTEND_URL=https://calendrax13-production.up.railway.app
-MONGO_URL=<production_mongo_url>
-DB_NAME=<production_db>
-STRIPE_API_KEY=<live_stripe_key>
-TWILIO_ACCOUNT_SID=<twilio_sid>
-TWILIO_AUTH_TOKEN=<twilio_token>
-TWILIO_WHATSAPP_NUMBER=<whatsapp_number>
-SENDGRID_API_KEY=<pending>
-SENDGRID_FROM_EMAIL=<pending>
+{
+  id, email, password (hashed), fullName, mobile, role,
+  suspended, suspendedReason, createdAt
+}
 ```
 
-## Test Credentials
-- Admin: `admin@booka.com` / `admin123`
-- Business Owner: `greygj@gmail.com` / `password123`
-- Customer: `gareth.grey@tickety-moo.com` / `password123`
+### Businesses
+```
+{
+  id, ownerId, businessName, description, logo, postcode, address,
+  approved, approvedAt, approvedBy, rejected, rejectedReason,
+  stripeConnectAccountId, stripeConnectOnboarded,
+  depositLevel, isCenturion, centurionJoinedAt, createdAt
+}
+```
+
+### Subscriptions
+```
+{
+  id, businessId, ownerId, staffCount, status,
+  priceMonthly, pricingTier (centurion/standard),
+  trialStartDate, trialEndDate, stripeCustomerId,
+  stripePaymentMethodId, freeAccessOverride
+}
+```
+
+## API Endpoints
+
+### Centurions
+- `GET /api/centurions/count` - Current count and availability
+- `GET /api/centurions/list` - List of approved Centurion businesses
+- `GET /api/centurions/pricing` - Both tier pricing info
+
+### Stripe
+- `POST /api/stripe/create-setup-intent` - For card capture during signup
+
+### Admin
+- `POST /api/admin/migrate-centurions` - Migrate existing businesses to Centurion
+
+---
+
+## Changelog
+
+### 2025-02-14
+- Implemented Calendrax Centurions founding members program
+- Added landing page counter (13/100 currently)
+- Added mandatory card capture for business signup
+- Created Founding Members page (/founding-members)
+- Added Centurion badge to public business pages
+- Migrated 13 existing businesses to Centurion status
+- Updated pricing tiers: Centurion (£10/£5) vs Standard (£16/£8)
+
+### 2025-02-13
+- Updated Subscription Information text on Business Owner Sign Up page
+- Fixed form data persistence when viewing Terms/Privacy during signup
+- Fixed white dots not appearing on availability calendar
+- Balanced Services & Staff tabs to equal widths
+
+### Previous
+- MongoDB Atlas migration
+- Profile data population fix
+- Optional phone number
+- WhatsApp toggle removal
+- Expandable service descriptions
+- Mobile header fix
+- PWA/homescreen icon
+
+---
+
+## Known Issues
+
+### WhatsApp Notifications (P1 - BLOCKED)
+- Not working in production
+- **Root Cause**: Not a code issue - requires Twilio Business Profile verification
+- **Action Required**: User must complete verification in Twilio account
+
+---
+
+## Backlog
+
+### P1 (High Priority)
+- Referral discount system for Centurions (awaiting details)
+
+### P2 (Medium Priority)
+- None currently
+
+### P3 (Future)
+- Custom Centurion badge icon (user to design)
