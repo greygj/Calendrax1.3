@@ -79,9 +79,17 @@ DEPOSIT_LEVELS = {
 }
 
 # Subscription pricing (GBP)
-SUBSCRIPTION_BASE_PRICE = 10.00  # 1 staff member
-SUBSCRIPTION_ADDITIONAL_STAFF = 5.00  # Per additional staff
+# Centurion (Founding Members) pricing - first 100 businesses
+CENTURION_BASE_PRICE = 10.00  # 1 staff member
+CENTURION_ADDITIONAL_STAFF = 5.00  # Per additional staff
+# Standard pricing - after first 100 or if opted out
+STANDARD_BASE_PRICE = 16.00  # 1 staff member
+STANDARD_ADDITIONAL_STAFF = 8.00  # Per additional staff
+# Legacy pricing (for backwards compatibility)
+SUBSCRIPTION_BASE_PRICE = CENTURION_BASE_PRICE
+SUBSCRIPTION_ADDITIONAL_STAFF = CENTURION_ADDITIONAL_STAFF
 TRIAL_PERIOD_DAYS = 30
+MAX_CENTURIONS = 100
 
 # Create the main app
 app = FastAPI(title="Booka API")
