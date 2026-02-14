@@ -1,21 +1,51 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, User, Mail, Phone, Lock, Eye, EyeOff, Briefcase, Upload, MapPin, X } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, Lock, Eye, EyeOff, Briefcase, Upload, MapPin, X, Shield, Check, CreditCard, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import InstallPrompt from '../components/InstallPrompt';
+import { centurionAPI, stripeAPI } from '../services/api';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 const STORAGE_KEY = 'calendrax_signup_form';
 
-const Signup = () => {
+// Card Element styling
+const cardElementOptions = {
+  style: {
+    base: {
+      fontSize: '16px',
+      color: '#ffffff',
+      '::placeholder': {
+        color: '#6b7280',
+      },
+      backgroundColor: 'transparent',
+    },
+    invalid: {
+      color: '#ef4444',
+    },
+  },
+};
+
+// Inner form component that uses Stripe hooks
+const SignupForm = ({ redirectUrl }) => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const redirectUrl = searchParams.get('redirect');
   const { signup } = useAuth();
+  const stripe = useStripe();
+  const elements = useElements();
+  
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+  const [cardError, setCardError] = useState('');
+  const [cardComplete, setCardComplete] = useState(false);
   const fileInputRef = useRef(null);
+  
+  // Centurion state
+  const [centurionData, setCenturionData] = useState({ count: 0, maxCenturions: 100, isAvailable: true, spotsRemaining: 100 });
+  const [joinCenturion, setJoinCenturion] = useState(true);
 
   // Load saved form data from localStorage on mount
   const getSavedFormData = () => {
@@ -73,6 +103,20 @@ const Signup = () => {
   const [activeTab, setActiveTab] = useState(getSavedTab);
   const [formData, setFormData] = useState(getSavedFormData);
 
+  // Load Centurion count
+  useEffect(() => {
+    loadCenturionCount();
+  }, []);
+
+  const loadCenturionCount = async () => {
+    try {
+      const res = await centurionAPI.getCount();
+      setCenturionData(res.data);
+    } catch (error) {
+      console.error('Failed to load centurion count:', error);
+    }
+  };
+
   // Save form data to localStorage whenever it changes
   useEffect(() => {
     const dataToSave = {
@@ -90,7 +134,6 @@ const Signup = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
   }, [formData, activeTab]);
 
-  // Clear saved form data
   const clearSavedFormData = () => {
     localStorage.removeItem(STORAGE_KEY);
   };
@@ -131,6 +174,11 @@ const Signup = () => {
     }
   };
 
+  const handleCardChange = (event) => {
+    setCardError(event.error ? event.error.message : '');
+    setCardComplete(event.complete);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -151,47 +199,89 @@ const Signup = () => {
       return;
     }
 
-    // For business owner, validate business name
+    // For business owner, validate business name and card
     if (activeTab === 'business') {
       if (!formData.businessName.trim()) {
         setError('Business name is required');
+        return;
+      }
+      
+      // Validate card is complete
+      if (!cardComplete) {
+        setError('Please enter valid card details');
         return;
       }
     }
 
     setLoading(true);
 
-    const userData = {
-      fullName: formData.fullName,
-      email: formData.email,
-      mobile: formData.mobile,
-      password: formData.password,
-      role: activeTab === 'customer' ? 'customer' : 'business_owner',
-      ...(activeTab === 'business' && {
-        businessName: formData.businessName,
-        businessDescription: formData.businessDescription,
-        postcode: formData.postcode,
-        logo: formData.logoPreview // Store base64 for mock, in real app would upload to server
-      })
-    };
+    try {
+      let stripePaymentMethodId = null;
 
-    // Store redirect URL in localStorage before signup
-    if (redirectUrl && activeTab === 'customer') {
-      localStorage.setItem('calendrax_redirect', redirectUrl);
-    }
+      // For business owners, create payment method
+      if (activeTab === 'business') {
+        if (!stripe || !elements) {
+          setError('Stripe is not loaded. Please refresh and try again.');
+          setLoading(false);
+          return;
+        }
 
-    const result = await signup(userData);
-    
-    if (result.success) {
-      // Clear saved form data on successful signup
-      clearSavedFormData();
-      // Show install prompt after successful signup
-      setShowInstallPrompt(true);
-      // The PublicRoute will handle the redirect using localStorage
-      // No need to navigate here - React will re-render and PublicRoute will redirect
-    } else {
-      setError(result.error);
-      localStorage.removeItem('calendrax_redirect');
+        // Create setup intent
+        const setupIntentRes = await stripeAPI.createSetupIntent();
+        const clientSecret = setupIntentRes.data.clientSecret;
+
+        // Confirm card setup
+        const { error: stripeError, setupIntent } = await stripe.confirmCardSetup(clientSecret, {
+          payment_method: {
+            card: elements.getElement(CardElement),
+            billing_details: {
+              name: formData.fullName,
+              email: formData.email,
+            },
+          },
+        });
+
+        if (stripeError) {
+          setError(stripeError.message);
+          setLoading(false);
+          return;
+        }
+
+        stripePaymentMethodId = setupIntent.payment_method;
+      }
+
+      const userData = {
+        fullName: formData.fullName,
+        email: formData.email,
+        mobile: formData.mobile,
+        password: formData.password,
+        role: activeTab === 'customer' ? 'customer' : 'business_owner',
+        ...(activeTab === 'business' && {
+          businessName: formData.businessName,
+          businessDescription: formData.businessDescription,
+          postcode: formData.postcode,
+          logo: formData.logoPreview,
+          joinCenturion: joinCenturion && centurionData.isAvailable,
+          stripePaymentMethodId: stripePaymentMethodId
+        })
+      };
+
+      // Store redirect URL in localStorage before signup
+      if (redirectUrl && activeTab === 'customer') {
+        localStorage.setItem('calendrax_redirect', redirectUrl);
+      }
+
+      const result = await signup(userData);
+      
+      if (result.success) {
+        clearSavedFormData();
+        setShowInstallPrompt(true);
+      } else {
+        setError(result.error);
+        localStorage.removeItem('calendrax_redirect');
+      }
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Registration failed. Please try again.');
     }
     
     setLoading(false);
@@ -199,7 +289,6 @@ const Signup = () => {
 
   const handleInstallPromptClose = () => {
     setShowInstallPrompt(false);
-    // Navigation will happen automatically via PublicRoute
   };
 
   return (
@@ -223,7 +312,6 @@ const Signup = () => {
           src="https://customer-assets.emergentagent.com/job_3f85dde5-1e91-4759-bd85-f441b993a550/artifacts/s4024gg5_Calendrax1.3%20Logo%20Opaque%20%282%29.png" 
           alt="Calendrax" 
           className="h-28 mx-auto"
-          
         />
       </div>
 
@@ -258,6 +346,65 @@ const Signup = () => {
           Business Owner
         </button>
       </div>
+
+      {/* Centurion Banner - Business Owners Only */}
+      {activeTab === 'business' && centurionData.isAvailable && (
+        <div className="w-full max-w-md mx-auto mb-6">
+          <div className="bg-gradient-to-r from-amber-900/40 via-yellow-900/30 to-amber-900/40 border border-amber-500/40 rounded-xl p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center">
+                <Shield className="w-5 h-5 text-black" />
+              </div>
+              <div>
+                <h4 className="text-amber-400 font-bold">Calendrax Centurions</h4>
+                <p className="text-gray-400 text-xs">Founding Members Club</p>
+              </div>
+              <div className="ml-auto text-right">
+                <div className="text-xl font-bold text-white">
+                  <span className="text-amber-400">{centurionData.count}</span>
+                  <span className="text-gray-500 mx-1">/</span>
+                  <span>{centurionData.maxCenturions}</span>
+                </div>
+                <p className="text-gray-500 text-xs">{centurionData.spotsRemaining} spots left</p>
+              </div>
+            </div>
+            
+            {/* Benefits */}
+            <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+              <span className="flex items-center gap-1 text-gray-300">
+                <Check className="w-3 h-3 text-amber-400" /> £10/month (vs £16)
+              </span>
+              <span className="flex items-center gap-1 text-gray-300">
+                <Check className="w-3 h-3 text-amber-400" /> Early access
+              </span>
+              <span className="flex items-center gap-1 text-gray-300">
+                <Check className="w-3 h-3 text-amber-400" /> Lifetime pricing
+              </span>
+              <span className="flex items-center gap-1 text-gray-300">
+                <Check className="w-3 h-3 text-amber-400" /> Public recognition
+              </span>
+            </div>
+            
+            {/* Checkbox */}
+            <label className="flex items-center gap-3 cursor-pointer">
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  checked={joinCenturion}
+                  onChange={(e) => setJoinCenturion(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-5 h-5 border-2 border-amber-500 rounded bg-transparent peer-checked:bg-amber-500 transition-all flex items-center justify-center">
+                  {joinCenturion && (
+                    <Check className="w-3 h-3 text-black" />
+                  )}
+                </div>
+              </div>
+              <span className="text-amber-400 font-medium text-sm">Yes, I want to become a Calendrax Centurion!</span>
+            </label>
+          </div>
+        </div>
+      )}
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto space-y-4">
@@ -462,6 +609,32 @@ const Signup = () => {
           </div>
         </div>
 
+        {/* Card Details - Business Owner Only */}
+        {activeTab === 'business' && (
+          <div>
+            <label className="text-white text-sm mb-2 block">
+              Card Details <span className="text-red-500">*</span>
+            </label>
+            <div className="bg-cardBg border border-zinc-800 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <CreditCard className="w-5 h-5 text-gray-500" />
+                <span className="text-gray-400 text-sm">Secure payment via Stripe</span>
+              </div>
+              <CardElement 
+                options={cardElementOptions}
+                onChange={handleCardChange}
+                className="p-3 border border-zinc-700 rounded-lg bg-zinc-900"
+              />
+              {cardError && (
+                <p className="text-red-500 text-xs mt-2">{cardError}</p>
+              )}
+              <p className="text-gray-500 text-xs mt-2">
+                Your card will not be charged during the 30-day free trial. You can cancel anytime before the trial ends.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Subscription Fee Notice - Business Owner Only */}
         {activeTab === 'business' && (
           <div className="bg-brand-500/10 border border-brand-500/30 rounded-lg p-4">
@@ -469,11 +642,22 @@ const Signup = () => {
             <p className="text-gray-300 text-sm mb-2">
               As a business owner, you'll have access to a <span className="text-brand-400 font-medium">30-day free trial</span>. After the trial, subscription fees apply:
             </p>
-            <ul className="text-gray-400 text-sm space-y-1 ml-4 list-disc">
-              <li>1 Staff Member: <span className="text-white">£10/month</span></li>
-              <li>Each additional staff: <span className="text-white">+£5/month</span></li>
-              <li>Example: 3 staff = £20/month</li>
-            </ul>
+            
+            {joinCenturion && centurionData.isAvailable ? (
+              <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 mb-3">
+                <p className="text-amber-400 font-medium text-sm mb-1">Centurion Pricing (Lifetime)</p>
+                <ul className="text-gray-400 text-sm space-y-1 ml-4 list-disc">
+                  <li>1 Staff Member: <span className="text-amber-400">£10/month</span></li>
+                  <li>Each additional staff: <span className="text-amber-400">+£5/month</span></li>
+                </ul>
+              </div>
+            ) : (
+              <ul className="text-gray-400 text-sm space-y-1 ml-4 list-disc mb-3">
+                <li>1 Staff Member: <span className="text-white">£16/month</span></li>
+                <li>Each additional staff: <span className="text-white">+£8/month</span></li>
+              </ul>
+            )}
+            
             <p className="text-gray-400 text-sm mt-3">
               A 5% platform fee applies to customer deposits paid through the platform. Please add your bank account details in your <span className="text-white">Profile</span> to automatically receive the customer Deposits / Payments.
             </p>
@@ -484,17 +668,17 @@ const Signup = () => {
               No Deposit  •  20% Payment  •  50% Payment  •  100% Payment
             </p>
             
-            {/* No Card Trial Info */}
+            {/* Trial Info */}
             <div className="mt-4 pt-3 border-t border-brand-500/20">
-              <p className="text-brand-400 font-medium text-sm mb-2">This is a 'No Card' trial.</p>
+              <p className="text-brand-400 font-medium text-sm mb-2">30-Day Free Trial</p>
               <ul className="text-gray-400 text-sm space-y-1.5">
                 <li className="flex items-start gap-2">
-                  <span className="text-green-400 mt-0.5">✓</span>
-                  <span>To opt out of subscription you do not need to do anything.</span>
+                  <span className="text-amber-400 mt-0.5">!</span>
+                  <span>Your card will be charged automatically after the trial ends unless you cancel.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-brand-400 mt-0.5">→</span>
-                  <span>Please add your card information in your <span className="text-white">Profile</span> before your 30 day trial ends to continue using the application.</span>
+                  <span>To opt out, cancel your subscription in your <span className="text-white">Profile</span> before the 30 day trial ends.</span>
                 </li>
               </ul>
             </div>
@@ -554,10 +738,17 @@ const Signup = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          disabled={loading}
-          className="w-full bg-brand-500 text-black font-semibold py-4 rounded-lg mt-6 hover:bg-brand-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={loading || (activeTab === 'business' && !stripe)}
+          className="w-full bg-brand-500 text-black font-semibold py-4 rounded-lg mt-6 hover:bg-brand-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
-          {loading ? 'Creating Account...' : 'Create Account'}
+          {loading ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Creating Account...
+            </>
+          ) : (
+            'Create Account'
+          )}
         </button>
       </form>
 
@@ -569,6 +760,18 @@ const Signup = () => {
         </Link>
       </p>
     </div>
+  );
+};
+
+// Main Signup component that wraps with Stripe Elements
+const Signup = () => {
+  const [searchParams] = useSearchParams();
+  const redirectUrl = searchParams.get('redirect');
+
+  return (
+    <Elements stripe={stripePromise}>
+      <SignupForm redirectUrl={redirectUrl} />
+    </Elements>
   );
 };
 
