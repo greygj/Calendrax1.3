@@ -1400,6 +1400,9 @@ async def get_my_subscription(user: dict = Depends(require_business_owner)):
     if staff_count == 0:
         staff_count = 1  # Minimum 1 staff (owner)
     
+    # Get pricing tier
+    pricing_tier = subscription.get("pricingTier", "centurion")
+    
     # Calculate trial days remaining
     trial_days_remaining = 0
     if subscription.get("status") == "trial" and subscription.get("trialEndDate"):
@@ -1413,12 +1416,15 @@ async def get_my_subscription(user: dict = Depends(require_business_owner)):
         "id": subscription["id"],
         "status": subscription.get("status", "trial"),
         "staffCount": staff_count,
-        "priceMonthly": calculate_subscription_price(staff_count),
+        "priceMonthly": calculate_subscription_price(staff_count, pricing_tier),
+        "pricingTier": pricing_tier,
+        "isCenturion": business.get("isCenturion", False),
         "trialEndDate": subscription.get("trialEndDate"),
         "trialDaysRemaining": trial_days_remaining,
         "lastPaymentStatus": subscription.get("lastPaymentStatus"),
         "nextPaymentDate": subscription.get("nextPaymentDate"),
-        "freeAccessOverride": subscription.get("freeAccessOverride", False)
+        "freeAccessOverride": subscription.get("freeAccessOverride", False),
+        "hasPaymentMethod": bool(subscription.get("stripePaymentMethodId"))
     }
 
 @api_router.get("/subscription/pricing")
