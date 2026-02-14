@@ -893,13 +893,16 @@ async def preview_staff_subscription_change(action: str = "add", user: dict = De
     if current_count == 0:
         current_count = 1
     
-    current_price = calculate_subscription_price(current_count)
+    # Get pricing tier
+    pricing_tier = await get_business_pricing_tier(business["id"])
+    
+    current_price = calculate_subscription_price(current_count, pricing_tier)
     
     if action == "add":
         if current_count >= 5:
             raise HTTPException(status_code=400, detail="Maximum 5 staff members allowed")
         new_count = current_count + 1
-        new_price = calculate_subscription_price(new_count)
+        new_price = calculate_subscription_price(new_count, pricing_tier)
         return {
             "action": "add",
             "currentStaffCount": current_count,
@@ -907,13 +910,14 @@ async def preview_staff_subscription_change(action: str = "add", user: dict = De
             "currentPrice": current_price,
             "newPrice": new_price,
             "priceIncrease": new_price - current_price,
+            "pricingTier": pricing_tier,
             "message": f"Adding a staff member will increase your subscription from £{current_price:.2f}/month to £{new_price:.2f}/month (+£{new_price - current_price:.2f})"
         }
     else:  # remove
         if current_count <= 1:
             raise HTTPException(status_code=400, detail="Cannot have less than 1 staff member")
         new_count = current_count - 1
-        new_price = calculate_subscription_price(new_count)
+        new_price = calculate_subscription_price(new_count, pricing_tier)
         return {
             "action": "remove",
             "currentStaffCount": current_count,
@@ -921,6 +925,7 @@ async def preview_staff_subscription_change(action: str = "add", user: dict = De
             "currentPrice": current_price,
             "newPrice": new_price,
             "priceDecrease": current_price - new_price,
+            "pricingTier": pricing_tier,
             "message": f"Removing a staff member will decrease your subscription from £{current_price:.2f}/month to £{new_price:.2f}/month (-£{current_price - new_price:.2f})"
         }
 
