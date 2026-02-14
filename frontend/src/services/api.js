@@ -46,6 +46,13 @@ export const authAPI = {
   resetPassword: (token, newPassword) => apiClient.post('/auth/reset-password', { token, newPassword })
 };
 
+// Centurion (Founding Members)
+export const centurionAPI = {
+  getCount: () => apiClient.get('/centurions/count'),
+  getList: () => apiClient.get('/centurions/list'),
+  getPricing: () => apiClient.get('/centurions/pricing')
+};
+
 // Businesses
 export const businessAPI = {
   getAll: () => apiClient.get('/businesses'),
