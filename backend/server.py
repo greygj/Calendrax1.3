@@ -689,6 +689,45 @@ async def update_notification_preferences(data: dict, user: dict = Depends(get_c
         "whatsappReminders": db_user.get("whatsappReminders", True)
     }
 
+# ==================== CENTURION (FOUNDING MEMBERS) ROUTES ====================
+
+@api_router.get("/centurions/count")
+async def get_centurion_count():
+    """Get the current number of Centurion members"""
+    count = await db.businesses.count_documents({"isCenturion": True})
+    return {
+        "count": count,
+        "maxCenturions": MAX_CENTURIONS,
+        "spotsRemaining": max(0, MAX_CENTURIONS - count),
+        "isAvailable": count < MAX_CENTURIONS
+    }
+
+@api_router.get("/centurions/list")
+async def get_centurion_list():
+    """Get list of all Centurion businesses for the Founding Members page"""
+    centurions = await db.businesses.find(
+        {"isCenturion": True, "approved": True},
+        {"businessName": 1, "description": 1, "logo": 1, "postcode": 1, "centurionJoinedAt": 1, "id": 1}
+    ).sort("centurionJoinedAt", 1).to_list(MAX_CENTURIONS)
+    return remove_mongo_id(centurions)
+
+@api_router.get("/centurions/pricing")
+async def get_pricing_info():
+    """Get pricing information for both tiers"""
+    return {
+        "centurion": {
+            "basePrice": CENTURION_BASE_PRICE,
+            "additionalStaffPrice": CENTURION_ADDITIONAL_STAFF,
+            "name": "Centurion (Founding Member)"
+        },
+        "standard": {
+            "basePrice": STANDARD_BASE_PRICE,
+            "additionalStaffPrice": STANDARD_ADDITIONAL_STAFF,
+            "name": "Standard"
+        },
+        "maxCenturions": MAX_CENTURIONS
+    }
+
 # ==================== BUSINESS ROUTES ====================
 
 @api_router.get("/businesses")
