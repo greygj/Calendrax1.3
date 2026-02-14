@@ -89,6 +89,57 @@ const LandingPage = () => {
         </div>
       </header>
 
+      {/* Centurion Founding Members Banner */}
+      {centurionData.isAvailable && (
+        <section className="bg-gradient-to-r from-amber-900/30 via-yellow-900/20 to-amber-900/30 border-b border-amber-500/30">
+          <div className="max-w-6xl mx-auto px-4 py-6">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
+                  <Shield className="w-7 h-7 text-black" />
+                </div>
+                <div>
+                  <h3 className="text-amber-400 font-bold text-lg">Calendrax Centurions</h3>
+                  <p className="text-gray-300 text-sm">Join our Founding Members Club</p>
+                </div>
+              </div>
+              
+              {/* Counter */}
+              <div className="flex items-center gap-6">
+                <div className="text-center">
+                  <div className="text-3xl md:text-4xl font-bold text-white">
+                    <span className="text-amber-400">{centurionData.count}</span>
+                    <span className="text-gray-500 mx-2">/</span>
+                    <span>{centurionData.maxCenturions}</span>
+                  </div>
+                  <p className="text-gray-400 text-sm">Centurions Signed Up</p>
+                </div>
+                
+                <button
+                  onClick={() => navigate('/signup')}
+                  className="bg-gradient-to-r from-amber-500 to-yellow-600 text-black px-6 py-3 rounded-lg font-semibold hover:from-amber-400 hover:to-yellow-500 transition-all shadow-lg shadow-amber-500/20"
+                >
+                  Claim Your Spot
+                </button>
+              </div>
+            </div>
+            
+            {/* Benefits Preview */}
+            <div className="mt-4 flex flex-wrap gap-4 justify-center md:justify-start text-sm">
+              <span className="flex items-center gap-1 text-gray-300">
+                <Check className="w-4 h-4 text-amber-400" /> Lifetime £10/month pricing
+              </span>
+              <span className="flex items-center gap-1 text-gray-300">
+                <Check className="w-4 h-4 text-amber-400" /> Early access to features
+              </span>
+              <span className="flex items-center gap-1 text-gray-300">
+                <Check className="w-4 h-4 text-amber-400" /> Founding member recognition
+              </span>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-zinc-900 to-black py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
