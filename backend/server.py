@@ -956,10 +956,13 @@ async def create_staff(staff_data: StaffCreate, user: dict = Depends(require_bus
     }
     await db.staff.insert_one(staff_doc)
     
+    # Get pricing tier for subscription calculation
+    pricing_tier = await get_business_pricing_tier(business["id"])
+    
     # Calculate new subscription price and notify
     new_staff_count = existing_count + 1
-    old_price = calculate_subscription_price(existing_count if existing_count > 0 else 1)
-    new_price = calculate_subscription_price(new_staff_count)
+    old_price = calculate_subscription_price(existing_count if existing_count > 0 else 1, pricing_tier)
+    new_price = calculate_subscription_price(new_staff_count, pricing_tier)
     
     # Update subscription with new staff count
     await db.subscriptions.update_one(
