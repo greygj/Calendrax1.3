@@ -135,6 +135,12 @@ const LandingPage = () => {
               <span className="flex items-center gap-1 text-gray-300">
                 <Check className="w-4 h-4 text-amber-400" /> Founding member recognition
               </span>
+              <button
+                onClick={() => navigate('/founding-members')}
+                className="flex items-center gap-1 text-amber-400 hover:text-amber-300 transition-colors"
+              >
+                View all Centurions <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
           </div>
         </section>
