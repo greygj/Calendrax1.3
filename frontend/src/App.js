@@ -164,6 +164,7 @@ function AppRoutes() {
       {/* Public pages */}
       <Route path="/terms" element={<Terms />} />
       <Route path="/privacy" element={<Privacy />} />
+      <Route path="/founding-members" element={<FoundingMembers />} />
       
       {/* Catch all */}
       <Route path="*" element={<Navigate to="/" replace />} />
