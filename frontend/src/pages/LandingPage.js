@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, MapPin, Clock, Star, Building2, ArrowRight } from 'lucide-react';
-import { businessAPI } from '../services/api';
+import { Search, MapPin, Clock, Star, Building2, ArrowRight, Shield, Check } from 'lucide-react';
+import { businessAPI, centurionAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 const LandingPage = () => {
@@ -10,9 +10,11 @@ const LandingPage = () => {
   const [businesses, setBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [centurionData, setCenturionData] = useState({ count: 0, maxCenturions: 100, isAvailable: true });
 
   useEffect(() => {
     loadBusinesses();
+    loadCenturionCount();
   }, []);
 
   const loadBusinesses = async () => {
@@ -25,6 +27,15 @@ const LandingPage = () => {
       console.error('Failed to load businesses:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadCenturionCount = async () => {
+    try {
+      const res = await centurionAPI.getCount();
+      setCenturionData(res.data);
+    } catch (error) {
+      console.error('Failed to load centurion count:', error);
     }
   };
 
