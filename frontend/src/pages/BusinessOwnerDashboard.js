@@ -1712,7 +1712,7 @@ const BusinessOwnerDashboard = () => {
                 <button
                   key={tab.id}
                   onClick={() => setServicesSubTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
                     servicesSubTab === tab.id
                       ? 'bg-brand-500 text-black'
                       : 'text-gray-400 hover:text-white hover:bg-zinc-800'
