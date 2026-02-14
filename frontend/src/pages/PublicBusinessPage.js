@@ -151,7 +151,15 @@ const PublicBusinessPage = () => {
       <div className="max-w-4xl mx-auto px-4 py-6">
         {/* Business Info */}
         <div className="mb-8">
-          <h1 className="text-white text-3xl font-bold mb-2">{business.businessName}</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-white text-3xl font-bold">{business.businessName}</h1>
+            {business.isCenturion && (
+              <div className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/40 px-3 py-1 rounded-full" title="Calendrax Centurion - Founding Member">
+                <Shield className="w-4 h-4 text-amber-400" />
+                <span className="text-amber-400 text-xs font-semibold">Centurion</span>
+              </div>
+            )}
+          </div>
           
           {business.description && (
             <p className="text-gray-400 mb-4">{business.description}</p>
