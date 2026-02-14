@@ -14,6 +14,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import BookingSuccess from "./pages/BookingSuccess";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import FoundingMembers from "./pages/FoundingMembers";
 import CookieConsent from "./components/CookieConsent";
 
 // Protected Route Component
