@@ -3633,6 +3633,40 @@ async def admin_get_all_reviews(admin: dict = Depends(require_admin)):
 
 # ==================== ADMIN ROUTES ====================
 
+@api_router.post("/admin/migrate-centurions")
+async def admin_migrate_centurions(admin: dict = Depends(require_admin)):
+    """Migrate all existing businesses to Centurion status"""
+    # Find all businesses that are not yet Centurion
+    businesses = await db.businesses.find({"isCenturion": {"$ne": True}}).to_list(1000)
+    migrated_count = 0
+    
+    for business in businesses:
+        # Update business to Centurion
+        await db.businesses.update_one(
+            {"id": business["id"]},
+            {"$set": {
+                "isCenturion": True,
+                "centurionJoinedAt": business.get("createdAt", datetime.now(timezone.utc).isoformat())
+            }}
+        )
+        
+        # Update subscription pricing tier
+        await db.subscriptions.update_one(
+            {"businessId": business["id"]},
+            {"$set": {"pricingTier": "centurion"}}
+        )
+        migrated_count += 1
+    
+    # Get new Centurion count
+    centurion_count = await db.businesses.count_documents({"isCenturion": True})
+    
+    return {
+        "success": True,
+        "migratedCount": migrated_count,
+        "totalCenturions": centurion_count,
+        "spotsRemaining": max(0, MAX_CENTURIONS - centurion_count)
+    }
+
 @api_router.get("/admin/stats")
 async def admin_get_stats(admin: dict = Depends(require_admin)):
     total_users = await db.users.count_documents({})
