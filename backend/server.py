@@ -168,6 +168,9 @@ class Business(BaseModel):
     stripeConnectOnboarded: bool = False
     # Deposit level setting
     depositLevel: str = "20"  # Options: "none", "20", "50", "full"
+    # Centurion (Founding Member) status
+    isCenturion: bool = False
+    centurionJoinedAt: Optional[datetime] = None
 
 class BusinessUpdate(BaseModel):
     businessName: Optional[str] = None
