@@ -130,6 +130,10 @@ class UserCreate(UserBase):
     businessDescription: Optional[str] = None
     postcode: Optional[str] = None
     logo: Optional[str] = None
+    # Centurion signup
+    joinCenturion: Optional[bool] = False
+    # Stripe payment method for business owners
+    stripePaymentMethodId: Optional[str] = None
 
 class UserLogin(BaseModel):
     email: EmailStr
