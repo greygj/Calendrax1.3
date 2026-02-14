@@ -217,6 +217,7 @@ class Subscription(BaseModel):
     staffCount: int = 1  # Number of staff members
     status: str = "trial"  # trial, active, inactive, cancelled, past_due
     priceMonthly: float = 14.0  # Base price for 1 staff
+    pricingTier: str = "centurion"  # centurion or standard
     trialStartDate: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     trialEndDate: Optional[datetime] = None
     subscriptionStartDate: Optional[datetime] = None
@@ -226,6 +227,7 @@ class Subscription(BaseModel):
     failedPayments: int = 0
     stripeCustomerId: Optional[str] = None
     stripeSubscriptionId: Optional[str] = None
+    stripePaymentMethodId: Optional[str] = None  # Saved card for auto-billing
     freeAccessOverride: bool = False  # Admin can grant free access
     freeAccessGrantedBy: Optional[str] = None
     freeAccessGrantedAt: Optional[datetime] = None
