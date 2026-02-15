@@ -655,6 +655,162 @@ const AdminDashboard = () => {
           </div>
         );
 
+      case 'referrals':
+        const filteredReferralBusinesses = referralBusinesses.filter(b => 
+          b.businessName?.toLowerCase().includes(referralSearch.toLowerCase()) ||
+          b.referralCode?.toLowerCase().includes(referralSearch.toLowerCase())
+        );
+        
+        return (
+          <div>
+            <h2 className="text-white text-xl font-semibold mb-6">Referral Management</h2>
+            
+            {/* Stats Cards */}
+            {referralStats && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="bg-gradient-to-br from-amber-900/30 to-slate-900 border border-amber-500/30 rounded-xl p-4">
+                  <div className="flex items-center gap-3">
+                    <Award className="w-8 h-8 text-amber-400" />
+                    <div>
+                      <p className="text-amber-400/80 text-xs">Centurions</p>
+                      <p className="text-amber-400 text-2xl font-bold">{referralStats.centurionBusinesses}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-cardBg border border-zinc-800 rounded-xl p-4">
+                  <div className="flex items-center gap-3">
+                    <TrendingUp className="w-8 h-8 text-green-400" />
+                    <div>
+                      <p className="text-gray-500 text-xs">Successful Referrals</p>
+                      <p className="text-white text-2xl font-bold">{referralStats.successfulReferrals}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-cardBg border border-zinc-800 rounded-xl p-4">
+                  <div className="flex items-center gap-3">
+                    <Gift className="w-8 h-8 text-brand-400" />
+                    <div>
+                      <p className="text-gray-500 text-xs">Credits in Circulation</p>
+                      <p className="text-white text-2xl font-bold">{referralStats.currentCreditsInCirculation}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-cardBg border border-zinc-800 rounded-xl p-4">
+                  <div className="flex items-center gap-3">
+                    <CreditCard className="w-8 h-8 text-purple-400" />
+                    <div>
+                      <p className="text-gray-500 text-xs">Credits Used</p>
+                      <p className="text-white text-2xl font-bold">{referralStats.creditsUsed}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Top Referrers */}
+            {referralStats?.topReferrers?.length > 0 && (
+              <div className="bg-cardBg border border-zinc-800 rounded-xl p-4 mb-6">
+                <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-brand-400" /> Top Referrers
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {referralStats.topReferrers.map((r, idx) => (
+                    <div key={idx} className={`px-3 py-2 rounded-lg text-sm ${r.isCenturion ? 'bg-amber-500/20 text-amber-400' : 'bg-zinc-800 text-white'}`}>
+                      <span className="font-medium">{r.businessName}</span>
+                      <span className="text-gray-500 ml-2">({r.referralCount} referrals)</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Search */}
+            <div className="relative mb-4">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+              <input
+                type="text"
+                placeholder="Search by business name or code..."
+                value={referralSearch}
+                onChange={(e) => setReferralSearch(e.target.value)}
+                className="w-full bg-cardBg border border-zinc-800 rounded-lg py-3 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500"
+              />
+            </div>
+
+            {/* Business List */}
+            <div className="space-y-3">
+              {filteredReferralBusinesses.map(b => (
+                <div key={b.id} className={`bg-cardBg border rounded-xl p-4 ${b.isCenturion ? 'border-amber-500/30' : 'border-zinc-800'}`}>
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      {b.isCenturion && (
+                        <img src="/calendrax-centurion-logo.png" alt="Centurion" className="w-10 h-10 object-contain" />
+                      )}
+                      {!b.isCenturion && (
+                        <div className="w-10 h-10 rounded-lg bg-zinc-800 flex items-center justify-center">
+                          <Building2 className="w-5 h-5 text-gray-500" />
+                        </div>
+                      )}
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-white font-medium">{b.businessName}</h4>
+                          {b.isCenturion && (
+                            <span className="text-xs bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded">Centurion</span>
+                          )}
+                        </div>
+                        <p className={`text-sm font-mono ${b.isCenturion ? 'text-amber-400' : 'text-gray-400'}`}>
+                          {b.referralCode || 'No code'}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-4">
+                      {/* Credits Display */}
+                      <div className="text-center">
+                        <p className="text-gray-500 text-xs">Credits</p>
+                        <p className={`text-xl font-bold ${b.referralCredits > 0 ? 'text-green-400' : 'text-gray-500'}`}>
+                          {b.referralCredits || 0}
+                        </p>
+                      </div>
+                      
+                      {/* Credit Adjustment */}
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleUpdateCredits(b.id, -1)}
+                          className="w-8 h-8 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center hover:bg-red-500/30"
+                          title="Remove 1 credit"
+                        >
+                          <Minus className="w-4 h-4" />
+                        </button>
+                        <input
+                          type="number"
+                          placeholder="±"
+                          value={creditUpdateAmount[b.id] || ''}
+                          onChange={(e) => setCreditUpdateAmount({ ...creditUpdateAmount, [b.id]: e.target.value })}
+                          className="w-16 bg-zinc-800 border border-zinc-700 rounded-lg py-1 px-2 text-white text-center text-sm focus:outline-none focus:border-brand-500"
+                        />
+                        <button
+                          onClick={() => handleUpdateCredits(b.id, parseInt(creditUpdateAmount[b.id]) || 1)}
+                          className="w-8 h-8 rounded-lg bg-green-500/20 text-green-400 flex items-center justify-center hover:bg-green-500/30"
+                          title="Add credits"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              {filteredReferralBusinesses.length === 0 && (
+                <div className="bg-cardBg border border-zinc-800 rounded-xl p-8 text-center">
+                  <Gift className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                  <p className="text-gray-500">No businesses found</p>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+
       default:
         return (
           <>
