@@ -1,56 +1,37 @@
-<analysis>**original_problem_statement**: The user initially faced application-breaking database issues, which were resolved by migrating to MongoDB Atlas. Subsequently, several UI/UX and feature requests were completed.
+<analysis>**original_problem_statement**: The user initially requested the Calendrax Centurions launch promotion, which included a Founders Club for the first 100 businesses, special pricing, a public counter, an opt-in on signup, and a dedicated Founding Members page. This was followed by a request to implement a comprehensive referral and credit system.
 
-The current major feature request is to implement the **Calendrax Centurions** launch promotion.
+The most recent request is a pivot on the signup process: make credit card entry optional during signup and instead display a warning on the dashboard for users to add payment details before their 30-day free trial ends.
 
 **PRODUCT REQUIREMENTS**:
-1.  **Centurion Program**: Create a Founders Club for the first 100 businesses who sign up.
-    *   Display a public counter on the landing page (e.g., 13 / 100).
-    *   Offer special pricing: £10/month for the first staff member, £5/month for each additional member. Standard pricing is £16 and £8, respectively.
-    *   Add a checkbox on the business signup form to opt into the Centurion program. This should only be visible until 100 businesses have signed up.
-    *   Businesses who don't opt-in receive standard pricing.
-    *   Existing businesses are to be automatically enrolled as Centurions.
-    *   Admin should be able to grant free access to Centurions.
-2.  **Mandatory Card on Signup**: Business owners must now enter credit card details during signup. The 30-day free trial still applies, but they must opt-out to avoid being charged. If card details are not provided, registration fails.
-3.  **Public Recognition**:
-    *   Display a Centurion badge on the public-facing pages of founding members.
-    *   Create a dedicated Founding Members page to list all Centurions.
-4.  **Landing Page Redesign**: Update the landing page to prominently feature the Centurion offer, including benefits and a call-to-action. The user has requested this section be condensed on mobile to not push other content too far down.
-5.  **Referral Program**: Implement a referral discount (details to be discussed later).
+1.  **Centurion Program**: A Founders Club for the first 100 businesses with special pricing and a public recognition badge. (Mostly complete, UI tuning remains).
+2.  **Referral System**:
+    *   Businesses get a unique referral code ( for Centurions,  for others).
+    *   Centurions receive 2 credits per successful referral; others receive 1 credit.
+    *   1 credit = 1 free month of subscription.
+    *   Billing system must automatically use credits before charging the card.
+    *   Business owners need a dashboard to track their code, credits, and referral stats.
+    *   Admins need a UI to manage (add/remove) referral credits for any user.
+3.  **Optional Card on Signup**: Business owners can sign up without entering credit card details.
+4.  **Dashboard Warning**: Users on a free trial without a payment method must see a prominent warning on their dashboard, reminding them to add card details before the trial expires to avoid account lockout.
 
 **User's preferred language**: English
 
-**what currently exists?**: The application is a full-stack booking platform (React frontend, FastAPI backend, MongoDB Atlas DB). Core features like signup, login, and booking are functional. The Calendrax Centurions feature has been substantially implemented:
-*   **Backend**: The  model now includes  and  fields. Pricing tiers (, ) have been defined. API endpoints to get the Centurion count, list members, and migrate existing businesses have been created. The registration endpoint now handles the Centurion opt-in and requires a Stripe payment method.
-*   **Frontend**: The landing page displays a Centurion promotional banner with a live counter. The signup page includes the Centurion opt-in checkbox and an integrated Stripe Card Element for mandatory card capture. A new  page lists all Centurion businesses. Public business pages display a badge if the business is a Centurion.
+**what currently exists?**: The application is a full-stack booking platform (React/FastAPI/MongoDB). The Calendrax Centurions feature and a comprehensive referral system are implemented. This includes backend logic for generating referral codes, tracking referrals, and managing credits. The frontend includes a referral code input on the signup form, a referral analytics card on the business owner dashboard, and an admin panel for managing credits. An automated billing system is in place, using a daily cron job and Stripe webhooks to deduct referral credits before charging a subscription fee.
 
 **Last working item**:
-- **Last item agent was working**: The user requested to replace the Centurion logo with a new image and to condense the Centurion information section on the landing page to make it more compact on mobile devices.
+- **Last item agent was working**: The user requested to change the signup flow by making credit card details optional and adding a warning on the business owner's dashboard to add payment details before the trial ends.
 - **Status**: NOT STARTED
 - **Agent Testing Done**: N
-- **Which testing method agent to use?**: screenshot tool
+- **Which testing method agent to use?**: both
 - **User Testing Done**: N
 
 **All Pending/In progress Issue list**:
-- **Issue 1**: Condense the Centurion information on the landing page (P0)
-- **Issue 2**: WhatsApp notifications are not being sent on the live app (P1)
+- **Issue 1**: WhatsApp notifications are not being sent on the live app (P1)
 
 **Issues Detail**:
 - **Issue 1**:
-    - **Attempted fixes**: The agent acknowledged the request but has not yet started implementation.
-    - **Next debug checklist**:
-        1. View .
-        2. Modify the JSX and Tailwind CSS classes for the Centurion banner section.
-        3. Use responsive design classes (e.g., , ) to create a more compact layout on smaller screens while keeping the detailed view on larger screens. An accordion or a show more button could be considered.
-        4. Update the Centurion logo image asset as requested.
-    - **Why fix this issue and what will be achieved with the fix?**: This will improve the user experience on mobile by preventing the promotional banner from occupying too much vertical space, allowing users to see the primary Book your next Appointment section without scrolling.
-    - **Status**: NOT STARTED
-    - **Is recurring issue?**: N
-    - **Should Test frontend/backend/both after fix?**: frontend
-    - **Blocked on other issue**: None
-
-- **Issue 2**:
-    - **Attempted fixes**: The code logic in  and  has been verified. The issue is confirmed to be external to the codebase.
-    - **Next debug checklist**: Remind the user that for WhatsApp notifications to work in production, they **must complete their Business Profile verification** within their Twilio account. No code changes are needed.
+    - **Attempted fixes**: The agent has previously confirmed the code is correct. The issue is external to the application.
+    - **Next debug checklist**: Remind the user that for WhatsApp notifications to work in production, they **must complete their Business Profile verification** within their Twilio account.
     - **Why fix this issue and what will be achieved with the fix?**: Enables a key notification channel for booking confirmations and reminders.
     - **Status**: BLOCKED (on user action)
     - **Is recurring issue?**: Y
@@ -58,28 +39,40 @@ The current major feature request is to implement the **Calendrax Centurions** l
     - **Blocked on other issue**: None
 
 **In progress Task List**:
-- **Task 1**: Calendrax Centurions Feature Implementation
-    - **Where to resume**: The core feature is implemented. The final step is to address the user's feedback on condensing the landing page UI for mobile view (See Issue 1).
-    - **What will be achieved with this?**: A complete launch promotion to attract the first 100 business users with special lifetime pricing and status.
-    - **Status**: IN PROGRESS
-    - **Should Test frontend/backend/both after fix?**: frontend
+- **Task 1**: Make Card Details Optional on Signup & Add Dashboard Warnings (P0)
+    - **Where to resume**:
+        1.  **Backend ()**: Modify the  endpoint to remove the requirement for a  from the request.
+        2.  **Frontend ()**: Make the Stripe Card Element section optional for the user during the signup process.
+        3.  **Frontend ()**: Implement a prominent warning banner (e.g., styled in red) that is conditionally rendered only for users who are on a trial and have not yet added a payment method.
+    - **What will be achieved with this?**: This will lower the barrier to entry for new users, potentially increasing signups, while still prompting them to add payment details to ensure conversion after the trial.
+    - **Status**: NOT STARTED
+    - **Should Test frontend/backend/both after fix?**: both
     - **Blocked on something**: None
 
 **Upcoming and Future Tasks**
-- **Future Tasks**:
-    - **Referral Discount Program (P2)**: Details need to be discussed with the user. The initial implementation should be deferred as requested.
+- **Upcoming Tasks**:
+    - **Referral Program (P1)**: Full end-to-end testing of the referral and credit system, especially how credits are awarded after the first successful payment, which is now decoupled from the initial signup.
 
 **Completed work in this session**
-- **Signup Form State Persistence**: Fixed an issue where form data was lost on the signup page when navigating to the Terms/Privacy pages and back. Implemented state persistence using .
-- **Calendar Availability Dots**: Fixed a bug where white dots (indicating available slots) were not appearing reliably on the business owner's availability calendar. The fix involved refactoring the data fetching logic to use  for parallel requests and a single state update.
-- **UI Tweaks**:
-    - Updated informational text on the business owner signup page.
-    - Balanced the 'Services' & 'Staff' tabs in the business owner dashboard to be of equal width.
-- **Calendrax Centurions Feature (v1)**:
-    - **Backend**: Added , , and  fields to the database models. Implemented new API endpoints for the Centurion feature (, ). Created an admin endpoint to migrate existing businesses ().
-    - **Stripe Integration**: Added  and integrated Stripe Elements into the signup form for mandatory card capture. Created a backend endpoint () to support this.
-    - **Frontend**: Created the  to display Centurions. Updated  with a promotional banner and live counter. Overhauled  to include the Centurion opt-in and Stripe card form. Added a Centurion badge to .
-    - **Branding**: Updated the landing, signup, and founding members pages with a new Centurion logo and marketing copy provided by the user.
+- **Landing Page UI Enhancements**:
+    - Implemented a count-up animation and a pulsing glow effect for the Centurion counter.
+    - Refined the mobile and desktop layouts multiple times based on user feedback, including repositioning and resizing the logo and counter.
+- **Referral System Implementation**:
+    - **Backend**:
+        - Updated the  model with fields for referral tracking (, , etc.).
+        - Implemented endpoints for referral code validation, admin credit management, and business owner referral stats.
+        - Updated the registration logic to generate unique referral codes for Centurions () and other businesses ().
+        - Ran a migration script to assign referral codes to all existing businesses.
+    - **Frontend**:
+        - Added an optional Referral Code field to the signup form with live validation.
+        - Created an expanded referral analytics card for the Business Owner Dashboard.
+        - Built an admin UI with a Referrals tab to view all referral data and manually adjust user credits.
+- **Automated Billing & Credit System**:
+    - **Backend**:
+        - Implemented a Stripe webhook handler () to automatically check for referral credits. If credits exist, it voids the Stripe invoice, deducts a credit, and pauses the Stripe subscription.
+        - Created a daily cron job () to process credit-based billing.
+        - Added an endpoint to allow admins to resume a paused Stripe subscription.
+    - **Frontend**: Added a button in the admin panel to manually trigger the credit billing process.
 
 **Earlier issues found/mentioned but not fixed**
 None.
@@ -91,71 +84,65 @@ None.
 
 
 **Key Technical Concepts**
-- **Backend**: Python, FastAPI, Motor (async MongoDB driver).
-- **Frontend**: React.js, Tailwind CSS, Axios, **React Stripe Elements**.
+- **Backend**: Python, FastAPI, Motor, **apscheduler** for cron jobs.
+- **Frontend**: React.js, Tailwind CSS, Axios.
 - **Database**: MongoDB Atlas.
-- **Deployment**: Railway.
-- **Notifications**: Twilio (WhatsApp), SendGrid (Email).
-- **Payments**: Stripe (Connect for payouts, Elements for card capture).
+- **Payments**: Stripe (Connect, Elements, Webhooks for , Subscription pause/resume).
+- **Frontend Animation**: State-driven animations using  and .
 
 **key DB schema**
-- **users**: {email, hashed_password, role, ...}
-- **businesses**: {..., **isCenturion**: bool, **centurionId**: int}
-- **subscriptions**: {..., **pricingTier**: str ('default' or 'centurion')}
+- **businesses**: {..., isCenturion: bool, centurionId: int, **referralCode**: str, **referralCredits**: int, **referredBy**: ObjectId(ref: 'businesses'), **successfulReferrals**: int, **stripeSubscriptionId**: str, **stripeSubscriptionStatus**: str}
 
 **changes in tech stack**
-- **Frontend Dependencies**: Added  and  for card input collection on the signup form.
+- **Backend**: Added  for scheduling background tasks (cron jobs).
 
 **All files of reference**
-- ****: Heavily modified to add Centurion logic, new pricing tiers, Stripe Setup Intent endpoint, admin migration endpoint, and updates to the registration flow.
-- ****: Heavily modified to add the responsive Centurion promotional banner with a live counter.
-- ****: Completely overhauled to integrate the Centurion opt-in logic, dynamic pricing display, and the Stripe Card Element for mandatory payment method capture.
-- ****: New file created to display the list of Centurion members.
-- ****: Modified to conditionally display the Centurion badge.
-- ****: Modified to fix the availability calendar dots and balance the Services/Staff tabs.
-- ****: Updated with new API client functions for Centurion and Stripe endpoints.
-- ****: Updated to add the new  route.
-- ****: Updated with new Stripe dependencies.
+- 
+- 
+- 
+- 
+- 
+- 
 
 **Areas that need refactoring**:
 None.
 
 **key api endpoints**
-- ****: Modified to handle  flag and require a Stripe .
-- ****: **NEW** endpoint to create a Stripe SetupIntent for capturing card details without an immediate charge.
-- ****: **NEW** endpoint to get the current number of Centurion members.
-- ****: **NEW** endpoint to get the public list of Centurion members.
-- ****: **NEW** admin-only endpoint to enroll all existing businesses into the Centurion program.
+- : **To be modified** to make payment details optional.
+- : Validates a referral code during signup.
+- : Fetches all referral data for the admin panel.
+- : Allows admin to add/remove referral credits.
+- : Fetches referral statistics for the logged-in business owner.
+- : Handles Stripe events, including  to process referral credits.
+- : Manually triggers the credit deduction logic.
 
 **Critical Info for New Agent**
-- **The Calendrax Centurions feature is the current focus.** It introduces two pricing tiers (, ) and makes providing card details via Stripe Elements mandatory during business signup.
-- **Your immediate task is a UI refinement**: The user wants the Centurion banner on the landing page to be more compact on mobile. See Issue 1 for the next steps.
-- **Existing businesses have been migrated.** An admin endpoint was created and used to set  for all 13 existing businesses. The counter on the landing page should reflect this.
-- **The WhatsApp notification issue is NOT a code bug.** It is blocked on the user completing their Twilio Business Profile verification. Do not spend time debugging this in the code.
+- **Your immediate task is to modify the signup flow.** The user wants to make credit card entry **optional** and instead show a **dashboard warning** for trial users without a payment method.
+- The referral credit system is complex. It hooks into Stripe's  webhook to void an upcoming charge and deduct a credit. A daily cron job also runs to ensure credits are processed.
+- The WhatsApp notification issue is a known external blocker dependent on the user's Twilio account configuration. Do not spend time debugging the code for this.
 
 **documents and test reports created in this job**
 - 
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User**: Request to use a new logo and condense the Centurion info on the landing page for mobile. (PENDING)
-2.  **User**: Provides the new Centurion logo and detailed text for the landing page banner. (COMPLETED)
-3.  **User**: Asks to implement the Calendrax Centurions program and require card details on signup. (COMPLETED)
-4.  **User**: Provides clarifications on the Centurion feature requirements. (COMPLETED)
-5.  **User**: Request to balance the 'Services' and 'Staff' tabs on the Business Owner Dashboard. (COMPLETED)
-6.  **User**: Reports that the white dots are not showing up on the availability calendar. (COMPLETED)
-7.  **User**: Reports that form data is lost when navigating away from the signup page and back. (COMPLETED)
-8.  **User**: Request to update the subscription information text on the signup page. (COMPLETED)
-9.  **Agent**: Confirms the calendar dot fix is working on mobile. (COMPLETED)
-10. **Agent**: Provides a summary of the Centurion feature implementation. (COMPLETED)
+10. **User**: Requests a change: make card details optional at signup and add a dashboard warning for users on trial to add card details before the trial ends. (PENDING)
+9. **User**: Asks to implement automatic credit deduction. (COMPLETED)
+8. **Agent**: Explains what a monthly billing cron job is and asks for confirmation to implement it. (COMPLETED)
+7. **User**: Asks what a monthly billing contract job is. (COMPLETED)
+6. **Agent**: Provides a plan for billing integration, admin UI, and referral analytics. (COMPLETED)
+5. **User**: OKs the plan, wants referral analytics for the business owner. (COMPLETED)
+4. **User**: Asks to continue with billing integration, admin UI, and referral analytics. (COMPLETED)
+3. **User**: Expands on the referral program: non-Centurions get 1 credit, use CBO prefix for their codes, and admin should be able to manage credits. (COMPLETED)
+2. **User**: Defines the referral scheme: Centurion card on dashboard, Centurion code, credit system (2 credits per referral, 1 credit = 1 free month). (COMPLETED)
+1. **User**: Request to make the Centurion logo slightly larger on the landing page. (COMPLETED)
 
 **Project Health Check:**
-- **Broken**: None.
-- **Mocked**: No features are mocked.
+- **Broken**: None
+- **Mocked**: None
 
 **3rd Party Integrations**
-- **Stripe Connect**: For business payouts.
-- **Stripe Elements**: For capturing card details on signup.
-- **Twilio (WhatsApp)**: Configured but **BLOCKED** in production pending user action (Business Profile verification).
+- **Stripe**: Connect for payouts and Elements for card capture. Advanced usage now includes Webhooks () and Subscription management APIs (pause/resume).
+- **Twilio (WhatsApp)**: Configured but **BLOCKED** in production pending user's Business Profile verification.
 - **SendGrid (Email)**: For transactional emails.
 - **MongoDB Atlas**: Primary database.
 
@@ -166,7 +153,8 @@ None.
 - **Known regressions**: None.
 
 **Credentials to test flow:**
-A test business account was created during the session (). The password is not stored, so creating a new test account via the UI is the recommended approach for testing authenticated flows.
+- Create a new test account via the UI.
+- Valid referral codes exist for testing:  through .
 
 **What agent forgot to execute**
-The agent was about to start on the user's latest request to condense the landing page UI before the session ended. This is now the highest priority pending task.</analysis>
+The agent has not yet started the implementation of making card details optional on signup, which was the user's last and highest-priority request.</analysis>
