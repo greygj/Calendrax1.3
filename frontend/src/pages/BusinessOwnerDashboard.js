@@ -99,6 +99,10 @@ const BusinessOwnerDashboard = () => {
   const [photoUploading, setPhotoUploading] = useState(false);
   const [logoUploading, setLogoUploading] = useState(false);
   
+  // Referral state
+  const [referralInfo, setReferralInfo] = useState(null);
+  const [referralCopied, setReferralCopied] = useState(false);
+  
   // Password change state
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
@@ -142,7 +146,25 @@ const BusinessOwnerDashboard = () => {
     loadData();
     loadStripeStatus();
     loadSubscription();
+    loadReferralInfo();
   }, []);
+
+  const loadReferralInfo = async () => {
+    try {
+      const res = await referralAPI.getMyInfo();
+      setReferralInfo(res.data);
+    } catch (error) {
+      console.error('Failed to load referral info:', error);
+    }
+  };
+
+  const copyReferralCode = () => {
+    if (referralInfo?.referralCode) {
+      navigator.clipboard.writeText(referralInfo.referralCode);
+      setReferralCopied(true);
+      setTimeout(() => setReferralCopied(false), 2000);
+    }
+  };
 
   const loadData = async () => {
     try {
