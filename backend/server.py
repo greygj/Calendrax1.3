@@ -861,11 +861,37 @@ async def get_my_referral_info(user: dict = Depends(require_business_owner)):
         "referralBonusPaid": True
     })
     
+    # Get list of referred businesses (names only for privacy)
+    referred_businesses = await db.businesses.find(
+        {"referredBy": business.get("referralCode")},
+        {"businessName": 1, "referralBonusPaid": 1, "createdAt": 1, "isCenturion": 1}
+    ).sort("createdAt", -1).to_list(50)
+    
+    # Count credits used
+    credits_used = await db.billing_history.count_documents({
+        "businessId": business["id"],
+        "type": "credit_used"
+    })
+    
+    # Calculate total credits earned
+    total_credits_earned = business.get("referralCredits", 0) + credits_used
+    
     return {
         "referralCode": business.get("referralCode"),
         "referralCredits": business.get("referralCredits", 0),
         "isCenturion": business.get("isCenturion", False),
-        "totalReferrals": referral_count
+        "totalReferrals": referral_count,
+        "pendingReferrals": len([r for r in referred_businesses if not r.get("referralBonusPaid")]),
+        "creditsEarned": total_credits_earned,
+        "creditsUsed": credits_used,
+        "referredBusinesses": [
+            {
+                "businessName": r.get("businessName"),
+                "status": "active" if r.get("referralBonusPaid") else "pending",
+                "isCenturion": r.get("isCenturion", False),
+                "joinedAt": r.get("createdAt")
+            } for r in referred_businesses
+        ]
     }
 
 @api_router.post("/referral/award-credits/{business_id}")
