@@ -1839,6 +1839,58 @@ async def subscription_webhook(request: Request):
                         )
                         logger.info(f"Awarded {credits_to_award} referral credits to {referring_business['businessName']} for {business['businessName']}'s first payment")
         
+        elif event_type == "invoice.created":
+            # Invoice created - check if we should use referral credits instead
+            customer_id = data.get("customer")
+            invoice_id = data.get("id")
+            amount_due = data.get("amount_due", 0)
+            
+            # Only process subscription invoices (not one-time payments)
+            if data.get("subscription") and amount_due > 0:
+                sub = await db.subscriptions.find_one({"stripeCustomerId": customer_id})
+                if sub:
+                    business = await db.businesses.find_one({"id": sub.get("businessId")})
+                    if business and business.get("referralCredits", 0) > 0:
+                        # Business has credits - void the invoice and use a credit instead
+                        try:
+                            # Void the invoice in Stripe
+                            stripe.Invoice.void_invoice(invoice_id)
+                            
+                            # Deduct a credit
+                            await db.businesses.update_one(
+                                {"id": business["id"]},
+                                {"$inc": {"referralCredits": -1}}
+                            )
+                            
+                            # Record the credit usage
+                            credit_usage_doc = {
+                                "id": str(uuid.uuid4()),
+                                "businessId": business["id"],
+                                "type": "credit_used",
+                                "amount": amount_due / 100,  # Convert from pence to pounds
+                                "stripeInvoiceId": invoice_id,
+                                "creditsBefore": business.get("referralCredits", 0),
+                                "creditsAfter": business.get("referralCredits", 0) - 1,
+                                "date": datetime.now(timezone.utc).isoformat(),
+                                "description": f"Monthly subscription paid via referral credit (invoice voided)"
+                            }
+                            await db.billing_history.insert_one(credit_usage_doc)
+                            
+                            # Update subscription status
+                            await db.subscriptions.update_one(
+                                {"id": sub["id"]},
+                                {"$set": {
+                                    "lastPaymentStatus": "credit_used",
+                                    "lastPaymentDate": datetime.now(timezone.utc).isoformat(),
+                                    "status": "active"
+                                }}
+                            )
+                            
+                            logger.info(f"Used referral credit for {business['businessName']}. Invoice {invoice_id} voided. Credits remaining: {business.get('referralCredits', 0) - 1}")
+                        except Exception as credit_err:
+                            logger.error(f"Failed to void invoice with credit: {credit_err}")
+                            # Let the invoice proceed normally if voiding fails
+        
         elif event_type == "invoice.payment_succeeded":
             # Recurring payment successful
             customer_id = data.get("customer")
