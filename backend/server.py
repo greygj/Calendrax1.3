@@ -134,6 +134,8 @@ class UserCreate(UserBase):
     joinCenturion: Optional[bool] = False
     # Stripe payment method for business owners
     stripePaymentMethodId: Optional[str] = None
+    # Referral code (optional - code of the business that referred them)
+    referralCode: Optional[str] = None
 
 class UserLogin(BaseModel):
     email: EmailStr
