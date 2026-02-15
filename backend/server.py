@@ -177,6 +177,11 @@ class Business(BaseModel):
     # Centurion (Founding Member) status
     isCenturion: bool = False
     centurionJoinedAt: Optional[datetime] = None
+    # Referral system
+    referralCode: Optional[str] = None  # CC001 for Centurions, CBO101 for non-Centurions
+    referralCredits: int = 0  # Number of free month credits
+    referredBy: Optional[str] = None  # Referral code that was used at signup
+    referralBonusPaid: bool = False  # Whether referrer has been credited for this business
 
 class BusinessUpdate(BaseModel):
     businessName: Optional[str] = None
