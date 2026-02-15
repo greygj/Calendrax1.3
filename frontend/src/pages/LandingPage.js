@@ -42,33 +42,28 @@ const LandingPage = () => {
     }
   };
 
-  // Count-up animation effect
+  // Count-up animation effect using recursive setTimeout for better React compatibility
   useEffect(() => {
-    console.log('Animation effect check:', { count: centurionData.count, hasAnimated });
     if (centurionData.count > 0 && !hasAnimated) {
-      console.log('Starting count-up animation to:', centurionData.count);
       setHasAnimated(true);
       const targetCount = centurionData.count;
       const duration = 2000; // 2 seconds
-      const steps = Math.min(targetCount, 30); // Max 30 steps
-      const increment = targetCount / steps;
+      const steps = Math.min(targetCount, 20);
       const stepDuration = duration / steps;
-      let current = 0;
-      let stepCount = 0;
+      let currentStep = 0;
       
-      const timer = setInterval(() => {
-        stepCount++;
-        current += increment;
-        if (stepCount >= steps || current >= targetCount) {
-          setDisplayCount(targetCount);
-          clearInterval(timer);
-          console.log('Animation complete:', targetCount);
-        } else {
-          setDisplayCount(Math.floor(current));
+      const animateStep = () => {
+        currentStep++;
+        const newValue = Math.round((currentStep / steps) * targetCount);
+        setDisplayCount(Math.min(newValue, targetCount));
+        
+        if (currentStep < steps) {
+          setTimeout(animateStep, stepDuration);
         }
-      }, stepDuration);
+      };
       
-      return () => clearInterval(timer);
+      // Start animation
+      animateStep();
     }
   }, [centurionData.count, hasAnimated]);
 
