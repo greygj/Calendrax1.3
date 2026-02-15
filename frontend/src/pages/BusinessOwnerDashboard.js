@@ -1193,6 +1193,38 @@ const BusinessOwnerDashboard = () => {
         {/* Dashboard View */}
         {activeView === 'dashboard' && (
           <div className="space-y-6">
+            {/* Trial Warning Banner - Show for trial users without payment method */}
+            {subscription && subscription.status === 'trial' && !subscription.hasPaymentMethod && !subscription.freeAccessOverride && (
+              <div className="bg-gradient-to-r from-red-500/20 via-red-500/10 to-red-500/20 border-2 border-red-500/50 rounded-xl p-4 animate-pulse-slow" data-testid="trial-warning-banner">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                    <AlertTriangle className="w-5 h-5 text-red-400" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-red-400 font-bold text-lg">Add Payment Method</h3>
+                      <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                        {subscription.trialDaysRemaining} days left
+                      </span>
+                    </div>
+                    <p className="text-red-200/80 text-sm mb-3">
+                      Your free trial ends on <span className="font-semibold text-white">{subscription.trialEndDate ? new Date(subscription.trialEndDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'soon'}</span>. 
+                      Add your payment details now to avoid losing access to your account and bookings.
+                    </p>
+                    <button
+                      onClick={() => setActiveView('profile')}
+                      className="inline-flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg transition-colors"
+                      data-testid="add-payment-btn"
+                    >
+                      <CreditCard className="w-4 h-4" />
+                      Add Payment Method Now
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Centurion/Referral Card */}
             {referralInfo && (
               <div className={`border rounded-xl overflow-hidden ${
