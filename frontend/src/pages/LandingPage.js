@@ -35,6 +35,7 @@ const LandingPage = () => {
   const loadCenturionCount = async () => {
     try {
       const res = await centurionAPI.getCount();
+      console.log('Centurion data loaded:', res.data);
       setCenturionData(res.data);
     } catch (error) {
       console.error('Failed to load centurion count:', error);
@@ -43,7 +44,9 @@ const LandingPage = () => {
 
   // Count-up animation effect
   useEffect(() => {
+    console.log('Animation effect check:', { count: centurionData.count, hasAnimated });
     if (centurionData.count > 0 && !hasAnimated) {
+      console.log('Starting count-up animation to:', centurionData.count);
       setHasAnimated(true);
       const targetCount = centurionData.count;
       const duration = 2000; // 2 seconds
@@ -59,6 +62,7 @@ const LandingPage = () => {
         if (stepCount >= steps || current >= targetCount) {
           setDisplayCount(targetCount);
           clearInterval(timer);
+          console.log('Animation complete:', targetCount);
         } else {
           setDisplayCount(Math.floor(current));
         }
