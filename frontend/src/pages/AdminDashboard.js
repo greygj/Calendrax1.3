@@ -22,6 +22,10 @@ const AdminDashboard = () => {
   const [appointments, setAppointments] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [trials, setTrials] = useState([]);
+  const [referralStats, setReferralStats] = useState(null);
+  const [referralBusinesses, setReferralBusinesses] = useState([]);
+  const [referralSearch, setReferralSearch] = useState('');
+  const [creditUpdateAmount, setCreditUpdateAmount] = useState({});
   const [selectedItem, setSelectedItem] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('');
