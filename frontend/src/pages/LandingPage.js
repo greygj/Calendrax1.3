@@ -93,6 +93,24 @@ const LandingPage = () => {
       {centurionData.isAvailable && (
         <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-b border-amber-500/30">
           <div className="max-w-6xl mx-auto px-4 py-6 md:py-10">
+            
+            {/* Mobile: Logo + Counter at TOP */}
+            <div className="flex flex-col items-center mb-4 lg:hidden">
+              <img 
+                src="/calendrax-centurion-logo.png"
+                alt="Calendrax Centurions"
+                className="w-32 h-32 object-contain mb-2"
+              />
+              <div className="text-center">
+                <div className="text-3xl font-bold">
+                  <span className="text-amber-400">{centurionData.count}</span>
+                  <span className="text-gray-500 mx-1">/</span>
+                  <span className="text-white">{centurionData.maxCenturions}</span>
+                </div>
+                <p className="text-gray-400 text-sm">Centurions Signed Up</p>
+              </div>
+            </div>
+
             {/* Desktop: Side-by-side layout / Mobile: Stacked compact layout */}
             <div className="flex flex-col lg:flex-row items-center gap-4 lg:gap-8">
               
@@ -140,25 +158,8 @@ const LandingPage = () => {
               </div>
             </div>
 
-            {/* CTA Section - Logo inline on mobile, counter and button */}
+            {/* CTA Section */}
             <div className="flex flex-col items-center mt-4 lg:mt-0 lg:ml-56">
-              {/* Mobile: Logo + Counter row */}
-              <div className="flex items-center justify-center gap-4 mb-3 lg:hidden">
-                <img 
-                  src="/calendrax-centurion-logo.png"
-                  alt="Calendrax Centurions"
-                  className="w-20 h-20 object-contain"
-                />
-                <div className="text-center">
-                  <div className="text-2xl font-bold">
-                    <span className="text-amber-400">{centurionData.count}</span>
-                    <span className="text-gray-500 mx-1">/</span>
-                    <span className="text-white">{centurionData.maxCenturions}</span>
-                  </div>
-                  <p className="text-gray-400 text-xs">Centurions Signed Up</p>
-                </div>
-              </div>
-              
               {/* CTA Button */}
               <button
                 onClick={() => navigate('/signup')}
@@ -167,7 +168,7 @@ const LandingPage = () => {
                 Claim your Centurion spot NOW
               </button>
               
-              {/* Desktop: Counter next to button */}
+              {/* Desktop: Counter below button */}
               <div className="hidden lg:flex items-center gap-4 mt-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold">
