@@ -53,6 +53,15 @@ export const centurionAPI = {
   getPricing: () => apiClient.get('/centurions/pricing')
 };
 
+// Referral System
+export const referralAPI = {
+  validate: (code) => apiClient.get(`/referral/validate/${code}`),
+  getMyInfo: () => apiClient.get('/referral/my-info'),
+  adminUpdateCredits: (businessId, credits) => apiClient.post(`/admin/referral-credits/${businessId}`, { credits }),
+  adminGetAllBusinesses: () => apiClient.get('/admin/businesses-with-referrals'),
+  adminMigrateReferralCodes: () => apiClient.post('/admin/migrate-referral-codes')
+};
+
 // Stripe
 export const stripeAPI = {
   createSetupIntent: () => apiClient.post('/stripe/create-setup-intent')
