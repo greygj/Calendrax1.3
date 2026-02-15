@@ -178,6 +178,18 @@ const AdminDashboard = () => {
     }
   };
 
+  // Update referral credits
+  const handleUpdateCredits = async (businessId, amount) => {
+    if (!amount || amount === 0) return;
+    try {
+      await referralAPI.adminUpdateCredits(businessId, amount);
+      setCreditUpdateAmount({ ...creditUpdateAmount, [businessId]: '' });
+      loadData();
+    } catch (err) {
+      setError('Failed to update referral credits');
+    }
+  };
+
   // Refund action
   const handleRefund = async (appointmentId, amount) => {
     try {
