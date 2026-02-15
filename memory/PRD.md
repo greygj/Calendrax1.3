@@ -107,6 +107,24 @@ First 100 business signups get special "Centurion" status with lifetime benefits
 
 ## Changelog
 
+### 2025-02-15 (Session 2)
+- **Optional Card Entry on Signup**:
+  - Business owners can now sign up without entering credit card details
+  - Card Details section now shows "(Optional - can add later)" label
+  - Added "Skip for now - add card later" button with yellow warning state
+  - Clicking skip shows message about adding card before trial ends
+  - "Actually, I want to add my card now" link to restore card input
+  - Backend updated: `stripePaymentMethodId` no longer required in `/api/auth/register`
+  - Subscription created with `hasPaymentMethod: false` when no card provided
+- **Dashboard Trial Warning Banner**:
+  - Prominent red gradient warning banner at top of dashboard
+  - Shows for trial users without payment method
+  - Displays exact trial end date (e.g., "17 March 2026")
+  - Shows days remaining badge (e.g., "29 days left")
+  - "Add Payment Method Now" CTA button navigates to Profile
+  - Has `data-testid="trial-warning-banner"` for testing
+  - Subtle pulse animation for attention
+
 ### 2025-02-15
 - Updated Centurion logo to new transparent background version
 - Condensed Centurion banner for mobile view:
