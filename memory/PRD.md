@@ -123,6 +123,20 @@ First 100 business signups get special "Centurion" status with lifetime benefits
   - **Credit System**: Centurions earn 2 credits per referral, non-Centurions earn 1 credit
   - **Backend APIs**: `/api/referral/validate/{code}`, `/api/referral/my-info`, `/api/admin/referral-credits/{business_id}`
   - Migrated all 13 existing businesses to have referral codes (CC001-CC013)
+- **Billing Integration with Credits**:
+  - When subscription payment due: if credits > 0, skip Stripe charge and deduct 1 credit
+  - Awards referral credits automatically when referred business makes first payment
+  - New endpoints: `/api/billing/process-with-credits`, `/api/billing/credit-history`
+- **Admin UI - Referrals Tab**:
+  - New "Referrals" tab in Admin Dashboard
+  - Stats: Centurion count, successful referrals, credits in circulation, credits used
+  - Top referrers display
+  - Business list with search, showing codes and credits
+  - Add/remove credits controls for each business
+- **Business Owner Dashboard - Expanded Referral Analytics**:
+  - Enhanced Centurion/Referral card with stats row (Credits, Referrals, Earned, Used)
+  - List of referred businesses with payment status (Paid/Pending)
+  - Pending referrals indicator
 
 ### 2025-02-14
 - Implemented Calendrax Centurions founding members program
