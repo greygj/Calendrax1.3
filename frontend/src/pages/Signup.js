@@ -41,6 +41,7 @@ const SignupForm = ({ redirectUrl }) => {
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [cardError, setCardError] = useState('');
   const [cardComplete, setCardComplete] = useState(false);
+  const [skipCard, setSkipCard] = useState(false);
   const fileInputRef = useRef(null);
   
   // Centurion state
@@ -227,16 +228,16 @@ const SignupForm = ({ redirectUrl }) => {
       return;
     }
 
-    // For business owner, validate business name and card
+    // For business owner, validate business name (card is optional)
     if (activeTab === 'business') {
       if (!formData.businessName.trim()) {
         setError('Business name is required');
         return;
       }
       
-      // Validate card is complete
-      if (!cardComplete) {
-        setError('Please enter valid card details');
+      // Only validate card if user hasn't chosen to skip
+      if (!skipCard && !cardComplete) {
+        setError('Please enter valid card details or click "Skip for now"');
         return;
       }
     }
@@ -246,8 +247,8 @@ const SignupForm = ({ redirectUrl }) => {
     try {
       let stripePaymentMethodId = null;
 
-      // For business owners, create payment method
-      if (activeTab === 'business') {
+      // For business owners, create payment method (unless skipped)
+      if (activeTab === 'business' && !skipCard && cardComplete) {
         if (!stripe || !elements) {
           setError('Stripe is not loaded. Please refresh and try again.');
           setLoading(false);
