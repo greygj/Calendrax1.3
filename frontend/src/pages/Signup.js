@@ -350,16 +350,18 @@ const SignupForm = ({ redirectUrl }) => {
       {/* Centurion Banner - Business Owners Only */}
       {activeTab === 'business' && centurionData.isAvailable && (
         <div className="w-full max-w-md mx-auto mb-6">
-          <div className="bg-gradient-to-r from-amber-900/40 via-yellow-900/30 to-amber-900/40 border border-amber-500/40 rounded-xl p-4">
+          <div className="bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 border border-amber-500/40 rounded-xl p-4">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center">
-                <Shield className="w-5 h-5 text-black" />
-              </div>
-              <div>
+              <img 
+                src="https://customer-assets.emergentagent.com/job_f0d49bd6-4ba1-447c-a671-a425c4ff7557/artifacts/cv1m7trg_Calendrax%20Centurion%20Logo.jpeg"
+                alt="Calendrax Centurions"
+                className="w-16 h-16 object-contain rounded"
+              />
+              <div className="flex-1">
                 <h4 className="text-amber-400 font-bold">Calendrax Centurions</h4>
                 <p className="text-gray-400 text-xs">Founding Members Club</p>
               </div>
-              <div className="ml-auto text-right">
+              <div className="text-right">
                 <div className="text-xl font-bold text-white">
                   <span className="text-amber-400">{centurionData.count}</span>
                   <span className="text-gray-500 mx-1">/</span>
@@ -370,20 +372,20 @@ const SignupForm = ({ redirectUrl }) => {
             </div>
             
             {/* Benefits */}
-            <div className="grid grid-cols-2 gap-2 text-xs mb-3">
-              <span className="flex items-center gap-1 text-gray-300">
-                <Check className="w-3 h-3 text-amber-400" /> £10/month (vs £16)
-              </span>
-              <span className="flex items-center gap-1 text-gray-300">
-                <Check className="w-3 h-3 text-amber-400" /> Early access
-              </span>
-              <span className="flex items-center gap-1 text-gray-300">
-                <Check className="w-3 h-3 text-amber-400" /> Lifetime pricing
-              </span>
-              <span className="flex items-center gap-1 text-gray-300">
-                <Check className="w-3 h-3 text-amber-400" /> Public recognition
-              </span>
-            </div>
+            <ul className="space-y-1.5 text-xs mb-3">
+              <li className="flex items-start gap-2 text-gray-300">
+                <Check className="w-3 h-3 text-amber-400 mt-0.5 flex-shrink-0" />
+                <span>Lifetime <span className="text-amber-400">£10/month</span> (vs £16) + <span className="text-amber-400">£5</span> per extra staff</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-300">
+                <Check className="w-3 h-3 text-amber-400 mt-0.5 flex-shrink-0" />
+                <span>Referral credits - <span className="text-amber-400">2 FREE months</span> per referral</span>
+              </li>
+              <li className="flex items-start gap-2 text-gray-300">
+                <Check className="w-3 h-3 text-amber-400 mt-0.5 flex-shrink-0" />
+                <span>Influence features • FREE Migration • Recognition</span>
+              </li>
+            </ul>
             
             {/* Checkbox */}
             <label className="flex items-center gap-3 cursor-pointer">
