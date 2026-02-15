@@ -1193,6 +1193,82 @@ const BusinessOwnerDashboard = () => {
         {/* Dashboard View */}
         {activeView === 'dashboard' && (
           <div className="space-y-6">
+            {/* Centurion/Referral Card */}
+            {referralInfo && (
+              <div className={`border rounded-xl p-4 ${
+                referralInfo.isCenturion 
+                  ? 'bg-gradient-to-br from-amber-900/30 via-slate-800/50 to-slate-900/50 border-amber-500/30' 
+                  : 'bg-cardBg border-zinc-800'
+              }`}>
+                <div className="flex items-center gap-4">
+                  {/* Logo */}
+                  {referralInfo.isCenturion && (
+                    <img 
+                      src="/calendrax-centurion-logo.png" 
+                      alt="Centurion" 
+                      className="w-16 h-16 object-contain"
+                    />
+                  )}
+                  {!referralInfo.isCenturion && (
+                    <div className="w-16 h-16 rounded-xl bg-brand-500/10 flex items-center justify-center">
+                      <Gift className="w-8 h-8 text-brand-400" />
+                    </div>
+                  )}
+                  
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className={`text-sm font-semibold ${referralInfo.isCenturion ? 'text-amber-400' : 'text-brand-400'}`}>
+                        {referralInfo.isCenturion ? 'Centurion Member' : 'Referral Program'}
+                      </span>
+                    </div>
+                    
+                    {/* Referral Code */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-400 text-sm">Your Code:</span>
+                      <span className={`font-mono font-bold text-lg ${referralInfo.isCenturion ? 'text-amber-400' : 'text-white'}`}>
+                        {referralInfo.referralCode}
+                      </span>
+                      <button
+                        onClick={copyReferralCode}
+                        className={`p-1.5 rounded-lg transition-colors ${
+                          referralCopied 
+                            ? 'bg-green-500/20 text-green-400' 
+                            : referralInfo.isCenturion 
+                              ? 'hover:bg-amber-500/20 text-amber-400' 
+                              : 'hover:bg-zinc-700 text-gray-400'
+                        }`}
+                        title={referralCopied ? 'Copied!' : 'Copy code'}
+                      >
+                        {referralCopied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                      </button>
+                    </div>
+                    
+                    {/* Credits */}
+                    <div className="flex items-center gap-4 mt-2">
+                      <div className="flex items-center gap-1">
+                        <span className="text-gray-500 text-sm">Credits:</span>
+                        <span className={`font-bold ${referralInfo.referralCredits > 0 ? 'text-green-400' : 'text-gray-400'}`}>
+                          {referralInfo.referralCredits}
+                        </span>
+                        <span className="text-gray-500 text-xs">free month{referralInfo.referralCredits !== 1 ? 's' : ''}</span>
+                      </div>
+                      <div className="text-gray-600 text-sm">|</div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-gray-500 text-sm">Referrals:</span>
+                        <span className="text-white font-medium">{referralInfo.totalReferrals}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Info text */}
+                <p className={`text-xs mt-3 ${referralInfo.isCenturion ? 'text-amber-400/70' : 'text-gray-500'}`}>
+                  Share your code! You'll earn {referralInfo.isCenturion ? '2' : '1'} free month{referralInfo.isCenturion ? 's' : ''} when a referred business pays their first subscription.
+                </p>
+              </div>
+            )}
+
             {/* Business Info Card */}
             <div className="bg-cardBg border border-zinc-800 rounded-xl p-6">
               <div className="flex items-start gap-4">
