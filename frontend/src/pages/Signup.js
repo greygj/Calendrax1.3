@@ -840,7 +840,7 @@ const SignupForm = ({ redirectUrl }) => {
         {/* Submit Button */}
         <button
           type="submit"
-          disabled={loading || (activeTab === 'business' && !stripe)}
+          disabled={loading || (activeTab === 'business' && !skipCard && !stripe)}
           className="w-full bg-brand-500 text-black font-semibold py-4 rounded-lg mt-6 hover:bg-brand-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {loading ? (
