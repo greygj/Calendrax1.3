@@ -60,7 +60,9 @@ export const referralAPI = {
   adminUpdateCredits: (businessId, credits) => apiClient.post(`/admin/referral-credits/${businessId}`, { credits }),
   adminGetAllBusinesses: () => apiClient.get('/admin/businesses-with-referrals'),
   adminMigrateReferralCodes: () => apiClient.post('/admin/migrate-referral-codes'),
-  adminGetStats: () => apiClient.get('/admin/referral-stats')
+  adminGetStats: () => apiClient.get('/admin/referral-stats'),
+  adminProcessCreditBilling: () => apiClient.post('/admin/process-credit-billing'),
+  adminResumeStripeBilling: (businessId) => apiClient.post(`/admin/resume-stripe-billing/${businessId}`)
 };
 
 // Billing
