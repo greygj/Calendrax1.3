@@ -532,6 +532,7 @@ const SignupForm = ({ redirectUrl }) => {
 
         {/* Postcode - Business Owner Only */}
         {activeTab === 'business' && (
+          <>
           <div>
             <label className="text-white text-sm mb-2 block">Business Postcode <span className="text-red-500">*</span></label>
             <div className="relative">
@@ -584,6 +585,7 @@ const SignupForm = ({ redirectUrl }) => {
               <p className="text-red-500 text-xs mt-1">Invalid referral code</p>
             )}
           </div>
+          </>
         )}
 
         {/* Full Name */}
