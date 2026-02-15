@@ -104,6 +104,15 @@ First 100 business signups get special "Centurion" status with lifetime benefits
   - Logo repositioned: smaller logo next to counter on mobile, full-size on left for desktop
   - CTA button and counter more prominent
   - "Book Your Next Appointment" section now visible without excessive scrolling
+- Added count-up animation to Centurion counter (0 to current over 2 seconds)
+- Added pulse glow animation on the counter number
+- **Implemented Referral System**:
+  - **Referral Codes**: Centurions get CC001-CC100 format, non-Centurions get CBO101+ format
+  - **Signup Flow**: Added optional referral code input with real-time validation
+  - **Dashboard Card**: Added Centurion/Referral card showing code, credits, and referral count
+  - **Credit System**: Centurions earn 2 credits per referral, non-Centurions earn 1 credit
+  - **Backend APIs**: `/api/referral/validate/{code}`, `/api/referral/my-info`, `/api/admin/referral-credits/{business_id}`
+  - Migrated all 13 existing businesses to have referral codes (CC001-CC013)
 
 ### 2025-02-14
 - Implemented Calendrax Centurions founding members program
