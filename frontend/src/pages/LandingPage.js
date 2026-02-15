@@ -41,6 +41,30 @@ const LandingPage = () => {
     }
   };
 
+  // Count-up animation effect
+  useEffect(() => {
+    if (centurionData.count > 0 && !hasAnimated) {
+      setHasAnimated(true);
+      const duration = 2000; // 2 seconds
+      const steps = 30;
+      const increment = centurionData.count / steps;
+      const stepDuration = duration / steps;
+      let current = 0;
+      
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= centurionData.count) {
+          setDisplayCount(centurionData.count);
+          clearInterval(timer);
+        } else {
+          setDisplayCount(Math.floor(current));
+        }
+      }, stepDuration);
+      
+      return () => clearInterval(timer);
+    }
+  }, [centurionData.count, hasAnimated]);
+
   const handleViewBusiness = (businessId) => {
     // Always go to public business page first
     navigate(`/business/${businessId}`);
