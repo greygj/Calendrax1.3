@@ -389,10 +389,8 @@ async def register(user_data: UserCreate):
     if user_data.role == UserRole.PLATFORM_ADMIN:
         raise HTTPException(status_code=403, detail="Cannot register as admin")
     
-    # For business owners, require Stripe payment method
-    if user_data.role == UserRole.BUSINESS_OWNER:
-        if not user_data.stripePaymentMethodId:
-            raise HTTPException(status_code=400, detail="Card details are required for business registration")
+    # For business owners, payment method is now optional (can add later)
+    # Card details are encouraged but not required during signup
     
     user_id = str(uuid.uuid4())
     user_doc = {
@@ -457,7 +455,7 @@ async def register(user_data: UserCreate):
         }
         await db.businesses.insert_one(business_doc)
         
-        # Create Stripe customer and attach payment method
+        # Create Stripe customer and optionally attach payment method
         stripe_customer_id = None
         try:
             # Create Stripe customer
@@ -471,19 +469,20 @@ async def register(user_data: UserCreate):
             )
             stripe_customer_id = customer.id
             
-            # Attach payment method to customer
-            stripe.PaymentMethod.attach(
-                user_data.stripePaymentMethodId,
-                customer=stripe_customer_id
-            )
-            
-            # Set as default payment method
-            stripe.Customer.modify(
-                stripe_customer_id,
-                invoice_settings={
-                    "default_payment_method": user_data.stripePaymentMethodId
-                }
-            )
+            # Attach payment method to customer only if provided
+            if user_data.stripePaymentMethodId:
+                stripe.PaymentMethod.attach(
+                    user_data.stripePaymentMethodId,
+                    customer=stripe_customer_id
+                )
+                
+                # Set as default payment method
+                stripe.Customer.modify(
+                    stripe_customer_id,
+                    invoice_settings={
+                        "default_payment_method": user_data.stripePaymentMethodId
+                    }
+                )
         except stripe.error.StripeError as e:
             logger.error(f"Stripe error during registration: {e}")
             # Clean up user and business if Stripe fails
@@ -506,7 +505,8 @@ async def register(user_data: UserCreate):
             "lastPaymentStatus": "pending",
             "failedPayments": 0,
             "stripeCustomerId": stripe_customer_id,
-            "stripePaymentMethodId": user_data.stripePaymentMethodId,
+            "stripePaymentMethodId": user_data.stripePaymentMethodId if user_data.stripePaymentMethodId else None,
+            "hasPaymentMethod": bool(user_data.stripePaymentMethodId),
             "freeAccessOverride": False,
             "createdAt": datetime.now(timezone.utc).isoformat()
         }
