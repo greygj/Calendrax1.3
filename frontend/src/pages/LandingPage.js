@@ -91,56 +91,84 @@ const LandingPage = () => {
 
       {/* Centurion Founding Members Banner */}
       {centurionData.isAvailable && (
-        <section className="bg-gradient-to-r from-amber-900/30 via-yellow-900/20 to-amber-900/30 border-b border-amber-500/30">
-          <div className="max-w-6xl mx-auto px-4 py-6">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
-                  <Shield className="w-7 h-7 text-black" />
-                </div>
-                <div>
-                  <h3 className="text-amber-400 font-bold text-lg">Calendrax Centurions</h3>
-                  <p className="text-gray-300 text-sm">Join our Founding Members Club</p>
-                </div>
+        <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-b border-amber-500/30">
+          <div className="max-w-6xl mx-auto px-4 py-8 md:py-10">
+            <div className="flex flex-col lg:flex-row items-center gap-8">
+              {/* Logo */}
+              <div className="flex-shrink-0">
+                <img 
+                  src="https://customer-assets.emergentagent.com/job_f0d49bd6-4ba1-447c-a671-a425c4ff7557/artifacts/cv1m7trg_Calendrax%20Centurion%20Logo.jpeg"
+                  alt="Calendrax Centurions"
+                  className="w-40 h-40 md:w-48 md:h-48 object-contain rounded-lg"
+                />
               </div>
               
-              {/* Counter */}
-              <div className="flex items-center gap-6">
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-white">
-                    <span className="text-amber-400">{centurionData.count}</span>
-                    <span className="text-gray-500 mx-2">/</span>
-                    <span>{centurionData.maxCenturions}</span>
+              {/* Content */}
+              <div className="flex-1 text-center lg:text-left">
+                <h2 className="text-amber-400 text-xl md:text-2xl font-bold uppercase tracking-wide mb-2">
+                  Calling All Business Owners
+                </h2>
+                <p className="text-white text-lg md:text-xl mb-4">
+                  Secure lifetime reduced pricing and help shape the future of salon booking.
+                </p>
+                
+                {/* Benefits */}
+                <ul className="space-y-2 mb-6 text-left">
+                  <li className="flex items-start gap-2 text-gray-300">
+                    <Check className="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" />
+                    <span>Lifetime <span className="text-amber-400 font-semibold">£10/month</span> for 1st Staff member - <span className="text-amber-400 font-semibold">£5/month</span> each additional staff member</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-gray-300">
+                    <Check className="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" />
+                    <span>Access to Centurion Referral credits - <span className="text-amber-400 font-semibold">Each referral = 2 FREE months</span> subscription</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-gray-300">
+                    <Check className="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" />
+                    <span>Influence over new features</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-gray-300">
+                    <Check className="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" />
+                    <span>FREE Migration support</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-gray-300">
+                    <Check className="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" />
+                    <span>Founding member recognition</span>
+                  </li>
+                </ul>
+                
+                {/* Counter and CTA */}
+                <div className="flex flex-col sm:flex-row items-center gap-4 mb-4">
+                  <button
+                    onClick={() => navigate('/signup')}
+                    className="bg-gradient-to-r from-amber-500 to-yellow-600 text-black px-8 py-3 rounded-lg font-bold text-lg hover:from-amber-400 hover:to-yellow-500 transition-all shadow-lg shadow-amber-500/30"
+                  >
+                    Claim your Centurion spot now
+                  </button>
+                  
+                  <div className="text-center sm:text-left">
+                    <div className="text-2xl font-bold">
+                      <span className="text-amber-400">{centurionData.count}</span>
+                      <span className="text-gray-500 mx-1">/</span>
+                      <span className="text-white">{centurionData.maxCenturions}</span>
+                    </div>
+                    <p className="text-gray-400 text-sm">Centurions Signed Up</p>
                   </div>
-                  <p className="text-gray-400 text-sm">Centurions Signed Up</p>
                 </div>
                 
-                <button
-                  onClick={() => navigate('/signup')}
-                  className="bg-gradient-to-r from-amber-500 to-yellow-600 text-black px-6 py-3 rounded-lg font-semibold hover:from-amber-400 hover:to-yellow-500 transition-all shadow-lg shadow-amber-500/20"
-                >
-                  Claim Your Spot
-                </button>
+                {/* Links and tagline */}
+                <div className="flex flex-col sm:flex-row items-center gap-4 text-sm">
+                  <button
+                    onClick={() => navigate('/founding-members')}
+                    className="flex items-center gap-1 text-amber-400 hover:text-amber-300 transition-colors font-medium"
+                  >
+                    View our Centurions <ArrowRight className="w-4 h-4" />
+                  </button>
+                  <span className="text-gray-500 hidden sm:inline">|</span>
+                  <span className="text-gray-400">Only <span className="text-amber-400 font-semibold">{centurionData.spotsRemaining}</span> Centurion spots available</span>
+                </div>
+                
+                <p className="text-amber-400/80 italic mt-4 text-lg">Let's grow together</p>
               </div>
-            </div>
-            
-            {/* Benefits Preview */}
-            <div className="mt-4 flex flex-wrap gap-4 justify-center md:justify-start text-sm">
-              <span className="flex items-center gap-1 text-gray-300">
-                <Check className="w-4 h-4 text-amber-400" /> Lifetime £10/month pricing
-              </span>
-              <span className="flex items-center gap-1 text-gray-300">
-                <Check className="w-4 h-4 text-amber-400" /> Early access to features
-              </span>
-              <span className="flex items-center gap-1 text-gray-300">
-                <Check className="w-4 h-4 text-amber-400" /> Founding member recognition
-              </span>
-              <button
-                onClick={() => navigate('/founding-members')}
-                className="flex items-center gap-1 text-amber-400 hover:text-amber-300 transition-colors"
-              >
-                View all Centurions <ArrowRight className="w-4 h-4" />
-              </button>
             </div>
           </div>
         </section>
