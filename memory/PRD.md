@@ -123,6 +123,12 @@ First 100 business signups get special "Centurion" status with lifetime benefits
   - **Credit System**: Centurions earn 2 credits per referral, non-Centurions earn 1 credit
   - **Backend APIs**: `/api/referral/validate/{code}`, `/api/referral/my-info`, `/api/admin/referral-credits/{business_id}`
   - Migrated all 13 existing businesses to have referral codes (CC001-CC013)
+- **Automatic Credit Billing**:
+  - **Stripe Webhook Handler**: `invoice.created` event voids invoices and uses credits when available
+  - **Daily Cron Job**: Runs at 6 AM UTC to process credit-based billing for all eligible subscriptions
+  - **Admin Manual Trigger**: "Process Credit Billing" button in Admin Referrals tab
+  - Credit usage recorded in `billing_history` collection
+  - Stripe subscription paused when credit is used
 - **Billing Integration with Credits**:
   - When subscription payment due: if credits > 0, skip Stripe charge and deduct 1 credit
   - Awards referral credits automatically when referred business makes first payment
@@ -133,6 +139,7 @@ First 100 business signups get special "Centurion" status with lifetime benefits
   - Top referrers display
   - Business list with search, showing codes and credits
   - Add/remove credits controls for each business
+  - "Process Credit Billing" button for manual trigger
 - **Business Owner Dashboard - Expanded Referral Analytics**:
   - Enhanced Centurion/Referral card with stats row (Credits, Referrals, Earned, Used)
   - List of referred businesses with payment status (Paid/Pending)
