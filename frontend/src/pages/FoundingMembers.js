@@ -53,11 +53,13 @@ const FoundingMembers = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-amber-900/30 via-yellow-900/20 to-transparent py-12 px-4">
+      <section className="bg-gradient-to-b from-slate-800 via-slate-900 to-transparent py-12 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center mx-auto mb-6 shadow-lg shadow-amber-500/30">
-            <Shield className="w-10 h-10 text-black" />
-          </div>
+          <img 
+            src="https://customer-assets.emergentagent.com/job_f0d49bd6-4ba1-447c-a671-a425c4ff7557/artifacts/cv1m7trg_Calendrax%20Centurion%20Logo.jpeg"
+            alt="Calendrax Centurions"
+            className="w-32 h-32 md:w-40 md:h-40 object-contain mx-auto mb-6 rounded-lg"
+          />
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Calendrax <span className="text-amber-400">Centurions</span>
           </h1>
