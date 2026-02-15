@@ -78,7 +78,7 @@ First 100 business signups get special "Centurion" status with lifetime benefits
   id, businessId, ownerId, staffCount, status,
   priceMonthly, pricingTier (centurion/standard),
   trialStartDate, trialEndDate, stripeCustomerId,
-  stripePaymentMethodId, freeAccessOverride
+  stripePaymentMethodId, hasPaymentMethod, freeAccessOverride
 }
 ```
 
