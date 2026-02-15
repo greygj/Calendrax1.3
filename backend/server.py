@@ -2050,6 +2050,147 @@ async def enable_invoice_emails(user: dict = Depends(require_business_owner)):
         logger.error(f"Error enabling invoice emails: {e}")
         raise HTTPException(status_code=500, detail="Failed to enable invoice emails")
 
+# ==================== REFERRAL CREDIT BILLING ====================
+
+@api_router.post("/billing/process-with-credits")
+async def process_billing_with_credits(user: dict = Depends(require_business_owner)):
+    """
+    Process monthly subscription billing, checking for referral credits first.
+    If credits > 0: Skip Stripe charge, deduct 1 credit, mark as paid via credit.
+    If credits = 0: Process normal Stripe charge.
+    """
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    subscription = await db.subscriptions.find_one({"businessId": business["id"]})
+    if not subscription:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    
+    # Check if business has free access override
+    if subscription.get("freeAccessOverride"):
+        return {
+            "success": True,
+            "paymentMethod": "free_access",
+            "message": "Free access granted - no payment required"
+        }
+    
+    referral_credits = business.get("referralCredits", 0)
+    
+    if referral_credits > 0:
+        # Use a credit instead of charging
+        await db.businesses.update_one(
+            {"id": business["id"]},
+            {"$inc": {"referralCredits": -1}}
+        )
+        
+        # Record the credit usage
+        credit_usage_doc = {
+            "id": str(uuid.uuid4()),
+            "businessId": business["id"],
+            "type": "credit_used",
+            "amount": subscription.get("priceMonthly", 0),
+            "creditsBefore": referral_credits,
+            "creditsAfter": referral_credits - 1,
+            "date": datetime.now(timezone.utc).isoformat(),
+            "description": f"Subscription paid via referral credit"
+        }
+        await db.billing_history.insert_one(credit_usage_doc)
+        
+        # Update subscription status
+        await db.subscriptions.update_one(
+            {"id": subscription["id"]},
+            {"$set": {
+                "lastPaymentStatus": "credit_used",
+                "lastPaymentDate": datetime.now(timezone.utc).isoformat(),
+                "status": "active"
+            }}
+        )
+        
+        logger.info(f"Business {business['businessName']} used 1 referral credit. Remaining: {referral_credits - 1}")
+        
+        return {
+            "success": True,
+            "paymentMethod": "referral_credit",
+            "creditsUsed": 1,
+            "creditsRemaining": referral_credits - 1,
+            "message": "Subscription paid using referral credit"
+        }
+    else:
+        # No credits - proceed with normal Stripe charge
+        # This would typically be handled by Stripe's automatic billing
+        return {
+            "success": True,
+            "paymentMethod": "stripe",
+            "creditsRemaining": 0,
+            "message": "No credits available - Stripe will process payment automatically"
+        }
+
+@api_router.get("/billing/credit-history")
+async def get_credit_history(user: dict = Depends(require_business_owner)):
+    """Get the credit usage history for a business"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    history = await db.billing_history.find(
+        {"businessId": business["id"], "type": "credit_used"}
+    ).sort("date", -1).to_list(100)
+    
+    return remove_mongo_id(history)
+
+@api_router.get("/admin/referral-stats")
+async def admin_get_referral_stats(admin: dict = Depends(require_admin)):
+    """Get overall referral statistics for admin dashboard"""
+    # Total referral codes issued
+    total_businesses = await db.businesses.count_documents({"referralCode": {"$exists": True, "$ne": None}})
+    centurion_businesses = await db.businesses.count_documents({"isCenturion": True})
+    
+    # Total credits awarded (sum of all referralCredits + credits used)
+    pipeline = [
+        {"$group": {"_id": None, "totalCredits": {"$sum": "$referralCredits"}}}
+    ]
+    credits_result = await db.businesses.aggregate(pipeline).to_list(1)
+    current_credits = credits_result[0]["totalCredits"] if credits_result else 0
+    
+    # Credits used
+    credits_used = await db.billing_history.count_documents({"type": "credit_used"})
+    
+    # Successful referrals (businesses that have paid their referral bonus)
+    successful_referrals = await db.businesses.count_documents({"referralBonusPaid": True})
+    
+    # Top referrers
+    top_referrers_pipeline = [
+        {"$match": {"referralCode": {"$exists": True, "$ne": None}}},
+        {"$lookup": {
+            "from": "businesses",
+            "localField": "referralCode",
+            "foreignField": "referredBy",
+            "as": "referrals"
+        }},
+        {"$project": {
+            "businessName": 1,
+            "referralCode": 1,
+            "referralCredits": 1,
+            "isCenturion": 1,
+            "referralCount": {"$size": {"$filter": {"input": "$referrals", "cond": {"$eq": ["$$this.referralBonusPaid", True]}}}}
+        }},
+        {"$match": {"referralCount": {"$gt": 0}}},
+        {"$sort": {"referralCount": -1}},
+        {"$limit": 10}
+    ]
+    top_referrers = await db.businesses.aggregate(top_referrers_pipeline).to_list(10)
+    
+    return {
+        "totalBusinesses": total_businesses,
+        "centurionBusinesses": centurion_businesses,
+        "nonCenturionBusinesses": total_businesses - centurion_businesses,
+        "currentCreditsInCirculation": current_credits,
+        "creditsUsed": credits_used,
+        "successfulReferrals": successful_referrals,
+        "topReferrers": remove_mongo_id(top_referrers)
+    }
+
 # ==================== TRIAL REMINDER ROUTES ====================
 
 @api_router.post("/admin/send-trial-reminders")
