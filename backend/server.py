@@ -312,6 +312,30 @@ def hash_password(password: str) -> str:
 def verify_password(password: str, hashed: str) -> bool:
     return hash_password(password) == hashed
 
+async def generate_referral_code(is_centurion: bool) -> str:
+    """Generate a unique referral code.
+    Centurions: CC001, CC002, etc.
+    Non-Centurions: CBO101, CBO102, etc.
+    """
+    if is_centurion:
+        # Count existing Centurion codes to get next number
+        centurion_count = await db.businesses.count_documents({"referralCode": {"$regex": "^CC"}})
+        next_num = centurion_count + 1
+        return f"CC{next_num:03d}"
+    else:
+        # Count existing non-Centurion codes (starting at 101)
+        non_centurion_count = await db.businesses.count_documents({"referralCode": {"$regex": "^CBO"}})
+        next_num = 101 + non_centurion_count
+        return f"CBO{next_num:03d}"
+
+async def validate_referral_code(code: str) -> dict:
+    """Validate a referral code and return the referring business."""
+    if not code:
+        return None
+    code = code.upper().strip()
+    business = await db.businesses.find_one({"referralCode": code})
+    return remove_mongo_id(business) if business else None
+
 def create_token(user_id: str, role: str) -> str:
     payload = {
         "user_id": user_id,
