@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, User, Mail, Phone, Lock, Eye, EyeOff, Briefcase, Upload, MapPin, X, Shield, Check, CreditCard, Loader2 } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, Lock, Eye, EyeOff, Briefcase, Upload, MapPin, X, Shield, Check, CreditCard, Loader2, Gift } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import InstallPrompt from '../components/InstallPrompt';
-import { centurionAPI, stripeAPI } from '../services/api';
+import { centurionAPI, stripeAPI, referralAPI } from '../services/api';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
