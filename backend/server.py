@@ -4742,6 +4742,27 @@ async def admin_process_credit_billing(admin: dict = Depends(require_admin)):
         "results": results
     }
 
+@api_router.post("/admin/resume-stripe-billing/{business_id}")
+async def admin_resume_stripe_billing(business_id: str, admin: dict = Depends(require_admin)):
+    """Resume Stripe billing for a business (when credits run out)"""
+    business = await db.businesses.find_one({"id": business_id})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    subscription = await db.subscriptions.find_one({"businessId": business_id})
+    if not subscription or not subscription.get("stripeSubscriptionId"):
+        raise HTTPException(status_code=404, detail="No Stripe subscription found")
+    
+    try:
+        # Resume collection
+        stripe.Subscription.modify(
+            subscription["stripeSubscriptionId"],
+            pause_collection=""  # Empty string resumes billing
+        )
+        return {"success": True, "message": f"Stripe billing resumed for {business['businessName']}"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to resume billing: {str(e)}")
+
 @app.on_event("shutdown")
 async def shutdown():
     client.close()
