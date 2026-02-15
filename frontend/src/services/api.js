@@ -59,7 +59,17 @@ export const referralAPI = {
   getMyInfo: () => apiClient.get('/referral/my-info'),
   adminUpdateCredits: (businessId, credits) => apiClient.post(`/admin/referral-credits/${businessId}`, { credits }),
   adminGetAllBusinesses: () => apiClient.get('/admin/businesses-with-referrals'),
-  adminMigrateReferralCodes: () => apiClient.post('/admin/migrate-referral-codes')
+  adminMigrateReferralCodes: () => apiClient.post('/admin/migrate-referral-codes'),
+  adminGetStats: () => apiClient.get('/admin/referral-stats')
+};
+
+// Billing
+export const billingAPI = {
+  getInvoices: () => apiClient.get('/billing/invoices'),
+  getUpcoming: () => apiClient.get('/billing/upcoming'),
+  enableInvoiceEmails: () => apiClient.post('/billing/enable-invoice-emails'),
+  processWithCredits: () => apiClient.post('/billing/process-with-credits'),
+  getCreditHistory: () => apiClient.get('/billing/credit-history')
 };
 
 // Stripe
