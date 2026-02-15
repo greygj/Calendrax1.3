@@ -97,6 +97,14 @@ First 100 business signups get special "Centurion" status with lifetime benefits
 
 ## Changelog
 
+### 2025-02-15
+- Updated Centurion logo to new transparent background version
+- Condensed Centurion banner for mobile view:
+  - Compact benefits list with smaller text and spacing
+  - Logo repositioned: smaller logo next to counter on mobile, full-size on left for desktop
+  - CTA button and counter more prominent
+  - "Book Your Next Appointment" section now visible without excessive scrolling
+
 ### 2025-02-14
 - Implemented Calendrax Centurions founding members program
 - Added landing page counter (13/100 currently)
