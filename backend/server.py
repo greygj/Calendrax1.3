@@ -3856,6 +3856,38 @@ async def admin_migrate_centurions(admin: dict = Depends(require_admin)):
         "spotsRemaining": max(0, MAX_CENTURIONS - centurion_count)
     }
 
+@api_router.post("/admin/migrate-referral-codes")
+async def admin_migrate_referral_codes(admin: dict = Depends(require_admin)):
+    """Generate referral codes for all existing businesses that don't have one"""
+    # Find all businesses without referral codes
+    businesses = await db.businesses.find({"referralCode": {"$exists": False}}).to_list(1000)
+    # Also find businesses with null referral codes
+    businesses_null = await db.businesses.find({"referralCode": None}).to_list(1000)
+    
+    # Combine and dedupe
+    all_businesses = {b["id"]: b for b in businesses + businesses_null}.values()
+    
+    migrated_count = 0
+    for business in all_businesses:
+        is_centurion = business.get("isCenturion", False)
+        referral_code = await generate_referral_code(is_centurion)
+        
+        await db.businesses.update_one(
+            {"id": business["id"]},
+            {"$set": {
+                "referralCode": referral_code,
+                "referralCredits": business.get("referralCredits", 0),
+                "referralBonusPaid": False
+            }}
+        )
+        migrated_count += 1
+    
+    return {
+        "success": True,
+        "migratedCount": migrated_count,
+        "message": f"Generated referral codes for {migrated_count} businesses"
+    }
+
 @api_router.get("/admin/stats")
 async def admin_get_stats(admin: dict = Depends(require_admin)):
     total_users = await db.users.count_documents({})
