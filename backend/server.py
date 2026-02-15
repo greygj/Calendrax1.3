@@ -4567,6 +4567,7 @@ async def startup():
     # Start background task for daily trial reminders
     import asyncio
     asyncio.create_task(daily_trial_reminder_task())
+    asyncio.create_task(daily_credit_billing_task())
 
 async def daily_trial_reminder_task():
     """Background task that runs trial reminder check once per day"""
@@ -4596,6 +4597,150 @@ async def daily_trial_reminder_task():
             logger.error(f"Error in trial reminder task: {str(e)}")
             # Wait an hour before retrying on error
             await asyncio.sleep(3600)
+
+async def daily_credit_billing_task():
+    """Background task that processes credit-based billing for subscriptions.
+    Runs daily at 6 AM UTC to check for subscriptions that need billing and have credits available.
+    This serves as a backup to the Stripe webhook approach.
+    """
+    import asyncio
+    while True:
+        try:
+            # Wait until next check (run at 6 AM UTC daily)
+            now = datetime.now(timezone.utc)
+            next_run = now.replace(hour=6, minute=0, second=0, microsecond=0)
+            if now >= next_run:
+                next_run += timedelta(days=1)
+            
+            wait_seconds = (next_run - now).total_seconds()
+            logger.info(f"Credit billing task: next run in {wait_seconds/3600:.1f} hours at {next_run.isoformat()}")
+            
+            await asyncio.sleep(wait_seconds)
+            
+            # Run the credit billing check
+            logger.info("Running scheduled credit billing check...")
+            results = await process_credit_billing()
+            logger.info(f"Credit billing check complete: {results['processed']} processed, {results['credits_used']} credits used")
+            
+        except asyncio.CancelledError:
+            logger.info("Credit billing task cancelled")
+            break
+        except Exception as e:
+            logger.error(f"Error in credit billing task: {str(e)}")
+            # Wait an hour before retrying on error
+            await asyncio.sleep(3600)
+
+async def process_credit_billing():
+    """Process credit-based billing for all active subscriptions.
+    This checks for subscriptions where:
+    1. The business has referral credits > 0
+    2. The subscription billing date is today or past due
+    3. The subscription hasn't been credited this billing period
+    """
+    results = {"processed": 0, "credits_used": 0, "errors": 0}
+    
+    try:
+        # Find all active subscriptions with businesses that have credits
+        businesses_with_credits = await db.businesses.find(
+            {"referralCredits": {"$gt": 0}}
+        ).to_list(1000)
+        
+        for business in businesses_with_credits:
+            try:
+                subscription = await db.subscriptions.find_one({"businessId": business["id"]})
+                if not subscription:
+                    continue
+                
+                # Skip if subscription is not active or is in trial
+                if subscription.get("status") not in ["active", "past_due"]:
+                    continue
+                
+                # Check if we need to process billing (based on last payment date)
+                last_payment = subscription.get("lastPaymentDate")
+                if last_payment:
+                    last_payment_date = datetime.fromisoformat(last_payment.replace('Z', '+00:00'))
+                    days_since_payment = (datetime.now(timezone.utc) - last_payment_date).days
+                    
+                    # If less than 28 days since last payment, skip
+                    if days_since_payment < 28:
+                        continue
+                
+                # Check if already credited this month
+                current_month = datetime.now(timezone.utc).strftime("%Y-%m")
+                recent_credit = await db.billing_history.find_one({
+                    "businessId": business["id"],
+                    "type": "credit_used",
+                    "date": {"$regex": f"^{current_month}"}
+                })
+                
+                if recent_credit:
+                    # Already processed this month
+                    continue
+                
+                # Use a credit for this billing period
+                credit_usage_doc = {
+                    "id": str(uuid.uuid4()),
+                    "businessId": business["id"],
+                    "type": "credit_used",
+                    "amount": subscription.get("priceMonthly", 0),
+                    "creditsBefore": business.get("referralCredits", 0),
+                    "creditsAfter": business.get("referralCredits", 0) - 1,
+                    "date": datetime.now(timezone.utc).isoformat(),
+                    "description": f"Monthly subscription paid via referral credit (automated)"
+                }
+                await db.billing_history.insert_one(credit_usage_doc)
+                
+                # Deduct the credit
+                await db.businesses.update_one(
+                    {"id": business["id"]},
+                    {"$inc": {"referralCredits": -1}}
+                )
+                
+                # Update subscription status
+                await db.subscriptions.update_one(
+                    {"id": subscription["id"]},
+                    {"$set": {
+                        "lastPaymentStatus": "credit_used",
+                        "lastPaymentDate": datetime.now(timezone.utc).isoformat(),
+                        "status": "active"
+                    }}
+                )
+                
+                # If the business has a Stripe subscription, pause it for this month
+                if subscription.get("stripeSubscriptionId"):
+                    try:
+                        # Pause collection to prevent Stripe from charging
+                        stripe.Subscription.modify(
+                            subscription["stripeSubscriptionId"],
+                            pause_collection={"behavior": "void"}
+                        )
+                        logger.info(f"Paused Stripe subscription for {business['businessName']} - using credit")
+                    except Exception as stripe_err:
+                        logger.warning(f"Could not pause Stripe subscription: {stripe_err}")
+                
+                logger.info(f"Auto-billed {business['businessName']} using referral credit. Credits remaining: {business.get('referralCredits', 0) - 1}")
+                results["processed"] += 1
+                results["credits_used"] += 1
+                
+            except Exception as business_err:
+                logger.error(f"Error processing credit billing for business {business.get('id')}: {business_err}")
+                results["errors"] += 1
+                
+    except Exception as e:
+        logger.error(f"Error in process_credit_billing: {e}")
+        results["errors"] += 1
+    
+    return results
+
+# Admin endpoint to manually trigger credit billing
+@api_router.post("/admin/process-credit-billing")
+async def admin_process_credit_billing(admin: dict = Depends(require_admin)):
+    """Manually trigger credit billing processing"""
+    results = await process_credit_billing()
+    return {
+        "success": True,
+        "results": results
+    }
 
 @app.on_event("shutdown")
 async def shutdown():
