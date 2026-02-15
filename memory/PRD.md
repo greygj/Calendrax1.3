@@ -66,7 +66,9 @@ First 100 business signups get special "Centurion" status with lifetime benefits
   id, ownerId, businessName, description, logo, postcode, address,
   approved, approvedAt, approvedBy, rejected, rejectedReason,
   stripeConnectAccountId, stripeConnectOnboarded,
-  depositLevel, isCenturion, centurionJoinedAt, createdAt
+  depositLevel, isCenturion, centurionJoinedAt,
+  referralCode, referralCredits, referredBy, referralBonusPaid,
+  createdAt
 }
 ```
 
@@ -86,6 +88,14 @@ First 100 business signups get special "Centurion" status with lifetime benefits
 - `GET /api/centurions/count` - Current count and availability
 - `GET /api/centurions/list` - List of approved Centurion businesses
 - `GET /api/centurions/pricing` - Both tier pricing info
+
+### Referrals
+- `GET /api/referral/validate/{code}` - Validate a referral code
+- `GET /api/referral/my-info` - Get current business's referral code and credits
+- `POST /api/referral/award-credits/{business_id}` - Award credits on first payment (internal)
+- `POST /api/admin/referral-credits/{business_id}` - Admin: add/remove credits
+- `GET /api/admin/businesses-with-referrals` - Admin: list all businesses with referral info
+- `POST /api/admin/migrate-referral-codes` - Admin: generate codes for existing businesses
 
 ### Stripe
 - `POST /api/stripe/create-setup-intent` - For card capture during signup
