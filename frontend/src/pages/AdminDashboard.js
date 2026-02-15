@@ -191,6 +191,23 @@ const AdminDashboard = () => {
     }
   };
 
+  // Process credit billing manually
+  const handleProcessCreditBilling = async () => {
+    try {
+      setProcessingBilling(true);
+      const result = await referralAPI.adminProcessCreditBilling();
+      if (result.data.results) {
+        const { processed, credits_used, errors } = result.data.results;
+        alert(`Credit billing processed:\n- ${processed} subscriptions processed\n- ${credits_used} credits used\n- ${errors} errors`);
+      }
+      loadData();
+    } catch (err) {
+      setError('Failed to process credit billing');
+    } finally {
+      setProcessingBilling(false);
+    }
+  };
+
   // Refund action
   const handleRefund = async (appointmentId, amount) => {
     try {
