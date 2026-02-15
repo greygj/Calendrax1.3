@@ -663,7 +663,21 @@ const AdminDashboard = () => {
         
         return (
           <div>
-            <h2 className="text-white text-xl font-semibold mb-6">Referral Management</h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-white text-xl font-semibold">Referral Management</h2>
+              <button
+                onClick={handleProcessCreditBilling}
+                disabled={processingBilling}
+                className="flex items-center gap-2 bg-brand-500 hover:bg-brand-600 disabled:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                {processingBilling ? (
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                ) : (
+                  <CreditCard className="w-4 h-4" />
+                )}
+                Process Credit Billing
+              </button>
+            </div>
             
             {/* Stats Cards */}
             {referralStats && (
