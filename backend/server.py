@@ -1794,6 +1794,24 @@ async def subscription_webhook(request: Request):
                         "lastPaymentDate": datetime.now(timezone.utc).isoformat()
                     }}
                 )
+                
+                # Award referral credits on first successful payment
+                business = await db.businesses.find_one({"id": sub.get("businessId")})
+                if business and business.get("referredBy") and not business.get("referralBonusPaid"):
+                    # Find the referring business
+                    referring_business = await db.businesses.find_one({"referralCode": business["referredBy"]})
+                    if referring_business:
+                        # Centurions get 2 credits, non-Centurions get 1
+                        credits_to_award = 2 if referring_business.get("isCenturion") else 1
+                        await db.businesses.update_one(
+                            {"id": referring_business["id"]},
+                            {"$inc": {"referralCredits": credits_to_award}}
+                        )
+                        await db.businesses.update_one(
+                            {"id": business["id"]},
+                            {"$set": {"referralBonusPaid": True}}
+                        )
+                        logger.info(f"Awarded {credits_to_award} referral credits to {referring_business['businessName']} for {business['businessName']}'s first payment")
         
         elif event_type == "invoice.payment_succeeded":
             # Recurring payment successful
@@ -1808,6 +1826,22 @@ async def subscription_webhook(request: Request):
                         "failedPayments": 0
                     }}
                 )
+                
+                # Award referral credits if this is the first successful recurring payment
+                business = await db.businesses.find_one({"id": sub.get("businessId")})
+                if business and business.get("referredBy") and not business.get("referralBonusPaid"):
+                    referring_business = await db.businesses.find_one({"referralCode": business["referredBy"]})
+                    if referring_business:
+                        credits_to_award = 2 if referring_business.get("isCenturion") else 1
+                        await db.businesses.update_one(
+                            {"id": referring_business["id"]},
+                            {"$inc": {"referralCredits": credits_to_award}}
+                        )
+                        await db.businesses.update_one(
+                            {"id": business["id"]},
+                            {"$set": {"referralBonusPaid": True}}
+                        )
+                        logger.info(f"Awarded {credits_to_award} referral credits to {referring_business['businessName']} for {business['businessName']}'s first payment")
         
         elif event_type == "invoice.payment_failed":
             # Payment failed
