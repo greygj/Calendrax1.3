@@ -425,6 +425,16 @@ async def register(user_data: UserCreate):
             base_price = STANDARD_BASE_PRICE
             pricing_tier = "standard"
         
+        # Generate referral code for this business
+        referral_code = await generate_referral_code(is_centurion)
+        
+        # Validate referral code if provided
+        referred_by_code = None
+        if user_data.referralCode:
+            referring_business = await validate_referral_code(user_data.referralCode)
+            if referring_business:
+                referred_by_code = user_data.referralCode.upper().strip()
+        
         business_doc = {
             "id": business_id,
             "ownerId": user_id,
@@ -439,6 +449,10 @@ async def register(user_data: UserCreate):
             "rejected": False,
             "isCenturion": is_centurion,
             "centurionJoinedAt": datetime.now(timezone.utc).isoformat() if is_centurion else None,
+            "referralCode": referral_code,
+            "referralCredits": 0,
+            "referredBy": referred_by_code,
+            "referralBonusPaid": False,
             "createdAt": datetime.now(timezone.utc).isoformat()
         }
         await db.businesses.insert_one(business_doc)
