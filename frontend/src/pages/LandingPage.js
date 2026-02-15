@@ -118,18 +118,27 @@ const LandingPage = () => {
       {/* Centurion Founding Members Banner */}
       {centurionData.isAvailable && (
         <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-b border-amber-500/30">
+          <style>{`
+            @keyframes pulse-glow {
+              0%, 100% { text-shadow: 0 0 10px rgba(251, 191, 36, 0.5); }
+              50% { text-shadow: 0 0 20px rgba(251, 191, 36, 0.8), 0 0 30px rgba(251, 191, 36, 0.4); }
+            }
+            .counter-pulse {
+              animation: pulse-glow 2s ease-in-out infinite;
+            }
+          `}</style>
           <div className="max-w-6xl mx-auto px-4 py-6 md:py-10">
             
-            {/* Mobile: Logo + Counter at TOP */}
-            <div className="flex flex-col items-center mb-4 lg:hidden">
+            {/* Mobile: Logo + Counter at TOP (side by side) */}
+            <div className="flex items-center justify-center gap-4 mb-4 lg:hidden">
               <img 
                 src="/calendrax-centurion-logo.png"
                 alt="Calendrax Centurions"
-                className="w-32 h-32 object-contain mb-2"
+                className="w-28 h-28 object-contain"
               />
               <div className="text-center">
                 <div className="text-3xl font-bold">
-                  <span className="text-amber-400">{centurionData.count}</span>
+                  <span className="text-amber-400 counter-pulse">{displayCount}</span>
                   <span className="text-gray-500 mx-1">/</span>
                   <span className="text-white">{centurionData.maxCenturions}</span>
                 </div>
@@ -198,7 +207,7 @@ const LandingPage = () => {
               <div className="hidden lg:flex items-center gap-4 mt-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold">
-                    <span className="text-amber-400">{centurionData.count}</span>
+                    <span className="text-amber-400 counter-pulse">{displayCount}</span>
                     <span className="text-gray-500 mx-1">/</span>
                     <span className="text-white">{centurionData.maxCenturions}</span>
                   </div>
