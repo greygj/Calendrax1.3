@@ -547,6 +547,43 @@ const SignupForm = ({ redirectUrl }) => {
               />
             </div>
           </div>
+
+          {/* Referral Code */}
+          <div>
+            <label className="text-white text-sm mb-2 block">
+              Referral Code <span className="text-gray-500 text-xs">(Optional)</span>
+            </label>
+            <div className="relative">
+              <Gift className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+              <input
+                type="text"
+                name="referralCode"
+                value={formData.referralCode}
+                onChange={handleChange}
+                placeholder="Enter referral code (e.g., CC001)"
+                className={`w-full bg-cardBg border rounded-lg py-4 pl-12 pr-12 text-white placeholder-gray-500 focus:outline-none transition-colors uppercase ${
+                  referralValidation.valid === true ? 'border-green-500' : 
+                  referralValidation.valid === false ? 'border-red-500' : 
+                  'border-zinc-800 focus:border-brand-500'
+                }`}
+              />
+              {referralValidation.checking && (
+                <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 animate-spin" />
+              )}
+              {!referralValidation.checking && referralValidation.valid === true && (
+                <Check className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />
+              )}
+              {!referralValidation.checking && referralValidation.valid === false && (
+                <X className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" />
+              )}
+            </div>
+            {referralValidation.valid === true && referralValidation.businessName && (
+              <p className="text-green-500 text-xs mt-1">Referred by: {referralValidation.businessName}</p>
+            )}
+            {referralValidation.valid === false && formData.referralCode.length >= 5 && (
+              <p className="text-red-500 text-xs mt-1">Invalid referral code</p>
+            )}
+          </div>
         )}
 
         {/* Full Name */}
