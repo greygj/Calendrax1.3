@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { adminAPI, reviewAPI } from '../services/api';
+import { adminAPI, reviewAPI, referralAPI } from '../services/api';
 import { formatDate } from '../utils/dateFormat';
 import { 
   LogOut, Users, Building2, Calendar, CreditCard, BarChart3, 
   ChevronRight, Check, X, Edit2, Trash2, Eye, AlertTriangle,
-  PoundSterling, RefreshCw, Shield, Clock, Star, Bell, Send
+  PoundSterling, RefreshCw, Shield, Clock, Star, Bell, Send,
+  Gift, Plus, Minus, Search, TrendingUp, Award
 } from 'lucide-react';
 
 const AdminDashboard = () => {
