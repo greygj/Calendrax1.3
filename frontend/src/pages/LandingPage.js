@@ -45,16 +45,19 @@ const LandingPage = () => {
   useEffect(() => {
     if (centurionData.count > 0 && !hasAnimated) {
       setHasAnimated(true);
+      const targetCount = centurionData.count;
       const duration = 2000; // 2 seconds
-      const steps = 30;
-      const increment = centurionData.count / steps;
+      const steps = Math.min(targetCount, 30); // Max 30 steps
+      const increment = targetCount / steps;
       const stepDuration = duration / steps;
       let current = 0;
+      let stepCount = 0;
       
       const timer = setInterval(() => {
+        stepCount++;
         current += increment;
-        if (current >= centurionData.count) {
-          setDisplayCount(centurionData.count);
+        if (stepCount >= steps || current >= targetCount) {
+          setDisplayCount(targetCount);
           clearInterval(timer);
         } else {
           setDisplayCount(Math.floor(current));
