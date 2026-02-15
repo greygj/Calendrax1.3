@@ -834,6 +834,135 @@ async def get_pricing_info():
         "maxCenturions": MAX_CENTURIONS
     }
 
+# ==================== REFERRAL ROUTES ====================
+
+@api_router.get("/referral/validate/{code}")
+async def validate_referral(code: str):
+    """Validate a referral code and return basic info about the referring business"""
+    business = await validate_referral_code(code)
+    if not business:
+        return {"valid": False, "message": "Invalid referral code"}
+    return {
+        "valid": True,
+        "businessName": business.get("businessName"),
+        "isCenturion": business.get("isCenturion", False)
+    }
+
+@api_router.get("/referral/my-info")
+async def get_my_referral_info(user: dict = Depends(require_business_owner)):
+    """Get the current business owner's referral code and credits"""
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    # Count successful referrals
+    referral_count = await db.businesses.count_documents({
+        "referredBy": business.get("referralCode"),
+        "referralBonusPaid": True
+    })
+    
+    return {
+        "referralCode": business.get("referralCode"),
+        "referralCredits": business.get("referralCredits", 0),
+        "isCenturion": business.get("isCenturion", False),
+        "totalReferrals": referral_count
+    }
+
+@api_router.post("/referral/award-credits/{business_id}")
+async def award_referral_credits(business_id: str):
+    """Award referral credits when a referred business makes their first payment.
+    Called internally when payment is successful.
+    Centurions get 2 credits, non-Centurions get 1 credit."""
+    
+    # Find the business that made the payment
+    business = await db.businesses.find_one({"id": business_id})
+    if not business:
+        return {"success": False, "message": "Business not found"}
+    
+    # Check if already credited
+    if business.get("referralBonusPaid"):
+        return {"success": False, "message": "Referral bonus already paid"}
+    
+    # Check if they were referred
+    referred_by_code = business.get("referredBy")
+    if not referred_by_code:
+        return {"success": False, "message": "No referral code used"}
+    
+    # Find the referring business
+    referring_business = await db.businesses.find_one({"referralCode": referred_by_code})
+    if not referring_business:
+        return {"success": False, "message": "Referring business not found"}
+    
+    # Determine credits to award (2 for Centurions, 1 for non-Centurions)
+    credits_to_award = 2 if referring_business.get("isCenturion") else 1
+    
+    # Award credits to the referring business
+    await db.businesses.update_one(
+        {"id": referring_business["id"]},
+        {"$inc": {"referralCredits": credits_to_award}}
+    )
+    
+    # Mark this business as having paid the referral bonus
+    await db.businesses.update_one(
+        {"id": business_id},
+        {"$set": {"referralBonusPaid": True}}
+    )
+    
+    logger.info(f"Awarded {credits_to_award} referral credits to {referring_business['businessName']} for referring {business['businessName']}")
+    
+    return {
+        "success": True,
+        "creditsAwarded": credits_to_award,
+        "referringBusiness": referring_business["businessName"]
+    }
+
+class ReferralCreditUpdate(BaseModel):
+    credits: int  # Positive to add, negative to deduct
+
+@api_router.post("/admin/referral-credits/{business_id}")
+async def admin_update_referral_credits(
+    business_id: str, 
+    update: ReferralCreditUpdate,
+    admin: dict = Depends(require_admin)
+):
+    """Admin endpoint to add or remove referral credits from a business"""
+    business = await db.businesses.find_one({"id": business_id})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    current_credits = business.get("referralCredits", 0)
+    new_credits = max(0, current_credits + update.credits)  # Can't go below 0
+    
+    await db.businesses.update_one(
+        {"id": business_id},
+        {"$set": {"referralCredits": new_credits}}
+    )
+    
+    action = "added" if update.credits > 0 else "removed"
+    logger.info(f"Admin {admin['email']} {action} {abs(update.credits)} referral credits for business {business['businessName']}. New total: {new_credits}")
+    
+    return {
+        "success": True,
+        "previousCredits": current_credits,
+        "creditsChanged": update.credits,
+        "newCredits": new_credits,
+        "businessName": business["businessName"]
+    }
+
+@api_router.get("/admin/businesses-with-referrals")
+async def admin_get_businesses_with_referrals(admin: dict = Depends(require_admin)):
+    """Admin endpoint to get all businesses with their referral info"""
+    businesses = await db.businesses.find(
+        {},
+        {
+            "id": 1, "businessName": 1, "isCenturion": 1, 
+            "referralCode": 1, "referralCredits": 1, "referredBy": 1,
+            "approved": 1, "createdAt": 1
+        }
+    ).sort("createdAt", -1).to_list(1000)
+    
+    return remove_mongo_id(businesses)
+
 @api_router.post("/stripe/create-setup-intent")
 async def create_setup_intent():
     """Create a Stripe SetupIntent for collecting card details during registration"""
