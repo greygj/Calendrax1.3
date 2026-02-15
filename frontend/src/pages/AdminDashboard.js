@@ -26,6 +26,7 @@ const AdminDashboard = () => {
   const [referralBusinesses, setReferralBusinesses] = useState([]);
   const [referralSearch, setReferralSearch] = useState('');
   const [creditUpdateAmount, setCreditUpdateAmount] = useState({});
+  const [processingBilling, setProcessingBilling] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('');
