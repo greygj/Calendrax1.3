@@ -680,29 +680,60 @@ const SignupForm = ({ redirectUrl }) => {
           </div>
         </div>
 
-        {/* Card Details - Business Owner Only */}
+        {/* Card Details - Business Owner Only (Optional) */}
         {activeTab === 'business' && (
           <div>
             <label className="text-white text-sm mb-2 block">
-              Card Details <span className="text-red-500">*</span>
+              Card Details <span className="text-gray-500 text-xs">(Optional - can add later)</span>
             </label>
-            <div className="bg-cardBg border border-zinc-800 rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <CreditCard className="w-5 h-5 text-gray-500" />
-                <span className="text-gray-400 text-sm">Secure payment via Stripe</span>
+            
+            {!skipCard ? (
+              <div className="bg-cardBg border border-zinc-800 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <CreditCard className="w-5 h-5 text-gray-500" />
+                  <span className="text-gray-400 text-sm">Secure payment via Stripe</span>
+                </div>
+                <CardElement 
+                  options={cardElementOptions}
+                  onChange={handleCardChange}
+                  className="p-3 border border-zinc-700 rounded-lg bg-zinc-900"
+                />
+                {cardError && (
+                  <p className="text-red-500 text-xs mt-2">{cardError}</p>
+                )}
+                <p className="text-gray-500 text-xs mt-2">
+                  Your card will not be charged during the 30-day free trial. You can cancel anytime before the trial ends.
+                </p>
+                
+                {/* Skip for now button */}
+                <button
+                  type="button"
+                  onClick={() => setSkipCard(true)}
+                  className="mt-3 text-brand-400 text-sm hover:text-brand-300 hover:underline transition-colors"
+                >
+                  Skip for now - add card later
+                </button>
               </div>
-              <CardElement 
-                options={cardElementOptions}
-                onChange={handleCardChange}
-                className="p-3 border border-zinc-700 rounded-lg bg-zinc-900"
-              />
-              {cardError && (
-                <p className="text-red-500 text-xs mt-2">{cardError}</p>
-              )}
-              <p className="text-gray-500 text-xs mt-2">
-                Your card will not be charged during the 30-day free trial. You can cancel anytime before the trial ends.
-              </p>
-            </div>
+            ) : (
+              <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-yellow-400 font-medium text-sm">Card details skipped</p>
+                    <p className="text-yellow-200/70 text-xs mt-1">
+                      You can add your card details anytime from your Profile settings. Remember to add payment details before your 30-day trial ends to avoid losing access.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setSkipCard(false)}
+                      className="mt-2 text-yellow-400 text-xs hover:text-yellow-300 hover:underline transition-colors"
+                    >
+                      Actually, I want to add my card now
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
