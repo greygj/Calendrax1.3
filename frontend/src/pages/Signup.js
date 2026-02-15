@@ -65,7 +65,8 @@ const SignupForm = ({ redirectUrl }) => {
           logo: null,
           logoPreview: parsed.logoPreview || null,
           acceptTerms: parsed.acceptTerms || false,
-          acceptPrivacy: parsed.acceptPrivacy || false
+          acceptPrivacy: parsed.acceptPrivacy || false,
+          referralCode: parsed.referralCode || ''
         };
       }
     } catch (e) {
@@ -83,7 +84,8 @@ const SignupForm = ({ redirectUrl }) => {
       logo: null,
       logoPreview: null,
       acceptTerms: false,
-      acceptPrivacy: false
+      acceptPrivacy: false,
+      referralCode: ''
     };
   };
 
@@ -102,6 +104,7 @@ const SignupForm = ({ redirectUrl }) => {
 
   const [activeTab, setActiveTab] = useState(getSavedTab);
   const [formData, setFormData] = useState(getSavedFormData);
+  const [referralValidation, setReferralValidation] = useState({ valid: null, businessName: '', checking: false });
 
   // Load Centurion count
   useEffect(() => {
@@ -116,6 +119,31 @@ const SignupForm = ({ redirectUrl }) => {
       console.error('Failed to load centurion count:', error);
     }
   };
+
+  // Validate referral code when it changes
+  useEffect(() => {
+    const validateReferral = async () => {
+      if (!formData.referralCode || formData.referralCode.length < 5) {
+        setReferralValidation({ valid: null, businessName: '', checking: false });
+        return;
+      }
+      
+      setReferralValidation(prev => ({ ...prev, checking: true }));
+      try {
+        const res = await referralAPI.validate(formData.referralCode);
+        setReferralValidation({
+          valid: res.data.valid,
+          businessName: res.data.businessName || '',
+          checking: false
+        });
+      } catch (error) {
+        setReferralValidation({ valid: false, businessName: '', checking: false });
+      }
+    };
+
+    const debounce = setTimeout(validateReferral, 500);
+    return () => clearTimeout(debounce);
+  }, [formData.referralCode]);
 
   // Save form data to localStorage whenever it changes
   useEffect(() => {
