@@ -290,7 +290,8 @@ const SignupForm = ({ redirectUrl }) => {
           postcode: formData.postcode,
           logo: formData.logoPreview,
           joinCenturion: joinCenturion && centurionData.isAvailable,
-          stripePaymentMethodId: stripePaymentMethodId
+          stripePaymentMethodId: stripePaymentMethodId,
+          referralCode: formData.referralCode || null
         })
       };
 
