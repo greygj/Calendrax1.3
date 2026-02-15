@@ -35,7 +35,6 @@ const LandingPage = () => {
   const loadCenturionCount = async () => {
     try {
       const res = await centurionAPI.getCount();
-      console.log('Centurion data loaded:', res.data);
       setCenturionData(res.data);
     } catch (error) {
       console.error('Failed to load centurion count:', error);
