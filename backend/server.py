@@ -612,7 +612,10 @@ async def login(credentials: UserLogin):
             "mobile": user["mobile"],
             "role": user["role"]
         },
-        "business": business
+        "business": business,
+        "accountFrozen": subscription_blocked,
+        "frozenMessage": subscription_message,
+        "frozenDetails": subscription_status_data
     }
 
 @api_router.get("/auth/me")
