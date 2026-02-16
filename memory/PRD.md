@@ -224,6 +224,16 @@ First 100 business signups get special "Centurion" status with lifetime benefits
 
 ---
 
+## Completed Features
+
+### Frozen Account & Reactivation Flow (P0 - COMPLETED)
+- Backend detects frozen status on login for expired trials without payment
+- Frontend displays modal overlay with Stripe card input
+- Reactivation endpoint processes payment and updates subscription status
+- Tested with user `frozen_test@test.com` / `Test123!`
+
+---
+
 ## Backlog
 
 ### P1 (High Priority)
