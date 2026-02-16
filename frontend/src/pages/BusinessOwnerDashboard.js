@@ -129,6 +129,12 @@ const BusinessOwnerDashboard = () => {
   const logoInputRef = useRef(null);
   
   const [showNotifications, setShowNotifications] = useState(false);
+  
+  // Frozen account state
+  const [accountFrozen, setAccountFrozen] = useState(user?.accountFrozen || false);
+  const [frozenMessage, setFrozenMessage] = useState(user?.frozenMessage || '');
+  const [reactivating, setReactivating] = useState(false);
+  const [reactivateError, setReactivateError] = useState('');
 
   const business = user?.business || businessData;
 
