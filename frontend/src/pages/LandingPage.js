@@ -185,11 +185,11 @@ const LandingPage = () => {
             {/* Expanded View - Shown when expanded */}
             {centurionExpanded && (
               <div className="mt-6 pt-6 border-t border-amber-500/20 animate-in slide-in-from-top duration-300">
-                <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-8">
+                <div className="flex flex-col items-center gap-6">
                   
                   {/* Benefits Section */}
-                  <div className="flex-1">
-                    <h3 className="text-white text-lg font-semibold mb-3">Centurion Benefits:</h3>
+                  <div className="w-full max-w-2xl">
+                    <h3 className="text-white text-lg font-semibold mb-3 text-center">Centurion Benefits:</h3>
                     <ul className="space-y-2 text-sm md:text-base">
                       <li className="flex items-start gap-2 text-gray-300">
                         <Check className="w-4 h-4 md:w-5 md:h-5 text-amber-400 mt-0.5 flex-shrink-0" />
