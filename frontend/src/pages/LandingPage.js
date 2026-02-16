@@ -245,7 +245,7 @@ const LandingPage = () => {
       <section className="bg-gradient-to-b from-zinc-900 to-black py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Book Your Next <span className="text-brand-400">Appointment</span>
+            Customers - Book Your Next <span className="text-brand-400">Appointment</span>
           </h1>
           <p className="text-gray-400 text-lg mb-8">
             Discover and book services from local businesses in just a few clicks
