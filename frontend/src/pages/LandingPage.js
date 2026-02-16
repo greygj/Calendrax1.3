@@ -218,7 +218,7 @@ const LandingPage = () => {
                   </div>
 
                   {/* CTA Section */}
-                  <div className="flex flex-col items-center lg:items-end gap-3">
+                  <div className="flex flex-col items-center gap-3 w-full lg:w-auto">
                     <button
                       onClick={() => navigate('/signup')}
                       className="bg-gradient-to-r from-amber-500 to-yellow-600 text-black px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold text-base md:text-lg hover:from-amber-400 hover:to-yellow-500 transition-all shadow-lg shadow-amber-500/30"
