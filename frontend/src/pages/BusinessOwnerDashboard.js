@@ -1122,7 +1122,17 @@ const BusinessOwnerDashboard = () => {
               )}
             </div>
             <div>
-              <h1 className="text-white text-xl font-bold">{business?.businessName || 'Calendrax'}</h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-white text-xl font-bold">{business?.businessName || 'Calendrax'}</h1>
+                {referralInfo?.isCenturion && (
+                  <img 
+                    src="/calendrax-centurion-logo.png" 
+                    alt="Centurion" 
+                    className="w-6 h-6 object-contain"
+                    title="Centurion Member"
+                  />
+                )}
+              </div>
               <p className="text-gray-500 text-sm">Business Dashboard</p>
             </div>
           </div>
