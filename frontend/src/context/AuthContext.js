@@ -37,15 +37,21 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await authAPI.login({ email, password });
-      const { token, user: userData, business } = response.data;
+      const { token, user: userData, business, accountFrozen, frozenMessage, frozenDetails } = response.data;
       
-      const fullUser = { ...userData, business };
+      const fullUser = { 
+        ...userData, 
+        business,
+        accountFrozen: accountFrozen || false,
+        frozenMessage: frozenMessage || null,
+        frozenDetails: frozenDetails || null
+      };
       
       localStorage.setItem('booka_token', token);
       localStorage.setItem('booka_user', JSON.stringify(fullUser));
       setUser(fullUser);
       
-      return { success: true, user: fullUser };
+      return { success: true, user: fullUser, accountFrozen, frozenMessage };
     } catch (error) {
       const message = error.response?.data?.detail || 'Invalid email or password';
       return { success: false, error: message };
