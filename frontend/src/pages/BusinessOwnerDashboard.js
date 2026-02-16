@@ -1,10 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, Calendar, Clock, Users, Settings, ChevronRight, ChevronLeft, Building2, MapPin, X, Plus, Edit2, Trash2, Bell, Check, XCircle, User, UserPlus, Save, CreditCard, Banknote, ExternalLink, AlertCircle, TrendingUp, TrendingDown, PoundSterling, BarChart3, AlertTriangle, PieChart, Activity, RefreshCw, ArrowUpRight, ArrowDownRight, Image, Upload, Loader2, FileText, Download, Receipt, Home, Smartphone, Lock, Mail, MessageCircle, Eye, EyeOff, Gift, Copy, CheckCircle } from 'lucide-react';
-import { serviceAPI, availabilityAPI, appointmentAPI, notificationAPI, staffAPI, businessAPI, stripeConnectAPI, subscriptionAPI, revenueAPI, payoutAPI, analyticsAPI, billingAPI, authAPI, referralAPI } from '../services/api';
+import { LogOut, Calendar, Clock, Users, Settings, ChevronRight, ChevronLeft, Building2, MapPin, X, Plus, Edit2, Trash2, Bell, Check, XCircle, User, UserPlus, Save, CreditCard, Banknote, ExternalLink, AlertCircle, TrendingUp, TrendingDown, PoundSterling, BarChart3, AlertTriangle, PieChart, Activity, RefreshCw, ArrowUpRight, ArrowDownRight, Image, Upload, Loader2, FileText, Download, Receipt, Home, Smartphone, Lock, Mail, MessageCircle, Eye, EyeOff, Gift, Copy, CheckCircle, ShieldAlert } from 'lucide-react';
+import { serviceAPI, availabilityAPI, appointmentAPI, notificationAPI, staffAPI, businessAPI, stripeConnectAPI, subscriptionAPI, revenueAPI, payoutAPI, analyticsAPI, billingAPI, authAPI, referralAPI, stripeAPI } from '../services/api';
 import { formatDate } from '../utils/dateFormat';
 import InstallPrompt from '../components/InstallPrompt';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+
+// Initialize Stripe
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 const BusinessOwnerDashboard = () => {
   const { user, logout, updateUser } = useAuth();
