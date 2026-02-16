@@ -544,6 +544,8 @@ async def login(credentials: UserLogin):
     # Check subscription status for business owners
     subscription_blocked = False
     subscription_message = None
+    subscription_status_data = None
+    
     if user["role"] == UserRole.BUSINESS_OWNER:
         business = await db.businesses.find_one({"ownerId": user["id"]})
         if business:
@@ -551,17 +553,44 @@ async def login(credentials: UserLogin):
             if subscription:
                 # Check if subscription is blocked (failed payment and not free access)
                 if not subscription.get("freeAccessOverride", False):
-                    if subscription.get("status") == "inactive" or subscription.get("lastPaymentStatus") == "failed":
-                        # Check if trial has ended
-                        trial_end = subscription.get("trialEndDate")
-                        if trial_end:
-                            trial_end_dt = datetime.fromisoformat(trial_end.replace('Z', '+00:00')) if isinstance(trial_end, str) else trial_end
-                            if datetime.now(timezone.utc) > trial_end_dt:
-                                subscription_blocked = True
-                                subscription_message = "Your subscription payment has failed. Please update your payment method to continue using Calendrax."
+                    trial_end = subscription.get("trialEndDate")
+                    trial_end_dt = None
+                    trial_expired = False
+                    
+                    if trial_end:
+                        trial_end_dt = datetime.fromisoformat(trial_end.replace('Z', '+00:00')) if isinstance(trial_end, str) else trial_end
+                        trial_expired = datetime.now(timezone.utc) > trial_end_dt
+                    
+                    # Case 1: Trial expired without payment method
+                    if subscription.get("status") == "trial" and trial_expired and not subscription.get("hasPaymentMethod"):
+                        subscription_blocked = True
+                        subscription_message = "Your free trial has ended. Please add a payment method to continue using Calendrax."
+                        subscription_status_data = {
+                            "reason": "trial_expired_no_payment",
+                            "canReactivate": True
+                        }
+                    
+                    # Case 2: Payment failed (card declined, expired, etc.)
+                    elif subscription.get("status") in ["inactive", "past_due"] or subscription.get("lastPaymentStatus") == "failed":
+                        subscription_blocked = True
+                        subscription_message = "Your payment failed. Please update your payment method to continue using Calendrax."
+                        subscription_status_data = {
+                            "reason": "payment_failed",
+                            "canReactivate": True
+                        }
+                    
+                    # Case 3: Trial expired but has payment method (should auto-charge, but mark if still trial status)
+                    elif subscription.get("status") == "trial" and trial_expired and subscription.get("hasPaymentMethod"):
+                        # This shouldn't happen normally, but handle it
+                        subscription_blocked = True
+                        subscription_message = "Your subscription is being processed. If this persists, please contact support."
+                        subscription_status_data = {
+                            "reason": "subscription_pending",
+                            "canReactivate": True
+                        }
     
-    if subscription_blocked:
-        raise HTTPException(status_code=403, detail=subscription_message)
+    # Instead of blocking login completely, allow login but return frozen status
+    # The frontend will show a restricted view where user can only add payment
     
     token = create_token(user["id"], user["role"])
     
