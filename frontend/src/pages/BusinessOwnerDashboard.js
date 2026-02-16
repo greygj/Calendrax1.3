@@ -11,6 +11,108 @@ import { Elements, CardElement, useStripe, useElements } from '@stripe/react-str
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
+// Card element options
+const cardElementOptions = {
+  style: {
+    base: {
+      fontSize: '16px',
+      color: '#ffffff',
+      '::placeholder': { color: '#6b7280' },
+      backgroundColor: 'transparent'
+    },
+    invalid: { color: '#ef4444' }
+  }
+};
+
+// Reactivate Payment Form Component
+const ReactivatePaymentForm = ({ onSuccess, onError, reactivating, setReactivating }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [cardComplete, setCardComplete] = useState(false);
+  const [cardError, setCardError] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!stripe || !elements || !cardComplete) return;
+
+    setReactivating(true);
+    onError('');
+
+    try {
+      // Create setup intent
+      const setupRes = await stripeAPI.createSetupIntent();
+      const clientSecret = setupRes.data.clientSecret;
+
+      // Confirm card setup
+      const { error: stripeError, setupIntent } = await stripe.confirmCardSetup(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement)
+        }
+      });
+
+      if (stripeError) {
+        onError(stripeError.message);
+        setReactivating(false);
+        return;
+      }
+
+      // Call reactivate endpoint
+      const reactivateRes = await billingAPI.reactivateAccount(setupIntent.payment_method);
+      
+      if (reactivateRes.data.success) {
+        onSuccess();
+      } else {
+        onError('Failed to reactivate account. Please try again.');
+      }
+    } catch (err) {
+      console.error('Reactivation error:', err);
+      onError(err.response?.data?.detail || 'Payment failed. Please try again.');
+    } finally {
+      setReactivating(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="mb-4">
+        <label className="text-gray-400 text-sm mb-2 block">Card Details</label>
+        <div className="bg-zinc-800 border border-zinc-700 rounded-lg p-3">
+          <CardElement 
+            options={cardElementOptions}
+            onChange={(e) => {
+              setCardComplete(e.complete);
+              setCardError(e.error ? e.error.message : '');
+            }}
+          />
+        </div>
+        {cardError && <p className="text-red-400 text-xs mt-1">{cardError}</p>}
+      </div>
+      
+      <button
+        type="submit"
+        disabled={!stripe || !cardComplete || reactivating}
+        className="w-full bg-brand-500 text-black font-bold py-3 rounded-lg hover:bg-brand-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+      >
+        {reactivating ? (
+          <>
+            <Loader2 className="w-5 h-5 animate-spin" />
+            Processing...
+          </>
+        ) : (
+          <>
+            <CreditCard className="w-5 h-5" />
+            Add Card & Reactivate Account
+          </>
+        )}
+      </button>
+      
+      <p className="text-gray-500 text-xs mt-3 text-center">
+        Your subscription fee will be charged immediately to reactivate your account.
+      </p>
+    </form>
+  );
+};
+
 const BusinessOwnerDashboard = () => {
   const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
