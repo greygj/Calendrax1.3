@@ -2160,6 +2160,181 @@ async def enable_invoice_emails(user: dict = Depends(require_business_owner)):
         logger.error(f"Error enabling invoice emails: {e}")
         raise HTTPException(status_code=500, detail="Failed to enable invoice emails")
 
+# ==================== ACCOUNT REACTIVATION ====================
+
+class ReactivateAccountRequest(BaseModel):
+    paymentMethodId: str
+
+@api_router.post("/billing/reactivate-account")
+async def reactivate_account(request: ReactivateAccountRequest, user: dict = Depends(get_current_user)):
+    """
+    Reactivate a frozen account by adding payment method and charging immediately.
+    Used when:
+    1. Trial expired without payment method
+    2. Payment failed (card declined/expired)
+    """
+    if user["role"] != UserRole.BUSINESS_OWNER:
+        raise HTTPException(status_code=403, detail="Only business owners can reactivate accounts")
+    
+    business = await db.businesses.find_one({"ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    
+    subscription = await db.subscriptions.find_one({"businessId": business["id"]})
+    if not subscription:
+        raise HTTPException(status_code=404, detail="Subscription not found")
+    
+    # Check if account is actually frozen
+    if subscription.get("freeAccessOverride"):
+        return {"success": True, "message": "Account has free access - no reactivation needed"}
+    
+    customer_id = subscription.get("stripeCustomerId")
+    
+    try:
+        # If no Stripe customer exists, create one
+        if not customer_id:
+            customer = stripe.Customer.create(
+                email=user["email"],
+                name=user.get("fullName", ""),
+                metadata={
+                    "business_id": business["id"],
+                    "user_id": user["id"]
+                }
+            )
+            customer_id = customer.id
+            await db.subscriptions.update_one(
+                {"id": subscription["id"]},
+                {"$set": {"stripeCustomerId": customer_id}}
+            )
+        
+        # Attach the new payment method
+        stripe.PaymentMethod.attach(
+            request.paymentMethodId,
+            customer=customer_id
+        )
+        
+        # Set as default payment method
+        stripe.Customer.modify(
+            customer_id,
+            invoice_settings={
+                "default_payment_method": request.paymentMethodId
+            }
+        )
+        
+        # Calculate the subscription price
+        staff_count = await db.staff.count_documents({"businessId": business["id"]})
+        if staff_count == 0:
+            staff_count = 1
+        
+        is_centurion = business.get("isCenturion", False)
+        monthly_price = calculate_subscription_price(staff_count, is_centurion)
+        
+        # Check for referral credits first
+        referral_credits = business.get("referralCredits", 0)
+        
+        if referral_credits > 0:
+            # Use a credit instead of charging
+            await db.businesses.update_one(
+                {"id": business["id"]},
+                {"$inc": {"referralCredits": -1}}
+            )
+            
+            # Update subscription status to active
+            await db.subscriptions.update_one(
+                {"id": subscription["id"]},
+                {"$set": {
+                    "status": "active",
+                    "hasPaymentMethod": True,
+                    "stripePaymentMethodId": request.paymentMethodId,
+                    "lastPaymentStatus": "credit_used",
+                    "lastPaymentDate": datetime.now(timezone.utc).isoformat(),
+                    "nextBillingDate": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat()
+                }}
+            )
+            
+            # Create notification
+            notification_doc = {
+                "id": str(uuid.uuid4()),
+                "userId": user["id"],
+                "type": "account_reactivated",
+                "title": "Account Reactivated",
+                "message": f"Your account has been reactivated using 1 referral credit. You have {referral_credits - 1} credit(s) remaining.",
+                "read": False,
+                "createdAt": datetime.now(timezone.utc).isoformat()
+            }
+            await db.notifications.insert_one(notification_doc)
+            
+            return {
+                "success": True,
+                "paymentMethod": "credit_used",
+                "message": f"Account reactivated using 1 referral credit. {referral_credits - 1} credit(s) remaining.",
+                "amountCharged": 0,
+                "creditsRemaining": referral_credits - 1
+            }
+        
+        # No credits - charge the card immediately
+        payment_intent = stripe.PaymentIntent.create(
+            amount=int(monthly_price * 100),  # Convert to pence
+            currency="gbp",
+            customer=customer_id,
+            payment_method=request.paymentMethodId,
+            off_session=True,
+            confirm=True,
+            description=f"Calendrax Subscription - {business.get('businessName', 'Business')}",
+            metadata={
+                "business_id": business["id"],
+                "subscription_id": subscription["id"],
+                "type": "reactivation"
+            }
+        )
+        
+        if payment_intent.status == "succeeded":
+            # Update subscription status to active
+            await db.subscriptions.update_one(
+                {"id": subscription["id"]},
+                {"$set": {
+                    "status": "active",
+                    "hasPaymentMethod": True,
+                    "stripePaymentMethodId": request.paymentMethodId,
+                    "lastPaymentStatus": "succeeded",
+                    "lastPaymentDate": datetime.now(timezone.utc).isoformat(),
+                    "lastPaymentAmount": monthly_price,
+                    "nextBillingDate": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat(),
+                    "failedPayments": 0
+                }}
+            )
+            
+            # Create notification
+            notification_doc = {
+                "id": str(uuid.uuid4()),
+                "userId": user["id"],
+                "type": "account_reactivated",
+                "title": "Account Reactivated",
+                "message": f"Your account has been reactivated. £{monthly_price:.2f} has been charged to your card.",
+                "read": False,
+                "createdAt": datetime.now(timezone.utc).isoformat()
+            }
+            await db.notifications.insert_one(notification_doc)
+            
+            return {
+                "success": True,
+                "paymentMethod": "card",
+                "message": f"Account reactivated successfully. £{monthly_price:.2f} charged.",
+                "amountCharged": monthly_price
+            }
+        else:
+            raise HTTPException(status_code=400, detail="Payment failed. Please try a different card.")
+            
+    except stripe.error.CardError as e:
+        logger.error(f"Card error during reactivation: {e}")
+        raise HTTPException(status_code=400, detail=f"Card declined: {e.user_message}")
+    except stripe.error.StripeError as e:
+        logger.error(f"Stripe error during reactivation: {e}")
+        raise HTTPException(status_code=500, detail="Payment processing failed. Please try again.")
+    except Exception as e:
+        logger.error(f"Error reactivating account: {e}")
+        raise HTTPException(status_code=500, detail="Failed to reactivate account")
+
 # ==================== REFERRAL CREDIT BILLING ====================
 
 @api_router.post("/billing/process-with-credits")
