@@ -71,7 +71,8 @@ export const billingAPI = {
   getUpcoming: () => apiClient.get('/billing/upcoming'),
   enableInvoiceEmails: () => apiClient.post('/billing/enable-invoice-emails'),
   processWithCredits: () => apiClient.post('/billing/process-with-credits'),
-  getCreditHistory: () => apiClient.get('/billing/credit-history')
+  getCreditHistory: () => apiClient.get('/billing/credit-history'),
+  reactivateAccount: (paymentMethodId) => apiClient.post('/billing/reactivate-account', { paymentMethodId })
 };
 
 // Stripe
