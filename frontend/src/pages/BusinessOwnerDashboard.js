@@ -209,6 +209,7 @@ const BusinessOwnerDashboard = () => {
   // Referral state
   const [referralInfo, setReferralInfo] = useState(null);
   const [referralCopied, setReferralCopied] = useState(false);
+  const [centurionCardExpanded, setCenturionCardExpanded] = useState(false);
   
   // Password change state
   const [showPasswordForm, setShowPasswordForm] = useState(false);
