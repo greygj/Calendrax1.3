@@ -773,16 +773,9 @@ const SignupForm = ({ redirectUrl }) => {
             {/* Trial Info */}
             <div className="mt-4 pt-3 border-t border-brand-500/20">
               <p className="text-brand-400 font-medium text-sm mb-2">30-Day Free Trial</p>
-              <ul className="text-gray-400 text-sm space-y-1.5">
-                <li className="flex items-start gap-2">
-                  <span className="text-amber-400 mt-0.5">!</span>
-                  <span>Your card will be charged automatically after the trial ends unless you cancel.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-brand-400 mt-0.5">→</span>
-                  <span>To opt out, cancel your subscription in your <span className="text-white">Profile</span> before the 30 day trial ends.</span>
-                </li>
-              </ul>
+              <p className="text-gray-400 text-sm">
+                Please add your card details above before the end of your 30 day free trial or your account will be frozen. To opt out you do not need to do anything and there will be no charge.
+              </p>
             </div>
           </div>
         )}
