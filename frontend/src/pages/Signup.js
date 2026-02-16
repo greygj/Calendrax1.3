@@ -625,7 +625,7 @@ const SignupForm = ({ redirectUrl }) => {
 
         {/* Mobile */}
         <div>
-          <label className="text-white text-sm mb-2 block">Mobile Number <span className="text-gray-500 text-xs">(Optional)</span></label>
+          <label className="text-white text-sm mb-2 block">Mobile Number <span className="text-gray-500 text-xs">(Optional - Not used for marketing)</span></label>
           <div className="relative">
             <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
             <input
