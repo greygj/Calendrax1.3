@@ -107,6 +107,20 @@ First 100 business signups get special "Centurion" status with lifetime benefits
 
 ## Changelog
 
+### 2026-02-16 (Session 3 - Frozen Account Feature)
+- **Frozen Account Feature - TESTED & VERIFIED**:
+  - Users whose trial has expired without a payment method see a "Frozen Account" overlay
+  - Overlay blocks access to dashboard but allows adding payment method to reactivate
+  - Backend `/api/auth/login` returns `accountFrozen: true`, `frozenMessage`, and `frozenDetails`
+  - New endpoint `/api/billing/reactivate-account` to process payment and un-freeze account
+  - Reactivation form with Stripe card input and "Add Card & Reactivate Account" button
+  - Logout option available from frozen overlay
+- **UI Changes - TESTED & VERIFIED**:
+  - Mobile Number field on signup shows "(Optional - Not used for marketing)"
+  - Availability Save button moved to top of time slots panel for better mobile UX
+  - Time slots changed from 15-minute to 5-minute intervals
+  - Centurion logo visible next to business name in dashboard header
+
 ### 2025-02-15 (Session 2)
 - **Optional Card Entry on Signup**:
   - Business owners can now sign up without entering credit card details
