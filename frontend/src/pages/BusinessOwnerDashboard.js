@@ -1460,7 +1460,7 @@ const BusinessOwnerDashboard = () => {
                 </div>
                 <div className="flex-1 text-left">
                   <span className="block">Appointments</span>
-                  <span className="text-gray-500 text-sm">Today: {bookingsToday} · Tomorrow: {bookingsTomorrow}</span>
+                  <span className="text-gray-500 text-sm">Today: {bookingsToday} · Tomorrow: {bookingsTomorrow} · Total: {bookingsTotal}</span>
                 </div>
                 {pendingAppointments.length > 0 && (
                   <span className="bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full mr-2">
