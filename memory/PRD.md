@@ -124,6 +124,18 @@ First 100 business signups get special "Centurion" status with lifetime benefits
   - "Add Payment Method Now" CTA button navigates to Profile
   - Has `data-testid="trial-warning-banner"` for testing
   - Subtle pulse animation for attention
+- **Landing Page Centurion Card - Collapsible**:
+  - Smaller collapsed card showing key info:
+    - "Calling All Business Owners"
+    - "Take your chance to become a Calendrax Centurion!"
+    - Logo & Counter (16/100)
+    - "Secure LIFETIME reduced pricing (It will never increase - EVER)"
+    - "Let's grow together"
+  - "Learn More" button expands to show full benefits
+  - Expanded view shows: pricing details, referral benefits, CTA button, links
+  - "Show Less" button collapses the card
+- **Landing Page Text Update**:
+  - Changed "Book Your Next Appointment" to "Customers - Book Your Next Appointment"
 
 ### 2025-02-15
 - Updated Centurion logo to new transparent background version
