@@ -1153,7 +1153,15 @@ const BusinessOwnerDashboard = () => {
 
   // Filter appointments - separate upcoming from past
   const pendingAppointments = allAppointments.filter(a => a.status === 'pending' && !isDatePassed(a.date));
-  const confirmedAppointments = allAppointments.filter(a => a.status === 'confirmed' && !isDatePassed(a.date));
+  const confirmedAppointments = allAppointments
+    .filter(a => a.status === 'confirmed' && !isDatePassed(a.date))
+    .sort((a, b) => {
+      // Sort by date first, then by time
+      const dateCompare = new Date(a.date) - new Date(b.date);
+      if (dateCompare !== 0) return dateCompare;
+      // If same date, sort by time
+      return (a.time || '').localeCompare(b.time || '');
+    });
   const historyAppointments = allAppointments.filter(a => 
     a.status === 'cancelled' || 
     a.status === 'declined' || 
