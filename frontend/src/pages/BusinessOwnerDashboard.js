@@ -2505,22 +2505,24 @@ const BusinessOwnerDashboard = () => {
                                     {customerAppointments
                                       .sort((a, b) => new Date(b.date) - new Date(a.date))
                                       .map(apt => (
-                                        <div key={apt.id} className="flex items-center justify-between bg-zinc-800 rounded-lg p-3 text-sm">
-                                          <div>
-                                            <span className="text-white">{apt.serviceName}</span>
-                                            {apt.staffName && <span className="text-gray-500 ml-2">with {apt.staffName}</span>}
-                                          </div>
-                                          <div className="flex items-center gap-3">
-                                            <span className="text-gray-400">{formatDate(apt.date)} at {apt.time}</span>
-                                            <span className={`px-2 py-0.5 rounded text-xs ${
-                                              apt.status === 'confirmed' ? 'bg-brand-500/20 text-brand-400'
-                                              : apt.status === 'completed' ? 'bg-blue-500/20 text-blue-400'
-                                              : apt.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400'
-                                              : apt.status === 'cancelled' ? 'bg-gray-500/20 text-gray-400'
-                                              : 'bg-red-500/20 text-red-400'
-                                            }`}>
-                                              {apt.status}
-                                            </span>
+                                        <div key={apt.id} className="bg-zinc-800 rounded-lg p-3 text-sm">
+                                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                                            <div className="flex-1 min-w-0">
+                                              <span className="text-white">{apt.serviceName}</span>
+                                              {apt.staffName && <span className="text-gray-500 ml-2">with {apt.staffName}</span>}
+                                            </div>
+                                            <div className="flex items-center justify-between sm:justify-end gap-3">
+                                              <span className="text-gray-400 whitespace-nowrap">{formatDate(apt.date)} at {apt.time}</span>
+                                              <span className={`px-2 py-0.5 rounded text-xs whitespace-nowrap ${
+                                                apt.status === 'confirmed' ? 'bg-brand-500/20 text-brand-400'
+                                                : apt.status === 'completed' ? 'bg-blue-500/20 text-blue-400'
+                                                : apt.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400'
+                                                : apt.status === 'cancelled' ? 'bg-gray-500/20 text-gray-400'
+                                                : 'bg-red-500/20 text-red-400'
+                                              }`}>
+                                                {apt.status}
+                                              </span>
+                                            </div>
                                           </div>
                                         </div>
                                       ))}
