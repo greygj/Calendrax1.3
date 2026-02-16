@@ -13,6 +13,7 @@ const LandingPage = () => {
   const [centurionData, setCenturionData] = useState({ count: 0, maxCenturions: 100, isAvailable: true });
   const [displayCount, setDisplayCount] = useState(0);
   const [hasAnimated, setHasAnimated] = useState(false);
+  const [centurionExpanded, setCenturionExpanded] = useState(false);
 
   useEffect(() => {
     loadBusinesses();
