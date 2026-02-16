@@ -1450,6 +1450,157 @@ const BusinessOwnerDashboard = () => {
               </button>
             )}
 
+            {/* Centurion Hub Card - Only for Centurions */}
+            {referralInfo?.isCenturion && (
+              <div className="border border-amber-500/30 rounded-xl overflow-hidden bg-gradient-to-br from-amber-900/30 via-slate-800/50 to-slate-900/50">
+                {/* Clickable Header */}
+                <button
+                  onClick={() => setCenturionCardExpanded(!centurionCardExpanded)}
+                  className="w-full p-4 text-left hover:bg-amber-500/10 transition-colors"
+                >
+                  <div className="flex items-center gap-4">
+                    <img 
+                      src="/calendrax-centurion-logo.png" 
+                      alt="Centurion" 
+                      className="w-14 h-14 object-contain"
+                    />
+                    <div className="flex-1">
+                      <p className="text-amber-400 font-bold text-lg">
+                        Congratulations you are Calendrax Centurion {referralInfo.referralCode?.replace('CC', '')}!
+                      </p>
+                      <p className="text-gray-400 text-sm">Tap to view your Centurion benefits & referrals</p>
+                    </div>
+                    {centurionCardExpanded ? (
+                      <ChevronUp className="w-6 h-6 text-amber-400" />
+                    ) : (
+                      <ChevronDown className="w-6 h-6 text-amber-400" />
+                    )}
+                  </div>
+                </button>
+
+                {/* Expanded Content */}
+                {centurionCardExpanded && (
+                  <div className="border-t border-amber-500/20 animate-in slide-in-from-top duration-300">
+                    {/* Centurion Offers & News Section */}
+                    <div className="p-4 bg-black/20">
+                      <h4 className="text-amber-400 font-semibold mb-2 flex items-center gap-2">
+                        <Bell className="w-4 h-4" />
+                        Centurion News & Offers
+                      </h4>
+                      <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                        <p className="text-gray-300 text-sm">
+                          <span className="text-amber-400 font-semibold">LIFETIME FREE SUBSCRIPTION:</span> Make 10 referrals before we reach 500 subscribed businesses!
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* Referral Section */}
+                    <div className="p-4">
+                      <h4 className="text-amber-400 font-semibold mb-3 flex items-center gap-2">
+                        <Gift className="w-4 h-4" />
+                        Your Referral Program
+                      </h4>
+                      
+                      {/* Referral Code */}
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-gray-400 text-sm">Your Code:</span>
+                        <span className="font-mono font-bold text-lg text-amber-400">
+                          {referralInfo.referralCode}
+                        </span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            copyReferralCode();
+                          }}
+                          className={`p-1.5 rounded-lg transition-colors ${
+                            referralCopied 
+                              ? 'bg-green-500/20 text-green-400' 
+                              : 'hover:bg-amber-500/20 text-amber-400'
+                          }`}
+                          title={referralCopied ? 'Copied!' : 'Copy code'}
+                        >
+                          {referralCopied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        </button>
+                      </div>
+                      
+                      <p className="text-amber-400/70 text-xs mb-3">
+                        Share your code! You'll earn 2 free months when a referred business pays their first subscription.
+                      </p>
+                    </div>
+                    
+                    {/* Stats Section */}
+                    <div className="px-4 py-3 grid grid-cols-4 gap-2 bg-black/20">
+                      <div className="text-center">
+                        <p className={`text-xl font-bold ${referralInfo.referralCredits > 0 ? 'text-green-400' : 'text-gray-500'}`}>
+                          {referralInfo.referralCredits}
+                        </p>
+                        <p className="text-gray-500 text-xs">Credits</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xl font-bold text-white">{referralInfo.totalReferrals || 0}</p>
+                        <p className="text-gray-500 text-xs">Referrals</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xl font-bold text-amber-400">
+                          {referralInfo.creditsEarned || 0}
+                        </p>
+                        <p className="text-gray-500 text-xs">Earned</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xl font-bold text-purple-400">{referralInfo.creditsUsed || 0}</p>
+                        <p className="text-gray-500 text-xs">Used</p>
+                      </div>
+                    </div>
+                    
+                    {/* Referred Businesses List */}
+                    {referralInfo.referredBusinesses && referralInfo.referredBusinesses.length > 0 && (
+                      <div className="px-4 py-3 border-t border-amber-500/20">
+                        <p className="text-gray-400 text-xs mb-2">Your Referrals:</p>
+                        <div className="space-y-2 max-h-32 overflow-y-auto">
+                          {referralInfo.referredBusinesses.map((ref, idx) => (
+                            <div key={idx} className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="text-white text-sm">{ref.businessName}</span>
+                                {ref.isCenturion && (
+                                  <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">CC</span>
+                                )}
+                              </div>
+                              <span className={`text-xs px-2 py-0.5 rounded ${
+                                ref.status === 'active' 
+                                  ? 'bg-green-500/20 text-green-400' 
+                                  : 'bg-yellow-500/20 text-yellow-400'
+                              }`}>
+                                {ref.status === 'active' ? 'Paid' : 'Pending'}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                        {referralInfo.pendingReferrals > 0 && (
+                          <p className="text-yellow-400/70 text-xs mt-2">
+                            {referralInfo.pendingReferrals} referral{referralInfo.pendingReferrals > 1 ? 's' : ''} pending first payment
+                          </p>
+                        )}
+                      </div>
+                    )}
+                    
+                    {/* Progress to Lifetime Free */}
+                    <div className="p-4 border-t border-amber-500/20 bg-black/20">
+                      <p className="text-gray-400 text-xs mb-2">Progress to Lifetime Free Subscription:</p>
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-2 bg-zinc-800 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-gradient-to-r from-amber-500 to-yellow-500 transition-all"
+                            style={{ width: `${Math.min(((referralInfo.totalReferrals || 0) / 10) * 100, 100)}%` }}
+                          />
+                        </div>
+                        <span className="text-amber-400 text-sm font-bold">{referralInfo.totalReferrals || 0}/10</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Navigation Buttons - Full Width for Mobile */}
             <div className="space-y-3">
               <button
