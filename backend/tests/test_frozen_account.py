@@ -125,7 +125,8 @@ class TestHealthCheck:
     
     def test_api_health(self):
         """Test that the API is responding"""
-        response = requests.get(f"{BASE_URL}/api/health")
+        # Use centurions count endpoint as health check since /health doesn't exist
+        response = requests.get(f"{BASE_URL}/api/centurions/count")
         assert response.status_code == 200
         print("✓ API health check passed")
 
