@@ -165,6 +165,9 @@ const LandingPage = () => {
                   <p className="text-gray-300 text-xs md:text-sm mt-1">
                     Secure <span className="text-amber-400 font-semibold">LIFETIME</span> reduced pricing (It will never increase - <span className="text-amber-400 font-semibold">EVER</span>)
                   </p>
+                  <p className="text-amber-400 font-bold text-xs md:text-sm mt-2">
+                    Get LIFETIME FREE SUBSCRIPTION via the Centurion referral system!!
+                  </p>
                   <p className="text-amber-400/80 italic text-sm md:text-base mt-1">Let's grow together</p>
                 </div>
                 
