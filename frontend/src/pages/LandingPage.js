@@ -205,6 +205,18 @@ const LandingPage = () => {
                         <Check className="w-4 h-4 md:w-5 md:h-5 text-amber-400 mt-0.5 flex-shrink-0" />
                         <span>Centurion Referral credits - <span className="text-amber-400 font-semibold">Each referral = 2 FREE months</span></span>
                       </li>
+                      <li className="flex items-start gap-2 text-gray-400 ml-6 text-xs md:text-sm">
+                        <span className="italic">Businesses you refer can also be Centurions.</span>
+                      </li>
+                      
+                      {/* BEST bit - Lifetime Free Subscription */}
+                      <li className="flex items-start gap-2 text-white mt-3 bg-amber-500/10 p-3 rounded-lg border border-amber-500/30">
+                        <span className="text-amber-400 font-bold">Here's the BEST bit!</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-gray-300 bg-amber-500/10 px-3 pb-3 rounded-b-lg -mt-2 border-x border-b border-amber-500/30">
+                        <span>If you have made <span className="text-amber-400 font-semibold">10 referrals</span> as a Centurion when the platform reaches <span className="text-amber-400 font-semibold">500 subscribed Businesses</span>, you will be granted <span className="text-amber-400 font-bold">LIFETIME FREE SUBSCRIPTION!!</span></span>
+                      </li>
+                      
                       <li className="flex items-start gap-2 text-gray-300">
                         <Check className="w-4 h-4 md:w-5 md:h-5 text-amber-400 mt-0.5 flex-shrink-0" />
                         <span>Influence over new features</span>
