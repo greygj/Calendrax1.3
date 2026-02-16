@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, MapPin, Clock, Star, Building2, ArrowRight, Shield, Check } from 'lucide-react';
+import { Search, MapPin, Clock, Star, Building2, ArrowRight, Shield, Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { businessAPI, centurionAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
