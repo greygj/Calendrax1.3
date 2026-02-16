@@ -4202,12 +4202,37 @@ async def admin_delete_user(user_id: str, admin: dict = Depends(require_admin)):
     
     # Delete user's business if they're a business owner
     if user.get("role") == UserRole.BUSINESS_OWNER:
-        await db.businesses.delete_many({"ownerId": user_id})
-        await db.services.delete_many({"businessId": {"$in": [b["id"] for b in await db.businesses.find({"ownerId": user_id}).to_list(100)]}})
+        # Get all businesses first before deleting
+        businesses = await db.businesses.find({"ownerId": user_id}).to_list(100)
+        business_ids = [b["id"] for b in businesses]
+        
+        # Delete related services
+        if business_ids:
+            await db.services.delete_many({"businessId": {"$in": business_ids}})
+            await db.staff.delete_many({"businessId": {"$in": business_ids}})
+            await db.bookings.delete_many({"businessId": {"$in": business_ids}})
+            await db.availability.delete_many({"businessId": {"$in": business_ids}})
+        
+        # Delete subscriptions
         await db.subscriptions.delete_many({"ownerId": user_id})
+        
+        # Delete businesses
+        await db.businesses.delete_many({"ownerId": user_id})
+        
+        # Clear referral references (don't delete referrer's record, just clear the reference)
+        await db.businesses.update_many(
+            {"referredBy": user_id},
+            {"$set": {"referredBy": None}}
+        )
     
+    # If customer, delete their bookings
+    if user.get("role") == UserRole.CUSTOMER:
+        await db.bookings.delete_many({"customerId": user_id})
+    
+    # Finally delete the user
     await db.users.delete_one({"id": user_id})
-    return {"success": True}
+    
+    return {"success": True, "message": f"User {user.get('email')} and all related data deleted"}
 
 @api_router.get("/admin/businesses")
 async def admin_get_businesses(admin: dict = Depends(require_admin)):
