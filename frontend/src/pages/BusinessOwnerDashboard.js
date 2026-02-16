@@ -1183,6 +1183,10 @@ const BusinessOwnerDashboard = () => {
     a.date === tomorrowStr && (a.status === 'confirmed' || a.status === 'pending')
   ).length;
 
+  const bookingsTotal = allAppointments.filter(a => 
+    (a.status === 'confirmed' || a.status === 'pending') && !isDatePassed(a.date)
+  ).length;
+
   const unreadNotifications = notifications.filter(n => !n.read);
 
   const customers = allAppointments.reduce((acc, apt) => {
