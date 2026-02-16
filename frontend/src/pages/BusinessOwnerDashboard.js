@@ -1708,6 +1708,159 @@ const BusinessOwnerDashboard = () => {
           </div>
         )}
 
+        {/* Centurion View */}
+        {activeView === 'centurion' && referralInfo?.isCenturion && (
+          <div className="space-y-6">
+            {/* Header Card */}
+            <div className="bg-gradient-to-br from-amber-900/30 via-slate-800/50 to-slate-900/50 border border-amber-500/30 rounded-xl p-6">
+              <div className="flex items-center gap-4">
+                <img 
+                  src="/calendrax-centurion-logo.png" 
+                  alt="Centurion" 
+                  className="w-20 h-20 object-contain"
+                />
+                <div>
+                  <h2 className="text-amber-400 font-bold text-2xl">
+                    Calendrax Centurion {referralInfo.referralCode?.replace('CC', '')}
+                  </h2>
+                  <p className="text-gray-400">Welcome to the Centurion Hub</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Centurion News & Offers */}
+            <div className="bg-cardBg border border-amber-500/30 rounded-xl overflow-hidden">
+              <div className="p-4 border-b border-amber-500/20 bg-amber-500/5">
+                <h3 className="text-amber-400 font-semibold text-lg flex items-center gap-2">
+                  <Bell className="w-5 h-5" />
+                  Centurion News & Offers
+                </h3>
+              </div>
+              <div className="p-4 space-y-3">
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
+                  <p className="text-amber-400 font-bold mb-1">LIFETIME FREE SUBSCRIPTION OPPORTUNITY!</p>
+                  <p className="text-gray-300 text-sm">
+                    Make 10 referrals before we reach 500 subscribed businesses and you'll receive a LIFETIME FREE SUBSCRIPTION!
+                  </p>
+                </div>
+                <p className="text-gray-500 text-sm italic">More offers and news coming soon...</p>
+              </div>
+            </div>
+
+            {/* Your Referral Program */}
+            <div className="bg-cardBg border border-amber-500/30 rounded-xl overflow-hidden">
+              <div className="p-4 border-b border-amber-500/20 bg-amber-500/5">
+                <h3 className="text-amber-400 font-semibold text-lg flex items-center gap-2">
+                  <Gift className="w-5 h-5" />
+                  Your Referral Program
+                </h3>
+              </div>
+              <div className="p-4">
+                {/* Referral Code */}
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-gray-400">Your Code:</span>
+                  <span className="font-mono font-bold text-2xl text-amber-400">
+                    {referralInfo.referralCode}
+                  </span>
+                  <button
+                    onClick={copyReferralCode}
+                    className={`p-2 rounded-lg transition-colors ${
+                      referralCopied 
+                        ? 'bg-green-500/20 text-green-400' 
+                        : 'hover:bg-amber-500/20 text-amber-400'
+                    }`}
+                    title={referralCopied ? 'Copied!' : 'Copy code'}
+                  >
+                    {referralCopied ? <CheckCircle className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                  </button>
+                </div>
+                
+                <p className="text-amber-400/70 text-sm mb-4">
+                  Share your code! You'll earn 2 free months when a referred business pays their first subscription.
+                </p>
+
+                {/* Stats */}
+                <div className="grid grid-cols-4 gap-4 p-4 bg-black/20 rounded-xl">
+                  <div className="text-center">
+                    <p className={`text-2xl font-bold ${referralInfo.referralCredits > 0 ? 'text-green-400' : 'text-gray-500'}`}>
+                      {referralInfo.referralCredits}
+                    </p>
+                    <p className="text-gray-500 text-sm">Credits</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-white">{referralInfo.totalReferrals || 0}</p>
+                    <p className="text-gray-500 text-sm">Referrals</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-amber-400">
+                      {referralInfo.creditsEarned || 0}
+                    </p>
+                    <p className="text-gray-500 text-sm">Earned</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-purple-400">{referralInfo.creditsUsed || 0}</p>
+                    <p className="text-gray-500 text-sm">Used</p>
+                  </div>
+                </div>
+
+                {/* Progress to Lifetime Free */}
+                <div className="mt-4 p-4 bg-amber-500/5 border border-amber-500/20 rounded-xl">
+                  <p className="text-gray-400 text-sm mb-2">Progress to Lifetime Free Subscription:</p>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 h-3 bg-zinc-800 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-amber-500 to-yellow-500 transition-all"
+                        style={{ width: `${Math.min(((referralInfo.totalReferrals || 0) / 10) * 100, 100)}%` }}
+                      />
+                    </div>
+                    <span className="text-amber-400 font-bold">{referralInfo.totalReferrals || 0}/10</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Referred Businesses */}
+            {referralInfo.referredBusinesses && referralInfo.referredBusinesses.length > 0 && (
+              <div className="bg-cardBg border border-zinc-800 rounded-xl overflow-hidden">
+                <div className="p-4 border-b border-zinc-700">
+                  <h3 className="text-white font-semibold text-lg">Your Referrals</h3>
+                </div>
+                <div className="p-4 space-y-3">
+                  {referralInfo.referredBusinesses.map((ref, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-3 bg-zinc-800/50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-zinc-700 flex items-center justify-center">
+                          <Building2 className="w-5 h-5 text-gray-400" />
+                        </div>
+                        <div>
+                          <span className="text-white font-medium">{ref.businessName}</span>
+                          {ref.isCenturion && (
+                            <span className="ml-2 text-xs bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded">Centurion</span>
+                          )}
+                        </div>
+                      </div>
+                      <span className={`text-sm px-3 py-1 rounded-lg ${
+                        ref.status === 'active' 
+                          ? 'bg-green-500/20 text-green-400' 
+                          : 'bg-yellow-500/20 text-yellow-400'
+                      }`}>
+                        {ref.status === 'active' ? 'Paid' : 'Pending'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                {referralInfo.pendingReferrals > 0 && (
+                  <div className="px-4 pb-4">
+                    <p className="text-yellow-400/70 text-sm">
+                      {referralInfo.pendingReferrals} referral{referralInfo.pendingReferrals > 1 ? 's' : ''} pending first payment
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Availability View */}
         {activeView === 'availability' && (
           <div className="space-y-6">
