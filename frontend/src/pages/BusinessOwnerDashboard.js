@@ -1810,6 +1810,14 @@ const BusinessOwnerDashboard = () => {
                     </button>
                   </div>
 
+                  {/* Save Button - At Top for Mobile */}
+                  <button
+                    onClick={saveAvailability}
+                    className="w-full bg-brand-500 text-black font-semibold py-3 rounded-lg hover:bg-brand-400 transition-colors mb-4"
+                  >
+                    Save Availability ({selectedSlots.length} slots)
+                  </button>
+
                   {/* Quick Actions */}
                   <div className="flex gap-2 mb-4">
                     <button
@@ -1826,13 +1834,13 @@ const BusinessOwnerDashboard = () => {
                     </button>
                   </div>
 
-                  {/* Time Slots Grid */}
-                  <div className="grid grid-cols-4 gap-2 max-h-80 overflow-y-auto mb-4">
+                  {/* Time Slots Grid - 5 minute intervals */}
+                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-96 overflow-y-auto">
                     {generateTimeSlots().map(slot => (
                       <button
                         key={slot}
                         onClick={() => toggleSlot(slot)}
-                        className={`py-2 px-3 rounded-lg text-sm font-medium transition-all ${
+                        className={`py-2 px-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
                           selectedSlots.includes(slot)
                             ? 'bg-brand-500 text-black'
                             : 'bg-zinc-800 text-white hover:bg-zinc-700'
@@ -1842,14 +1850,6 @@ const BusinessOwnerDashboard = () => {
                       </button>
                     ))}
                   </div>
-
-                  {/* Save Button */}
-                  <button
-                    onClick={saveAvailability}
-                    className="w-full bg-brand-500 text-black font-semibold py-3 rounded-lg hover:bg-brand-400 transition-colors"
-                  >
-                    Save Availability ({selectedSlots.length} slots)
-                  </button>
                 </div>
               )}
 
