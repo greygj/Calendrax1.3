@@ -1134,8 +1134,30 @@ const BusinessOwnerDashboard = () => {
       return isSameDate && isActiveBooking && matchesStaff;
     });
     
-    // Return array of booked time slots
-    return bookedAppointments.map(apt => apt.time);
+    // Calculate all blocked slots based on appointment duration
+    const blockedSlots = [];
+    bookedAppointments.forEach(apt => {
+      const startTime = apt.time;
+      const duration = apt.duration || 30; // Default to 30 minutes if not specified
+      
+      // Parse start time
+      const [startHour, startMin] = startTime.split(':').map(Number);
+      let currentMinutes = startHour * 60 + startMin;
+      const endMinutes = currentMinutes + duration;
+      
+      // Add all 5-minute slots within the duration
+      while (currentMinutes < endMinutes) {
+        const hour = Math.floor(currentMinutes / 60);
+        const min = currentMinutes % 60;
+        const slotTime = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+        if (!blockedSlots.includes(slotTime)) {
+          blockedSlots.push(slotTime);
+        }
+        currentMinutes += 5; // 5-minute intervals
+      }
+    });
+    
+    return blockedSlots;
   };
 
   const bookedSlots = getBookedSlots();
