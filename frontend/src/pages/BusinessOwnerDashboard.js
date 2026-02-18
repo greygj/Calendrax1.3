@@ -1120,7 +1120,31 @@ const BusinessOwnerDashboard = () => {
     return slots;
   };
 
-  const selectAllSlots = () => setSelectedSlots(generateTimeSlots());
+  // Get booked slots for the selected date and staff
+  const getBookedSlots = () => {
+    if (!selectedDate) return [];
+    
+    // Filter appointments for the selected date and staff (confirmed or pending only)
+    const bookedAppointments = allAppointments.filter(apt => {
+      const isSameDate = apt.date === selectedDate;
+      const isActiveBooking = apt.status === 'confirmed' || apt.status === 'pending';
+      // If a staff member is selected, only show their bookings
+      // If no staff selected (owner view), show all bookings
+      const matchesStaff = !selectedStaff || apt.staffId === selectedStaff.id;
+      return isSameDate && isActiveBooking && matchesStaff;
+    });
+    
+    // Return array of booked time slots
+    return bookedAppointments.map(apt => apt.time);
+  };
+
+  const bookedSlots = getBookedSlots();
+
+  const selectAllSlots = () => {
+    // Select all slots except booked ones
+    const availableSlots = generateTimeSlots().filter(slot => !bookedSlots.includes(slot));
+    setSelectedSlots(availableSlots);
+  };
   const clearAllSlots = () => setSelectedSlots([]);
 
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
