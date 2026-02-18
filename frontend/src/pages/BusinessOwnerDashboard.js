@@ -2020,6 +2020,20 @@ const BusinessOwnerDashboard = () => {
                     </button>
                   </div>
 
+                  {/* Legend */}
+                  {bookedSlots.length > 0 && (
+                    <div className="flex items-center gap-4 mb-4 p-2 bg-zinc-800/50 rounded-lg text-xs">
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-red-500/20 border border-red-500/30 rounded"></div>
+                        <span className="text-gray-400">Booked ({bookedSlots.length})</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-brand-500 rounded"></div>
+                        <span className="text-gray-400">Selected</span>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Time Slots Grid - 5 minute intervals */}
                   <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-96 overflow-y-auto">
                     {generateTimeSlots().map(slot => {
