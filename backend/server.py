@@ -4887,6 +4887,11 @@ async def process_credit_billing():
                 if not subscription:
                     continue
                 
+                # Skip if subscription has free access - credits shouldn't be used
+                if subscription.get("freeAccessOverride", False):
+                    logger.info(f"Skipping credit billing for {business.get('businessName')} - has free access override")
+                    continue
+                
                 # Skip if subscription is not active or is in trial
                 if subscription.get("status") not in ["active", "past_due"]:
                     continue
