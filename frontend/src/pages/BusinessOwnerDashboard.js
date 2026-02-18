@@ -2022,19 +2022,29 @@ const BusinessOwnerDashboard = () => {
 
                   {/* Time Slots Grid - 5 minute intervals */}
                   <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-96 overflow-y-auto">
-                    {generateTimeSlots().map(slot => (
-                      <button
-                        key={slot}
-                        onClick={() => toggleSlot(slot)}
-                        className={`py-2 px-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
-                          selectedSlots.includes(slot)
-                            ? 'bg-brand-500 text-black'
-                            : 'bg-zinc-800 text-white hover:bg-zinc-700'
-                        }`}
-                      >
-                        {slot}
-                      </button>
-                    ))}
+                    {generateTimeSlots().map(slot => {
+                      const isBooked = bookedSlots.includes(slot);
+                      const isSelected = selectedSlots.includes(slot);
+                      
+                      return (
+                        <button
+                          key={slot}
+                          onClick={() => !isBooked && toggleSlot(slot)}
+                          disabled={isBooked}
+                          className={`py-2 px-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
+                            isBooked
+                              ? 'bg-red-500/20 text-red-400 cursor-not-allowed border border-red-500/30'
+                              : isSelected
+                                ? 'bg-brand-500 text-black'
+                                : 'bg-zinc-800 text-white hover:bg-zinc-700'
+                          }`}
+                          title={isBooked ? 'This slot has an existing booking' : ''}
+                        >
+                          {slot}
+                          {isBooked && <span className="block text-[10px] opacity-70">Booked</span>}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
