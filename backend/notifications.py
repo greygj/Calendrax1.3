@@ -525,10 +525,15 @@ async def notify_booking_created(
         )
         results["email"] = send_email(business_owner_email, subject, html_content)
     
-    # Send WhatsApp to business owner if phone number is available
+    # Send WhatsApp to business owner using approved template
     if business_owner_phone and whatsapp_enabled:
-        whatsapp_message = get_booking_created_whatsapp(customer_name, service_name, date, time)
-        results["whatsapp"] = send_whatsapp(business_owner_phone, whatsapp_message)
+        results["whatsapp"] = send_business_new_booking_whatsapp(
+            to_number=business_owner_phone,
+            customer_name=customer_name,
+            service_name=service_name,
+            date=date,
+            time=time
+        )
     
     logger.info(f"Booking created notifications sent: {results}")
     return results
