@@ -20,6 +20,7 @@ from notifications import (
     notify_booking_approved, 
     notify_booking_declined, 
     notify_booking_cancelled,
+    notify_customer_booking_cancelled,
     get_notification_status,
     send_trial_reminder,
     send_whatsapp
