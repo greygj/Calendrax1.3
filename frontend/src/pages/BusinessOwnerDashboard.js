@@ -752,6 +752,18 @@ const BusinessOwnerDashboard = () => {
     }
   };
 
+  const handleCancelBooking = async (appointment) => {
+    if (window.confirm(`Are you sure you want to cancel the booking for ${appointment.customerName}?\n\nThe customer will be notified of this cancellation.`)) {
+      try {
+        await appointmentAPI.cancel(appointment.id);
+        loadData();
+      } catch (error) {
+        console.error('Failed to cancel booking:', error);
+        alert('Failed to cancel booking. Please try again.');
+      }
+    }
+  };
+
   // ========== BOOK FOR CUSTOMER ==========
   const openBookForCustomer = () => {
     setBookingForm({
