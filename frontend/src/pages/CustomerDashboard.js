@@ -910,6 +910,11 @@ const CustomerDashboard = () => {
                         }`} />
                       </button>
                     </div>
+                    {notificationPrefs.whatsappReminders && !profileForm.mobile && (
+                      <p className="text-yellow-400 text-xs mt-2 px-4">
+                        ⚠️ Please add your phone number above to receive WhatsApp notifications
+                      </p>
+                    )}
                   </div>
                 </div>
 
