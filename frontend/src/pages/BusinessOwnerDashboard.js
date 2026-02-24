@@ -3966,9 +3966,14 @@ const BusinessOwnerDashboard = () => {
                   </button>
                 </div>
                 
-                <p className="text-gray-500 text-xs">
+                {notificationPrefs.whatsappReminders && !profileForm.mobile && (
+                  <p className="text-yellow-400 text-xs mt-2">
+                    ⚠️ Please add your phone number in the business details above to receive WhatsApp notifications
+                  </p>
+                )}
+                
+                <p className="text-gray-500 text-xs mt-2">
                   When enabled, you'll receive WhatsApp messages for new bookings, cancellations, and reminders.
-                  Make sure your phone number is correct in your business details above.
                 </p>
               </div>
             </div>
