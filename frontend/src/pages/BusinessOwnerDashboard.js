@@ -2802,6 +2802,48 @@ const BusinessOwnerDashboard = () => {
                       </div>
                     </div>
 
+                    {/* Attendance Statistics */}
+                    <div className="bg-cardBg border border-zinc-800 rounded-xl p-6">
+                      <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                        <Users className="w-5 h-5 text-brand-400" />
+                        Customer Attendance
+                      </h3>
+                      {(() => {
+                        const attendanceData = allAppointments.filter(a => a.attendance);
+                        const showCount = attendanceData.filter(a => a.attendance === 'show').length;
+                        const noShowCount = attendanceData.filter(a => a.attendance === 'no_show').length;
+                        const totalTracked = showCount + noShowCount;
+                        const showRate = totalTracked > 0 ? ((showCount / totalTracked) * 100).toFixed(1) : 0;
+                        const noShowRate = totalTracked > 0 ? ((noShowCount / totalTracked) * 100).toFixed(1) : 0;
+                        
+                        return (
+                          <div className="grid md:grid-cols-4 gap-4">
+                            <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4 text-center">
+                              <p className="text-green-400 text-3xl font-bold">{showCount}</p>
+                              <p className="text-green-400 text-sm">Shows</p>
+                            </div>
+                            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-center">
+                              <p className="text-red-400 text-3xl font-bold">{noShowCount}</p>
+                              <p className="text-red-400 text-sm">No Shows</p>
+                            </div>
+                            <div className="bg-zinc-800 rounded-xl p-4 text-center">
+                              <p className="text-green-400 text-3xl font-bold">{showRate}%</p>
+                              <p className="text-gray-400 text-sm">Show Rate</p>
+                            </div>
+                            <div className="bg-zinc-800 rounded-xl p-4 text-center">
+                              <p className="text-red-400 text-3xl font-bold">{noShowRate}%</p>
+                              <p className="text-gray-400 text-sm">No Show Rate</p>
+                            </div>
+                          </div>
+                        );
+                      })()}
+                      {allAppointments.filter(a => a.attendance).length === 0 && (
+                        <p className="text-gray-500 text-center mt-4 text-sm">
+                          Mark attendance on past appointments in the History tab to see statistics here
+                        </p>
+                      )}
+                    </div>
+
                     <div className="grid md:grid-cols-2 gap-6">
                       {/* Popular Services */}
                       <div className="bg-cardBg border border-zinc-800 rounded-xl p-6">
