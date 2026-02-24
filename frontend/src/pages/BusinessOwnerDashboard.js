@@ -2276,32 +2276,80 @@ const BusinessOwnerDashboard = () => {
                     {historyAppointments.map(apt => (
                       <div key={apt.id} className="bg-cardBg/50 border border-zinc-800 rounded-xl p-4">
                         <div className="flex items-start justify-between">
-                          <div>
+                          <div className="flex-1">
                             <h4 className="text-white font-medium">{apt.customerName}</h4>
                             <p className="text-gray-400">{apt.serviceName}</p>
                             {apt.staffName && <p className="text-gray-500 text-sm">with {apt.staffName}</p>}
                             <p className="text-gray-500 text-sm mt-1">
                               {formatDate(apt.date)} at {apt.time}
                             </p>
+                            {/* Payment Details */}
+                            <div className="flex items-center gap-4 mt-2 text-sm">
+                              <span className={apt.depositPaid ? 'text-green-400' : 'text-gray-500'}>
+                                Deposit: £{(apt.depositAmount || 0).toFixed(2)} {apt.depositPaid ? '✓ Paid' : ''}
+                              </span>
+                              <span className="text-yellow-400">
+                                Outstanding: £{((apt.paymentAmount || 0) - (apt.depositPaid ? (apt.depositAmount || 0) : 0)).toFixed(2)}
+                              </span>
+                            </div>
                             {apt.depositRefunded && (
                               <p className="text-yellow-400 text-xs mt-1">
                                 Deposit refunded: £{apt.refundAmount?.toFixed(2)}
                               </p>
                             )}
                           </div>
-                          <span className={`px-3 py-1 text-sm rounded-full ${
-                            apt.status === 'completed' || (apt.status === 'confirmed' && isDatePassed(apt.date))
-                              ? 'bg-brand-500/20 text-brand-400'
-                              : apt.status === 'cancelled'
-                              ? 'bg-gray-500/20 text-gray-400'
-                              : apt.status === 'declined'
-                              ? 'bg-red-500/20 text-red-400'
-                              : 'bg-gray-500/20 text-gray-400'
-                          }`}>
-                            {apt.status === 'confirmed' && isDatePassed(apt.date) 
-                              ? 'Completed' 
-                              : apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}
-                          </span>
+                          <div className="flex flex-col items-end gap-2">
+                            <span className={`px-3 py-1 text-sm rounded-full ${
+                              apt.status === 'completed' || (apt.status === 'confirmed' && isDatePassed(apt.date))
+                                ? 'bg-brand-500/20 text-brand-400'
+                                : apt.status === 'cancelled'
+                                ? 'bg-gray-500/20 text-gray-400'
+                                : apt.status === 'declined'
+                                ? 'bg-red-500/20 text-red-400'
+                                : apt.status === 'no_show'
+                                ? 'bg-red-500/20 text-red-400'
+                                : 'bg-gray-500/20 text-gray-400'
+                            }`}>
+                              {apt.status === 'confirmed' && isDatePassed(apt.date) && !apt.attendance
+                                ? 'Completed' 
+                                : apt.status === 'no_show'
+                                ? 'No Show'
+                                : apt.attendance === 'show'
+                                ? 'Attended'
+                                : apt.attendance === 'no_show'
+                                ? 'No Show'
+                                : apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}
+                            </span>
+                            {/* Show/No Show buttons for past confirmed appointments without attendance marked */}
+                            {(apt.status === 'confirmed' || apt.status === 'completed') && isDatePassed(apt.date) && !apt.attendance && (
+                              <div className="flex gap-1 mt-1">
+                                <button
+                                  onClick={() => handleMarkAttendance(apt.id, 'show')}
+                                  className="px-2 py-1 text-xs bg-green-500/20 text-green-400 rounded hover:bg-green-500/30 transition-colors"
+                                  title="Customer attended"
+                                >
+                                  Show
+                                </button>
+                                <button
+                                  onClick={() => handleMarkAttendance(apt.id, 'no_show')}
+                                  className="px-2 py-1 text-xs bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 transition-colors"
+                                  title="Customer did not attend"
+                                >
+                                  No Show
+                                </button>
+                              </div>
+                            )}
+                            {/* Show attendance badge if already marked */}
+                            {apt.attendance && (
+                              <span className={`px-2 py-1 text-xs rounded ${
+                                apt.attendance === 'show' 
+                                  ? 'bg-green-500/20 text-green-400' 
+                                  : 'bg-red-500/20 text-red-400'
+                              }`}>
+                                {apt.attendance === 'show' ? '✓ Attended' : '✗ No Show'}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
