@@ -148,9 +148,12 @@ def send_sms(to_number: str, message: str) -> bool:
 
 # ==================== WHATSAPP SERVICE ====================
 
+# Twilio Content Template SIDs
+WHATSAPP_TEMPLATE_APPOINTMENT_CONFIRMATION = "HXfd8de220f8c35ad016d0a898da95423a"
+
 def send_whatsapp(to_number: str, message: str) -> bool:
     """
-    Send a WhatsApp message using Twilio
+    Send a WhatsApp message using Twilio (plain text - for sandbox/testing)
     
     Args:
         to_number: Recipient phone number (E.164 format, e.g., +44123456789)
@@ -177,7 +180,7 @@ def send_whatsapp(to_number: str, message: str) -> bool:
         
         wa_message = client.messages.create(
             body=message,
-            from_=TWILIO_WHATSAPP_NUMBER,
+            from_=f"whatsapp:{TWILIO_WHATSAPP_NUMBER}" if not TWILIO_WHATSAPP_NUMBER.startswith("whatsapp:") else TWILIO_WHATSAPP_NUMBER,
             to=whatsapp_to
         )
         
@@ -187,6 +190,74 @@ def send_whatsapp(to_number: str, message: str) -> bool:
     except Exception as e:
         logger.error(f"Failed to send WhatsApp to {to_number}: {str(e)}")
         return False
+
+
+def send_whatsapp_template(to_number: str, template_sid: str, template_variables: dict) -> bool:
+    """
+    Send a WhatsApp message using a Twilio Content Template
+    
+    Args:
+        to_number: Recipient phone number (E.164 format)
+        template_sid: The Twilio Content Template SID (e.g., HXxxxx)
+        template_variables: Dictionary of template variables (e.g., {"1": "John", "2": "Jan 15"})
+    
+    Returns:
+        bool: True if WhatsApp was sent successfully, False otherwise
+    """
+    if not WHATSAPP_ENABLED:
+        logger.warning("WhatsApp notifications disabled - Twilio credentials not configured")
+        return False
+    
+    try:
+        client = TwilioClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+        
+        # Format the phone number to E.164
+        formatted_number = format_phone_number(to_number)
+        
+        # Format the 'to' number for WhatsApp
+        whatsapp_to = f"whatsapp:{formatted_number}" if not formatted_number.startswith("whatsapp:") else formatted_number
+        whatsapp_from = f"whatsapp:{TWILIO_WHATSAPP_NUMBER}" if not TWILIO_WHATSAPP_NUMBER.startswith("whatsapp:") else TWILIO_WHATSAPP_NUMBER
+        
+        import json
+        wa_message = client.messages.create(
+            content_sid=template_sid,
+            content_variables=json.dumps(template_variables),
+            from_=whatsapp_from,
+            to=whatsapp_to
+        )
+        
+        logger.info(f"WhatsApp template sent successfully to {formatted_number}, SID: {wa_message.sid}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Failed to send WhatsApp template to {to_number}: {str(e)}")
+        return False
+
+
+def send_appointment_confirmation_whatsapp(to_number: str, first_name: str, date: str, time: str) -> bool:
+    """
+    Send appointment confirmation via WhatsApp using the approved template
+    
+    Args:
+        to_number: Customer's phone number
+        first_name: Customer's first name
+        date: Appointment date (e.g., "15th January 2025")
+        time: Appointment time (e.g., "3:00 PM")
+    
+    Returns:
+        bool: True if sent successfully
+    """
+    template_variables = {
+        "first_name": first_name,
+        "date": date,
+        "time": time
+    }
+    
+    return send_whatsapp_template(
+        to_number=to_number,
+        template_sid=WHATSAPP_TEMPLATE_APPOINTMENT_CONFIRMATION,
+        template_variables=template_variables
+    )
 
 
 # ==================== EMAIL TEMPLATES ====================
