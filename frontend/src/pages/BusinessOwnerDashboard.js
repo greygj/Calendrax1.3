@@ -764,6 +764,16 @@ const BusinessOwnerDashboard = () => {
     }
   };
 
+  const handleMarkAttendance = async (appointmentId, attendance) => {
+    try {
+      await appointmentAPI.markAttendance(appointmentId, attendance);
+      loadData();
+    } catch (error) {
+      console.error('Failed to mark attendance:', error);
+      alert('Failed to update attendance. Please try again.');
+    }
+  };
+
   // ========== BOOK FOR CUSTOMER ==========
   const openBookForCustomer = () => {
     setBookingForm({
