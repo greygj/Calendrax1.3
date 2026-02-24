@@ -1,100 +1,121 @@
-<analysis>**original_problem_statement**: The user initially requested the Calendrax Centurions launch promotion, which included a Founders Club for the first 100 businesses, special pricing, a public counter, an opt-in on signup, and a dedicated Founding Members page. This was followed by a request to implement a comprehensive referral and credit system.
+<analysis>**original_problem_statement**: The user initially requested the Calendrax Centurions launch promotion, a referral system, and optional credit card signup.
 
-The most recent request is a pivot on the signup process: make credit card entry optional during signup and instead display a warning on the dashboard for users to add payment details before their 30-day free trial ends.
+Subsequent requests included:
+- UI enhancements for the landing page and dashboard.
+- A bug fix to allow reusing email addresses of deleted accounts.
+- A critical feature to handle expired trials by freezing the account and providing a reactivation flow.
+- Availability management changes (5-minute intervals, button placement).
+- Adding Total appointments count to the dashboard.
+- Creating a dedicated, modal-like Centurion Hub on the business dashboard.
+- Preventing business owners from setting availability for already-booked slots.
+- Fixing a bug where free-access businesses were consuming referral credits.
+- Implementing a full-featured WhatsApp notification system using Twilio templates for various events (welcome, confirmation, cancellation, reminder).
+- Adding Show/No Show attendance tracking and analytics for business owners.
+- Displaying deposit/outstanding payment information on bookings.
+- Modifying the booking cancellation flow to be exclusive to business owners.
+- The most recent request is to consolidate the separate Email and WhatsApp notification toggles into a single settings card on both user and business profiles.
 
 **PRODUCT REQUIREMENTS**:
-1.  **Centurion Program**: A Founders Club for the first 100 businesses with special pricing and a public recognition badge. (Mostly complete, UI tuning remains).
-2.  **Referral System**:
-    *   Businesses get a unique referral code ( for Centurions,  for others).
-    *   Centurions receive 2 credits per successful referral; others receive 1 credit.
-    *   1 credit = 1 free month of subscription.
-    *   Billing system must automatically use credits before charging the card.
-    *   Business owners need a dashboard to track their code, credits, and referral stats.
-    *   Admins need a UI to manage (add/remove) referral credits for any user.
-3.  **Optional Card on Signup**: Business owners can sign up without entering credit card details.
-4.  **Dashboard Warning**: Users on a free trial without a payment method must see a prominent warning on their dashboard, reminding them to add card details before the trial expires to avoid account lockout.
+1.  **Frozen Account on Trial Expiry**: A robust flow to handle lapsed trials, allowing users to log in to a restricted view and reactivate by adding a payment method. (Completed & Verified).
+2.  **WhatsApp Notifications**: A comprehensive notification system using Twilio templates for booking confirmations, cancellations, reminders, and welcome messages. (In Progress, Blocked).
+3.  **Availability Management**: The scheduler must prevent double-booking by disabling time slots that are already booked, considering the full duration of the appointment. (Completed & Verified).
+4.  **Attendance Tracking**: Business owners can mark appointments as Show or No Show, with statistics displayed on an analytics page. (Completed & Verified).
+5.  **Cancellation Flow**: Only business owners can cancel appointments; the option has been removed for customers. (Completed & Verified).
+6.  **UI/UX Refinements**: Numerous ongoing UI adjustments, including the creation of a Centurion Hub, mobile responsiveness fixes, and consolidating notification settings. (Partially Completed).
 
 **User's preferred language**: English
 
-**what currently exists?**: The application is a full-stack booking platform (React/FastAPI/MongoDB). The Calendrax Centurions feature and a comprehensive referral system are implemented. This includes backend logic for generating referral codes, tracking referrals, and managing credits. The frontend includes a referral code input on the signup form, a referral analytics card on the business owner dashboard, and an admin panel for managing credits. An automated billing system is in place, using a daily cron job and Stripe webhooks to deduct referral credits before charging a subscription fee.
+**what currently exists?**: The application is a full-stack booking platform (React/FastAPI/MongoDB). It features a Centurion program, referral system, and a tested Frozen Account reactivation flow. The availability calendar correctly blocks booked time slots based on appointment duration. Business owners have tools for attendance tracking and appointment cancellation. The backend has been significantly updated to support a templated WhatsApp notification system via Twilio, and the UI has corresponding toggles. However, the WhatsApp feature is not yet live.
 
 **Last working item**:
-- **Last item agent was working**: The user requested to change the signup flow by making credit card details optional and adding a warning on the business owner's dashboard to add payment details before the trial ends.
+- **Last item agent was working**: The user requested to combine the separate Email Notifications and WhatsApp Notifications cards into a single Notification Settings card on both the user and business owner profile pages for a cleaner UI. The agent had started by viewing the  file.
 - **Status**: NOT STARTED
 - **Agent Testing Done**: N
-- **Which testing method agent to use?**: both
+- **Which testing method agent to use?**: manual testing by screenshot tool
 - **User Testing Done**: N
 
 **All Pending/In progress Issue list**:
-- **Issue 1**: WhatsApp notifications are not being sent on the live app (P1)
+- **Issue 1**: Combine Email and WhatsApp notification toggles onto a single card. (P0)
+- **Issue 2**: WhatsApp notifications are not yet functional on the live system. (P1)
 
 **Issues Detail**:
 - **Issue 1**:
-    - **Attempted fixes**: The agent has previously confirmed the code is correct. The issue is external to the application.
-    - **Next debug checklist**: Remind the user that for WhatsApp notifications to work in production, they **must complete their Business Profile verification** within their Twilio account.
-    - **Why fix this issue and what will be achieved with the fix?**: Enables a key notification channel for booking confirmations and reminders.
-    - **Status**: BLOCKED (on user action)
+    - **Attempted fixes**: None.
+    - **Next debug checklist**:
+        1. In , find the JSX for the Email and WhatsApp toggles within the profile view ().
+        2. Create a new, single card component titled Notification Settings.
+        3. Move both toggle components into this new card.
+        4. Remove the two old, separate cards.
+        5. Repeat the exact same steps for .
+        6. Take screenshots of both the business and customer profile pages to verify the change.
+    - **Why fix this issue and what will be achieved with the fix?**: This will improve the UI by de-cluttering the profile settings pages and grouping related options together, making the interface more intuitive for users.
+    - **Status**: NOT STARTED
+    - **Is recurring issue?**: N
+    - **Should Test frontend/backend/both after fix?**: frontend
+    - **Blocked on other issue**: None
+
+- **Issue 2**:
+    - **Attempted fixes**: The agent successfully integrated all user-created Twilio templates ( versions) into the backend code ( and ) and updated the sender number.
+    - **Next debug checklist**: This issue is blocked on two external user actions. Remind the user they must:
+        1.  Add the  environment variable with the value  to their live Railway deployment.
+        2.  Wait for WhatsApp to approve the business-initiated status for all the new  templates. The system will not work until this is complete.
+    - **Why fix this issue and what will be achieved with the fix?**: This is a critical communication feature for the app. Fixing it will enable automated confirmations, reminders, and welcome messages, significantly improving the user experience.
+    - **Status**: BLOCKED
     - **Is recurring issue?**: Y
-    - **Should Test frontend/backend/both after fix?**: backend
+    - **Should Test frontend/backend/both after fix?**: backend (via user testing on live system)
     - **Blocked on other issue**: None
 
 **In progress Task List**:
-- **Task 1**: Make Card Details Optional on Signup & Add Dashboard Warnings (P0)
-    - **Where to resume**:
-        1.  **Backend ()**: Modify the  endpoint to remove the requirement for a  from the request.
-        2.  **Frontend ()**: Make the Stripe Card Element section optional for the user during the signup process.
-        3.  **Frontend ()**: Implement a prominent warning banner (e.g., styled in red) that is conditionally rendered only for users who are on a trial and have not yet added a payment method.
-    - **What will be achieved with this?**: This will lower the barrier to entry for new users, potentially increasing signups, while still prompting them to add payment details to ensure conversion after the trial.
-    - **Status**: NOT STARTED
-    - **Should Test frontend/backend/both after fix?**: both
-    - **Blocked on something**: None
+None.
 
 **Upcoming and Future Tasks**
 - **Upcoming Tasks**:
-    - **Referral Program (P1)**: Full end-to-end testing of the referral and credit system, especially how credits are awarded after the first successful payment, which is now decoupled from the initial signup.
+    - **WhatsApp E2E Test (P1)**: Once the blockers for Issue #2 are resolved, guide the user through a full end-to-end test on their live system to trigger and verify every type of WhatsApp notification (welcome, confirmation, cancellation, reminder).
+    - **Referral Program E2E Testing (P2)**: Perform a full test of the referral and credit system to ensure credits are granted and applied correctly.
 
 **Completed work in this session**
-- **Landing Page UI Enhancements**:
-    - Implemented a count-up animation and a pulsing glow effect for the Centurion counter.
-    - Refined the mobile and desktop layouts multiple times based on user feedback, including repositioning and resizing the logo and counter.
-- **Referral System Implementation**:
-    - **Backend**:
-        - Updated the  model with fields for referral tracking (, , etc.).
-        - Implemented endpoints for referral code validation, admin credit management, and business owner referral stats.
-        - Updated the registration logic to generate unique referral codes for Centurions () and other businesses ().
-        - Ran a migration script to assign referral codes to all existing businesses.
-    - **Frontend**:
-        - Added an optional Referral Code field to the signup form with live validation.
-        - Created an expanded referral analytics card for the Business Owner Dashboard.
-        - Built an admin UI with a Referrals tab to view all referral data and manually adjust user credits.
-- **Automated Billing & Credit System**:
-    - **Backend**:
-        - Implemented a Stripe webhook handler () to automatically check for referral credits. If credits exist, it voids the Stripe invoice, deducts a credit, and pauses the Stripe subscription.
-        - Created a daily cron job () to process credit-based billing.
-        - Added an endpoint to allow admins to resume a paused Stripe subscription.
-    - **Frontend**: Added a button in the admin panel to manually trigger the credit billing process.
+- **Frozen Account & Reactivation Flow**: Fully tested and verified.
+- **Availability Management**: Business owners are now prevented from selecting already booked time slots, and the appointment's full duration is correctly blocked out.
+- **Attendance Tracking**: Implemented and verified Show/No Show buttons and corresponding analytics.
+- **Booking Management**:
+    - Removed cancellation ability for customers and added it for business owners.
+    - Added Deposit Paid and Outstanding financial details to booking views.
+- **Bug Fix**: Corrected a bug where free-access businesses were incorrectly consuming referral credits.
+- **UI Enhancements**:
+    - Created the new Centurion Hub which opens as a full-page view.
+    - Added a Total count to the appointments card.
+    - Updated text on the landing page's Centurion card.
+    - Fixed mobile layout for customer booking history.
+- **WhatsApp Integration (Code Complete)**:
+    - Guided user to create and submit all necessary Twilio templates (, , , ).
+    - Integrated all new  template SIDs and the  variable into the backend.
+    - Implemented logic to send welcome messages on registration.
+    - Added/restored WhatsApp notification toggles to user and business profiles.
+    - Added a UI warning for users who enable WhatsApp notifications without providing a phone number.
 
 **Earlier issues found/mentioned but not fixed**
 None.
 
 **Known issue recurrence from previous fork**
-None.
+- **Issue**: WhatsApp notifications not working.
+- **Recurrence count**: 3+
+- **Status**: IN PROGRESS. This session has likely resolved the code-side issues, but the feature is now blocked by external configuration (user environment variables) and third-party approval (WhatsApp templates).
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
-- **Backend**: Python, FastAPI, Motor, **apscheduler** for cron jobs.
-- **Frontend**: React.js, Tailwind CSS, Axios.
-- **Database**: MongoDB Atlas.
-- **Payments**: Stripe (Connect, Elements, Webhooks for , Subscription pause/resume).
-- **Frontend Animation**: State-driven animations using  and .
+- **Backend**: FastAPI, Motor, APScheduler. A new  module was created to modularize Twilio API calls.
+- **Frontend**: React.js, Tailwind CSS, Axios. Extensive use of conditional rendering based on state (, , etc.).
+- **External APIs**: Twilio WhatsApp API (using content templates), Stripe.
 
 **key DB schema**
-- **businesses**: {..., isCenturion: bool, centurionId: int, **referralCode**: str, **referralCredits**: int, **referredBy**: ObjectId(ref: 'businesses'), **successfulReferrals**: int, **stripeSubscriptionId**: str, **stripeSubscriptionStatus**: str}
+- **bookings**: Added .
+- **businesses**: Contains .
+- **users**: Contains .
 
 **changes in tech stack**
-- **Backend**: Added  for scheduling background tasks (cron jobs).
+None.
 
 **All files of reference**
 - 
@@ -103,58 +124,58 @@ None.
 - 
 - 
 - 
+- 
+- 
 
 **Areas that need refactoring**:
-None.
+-  is now extremely large and complex. It urgently needs to be broken down into smaller, single-purpose components (e.g., , , ).
+-  remains a monolithic file. Continuing to extract logic into separate modules (like ) is recommended for maintainability (e.g., , ).
 
 **key api endpoints**
-- : **To be modified** to make payment details optional.
-- : Validates a referral code during signup.
-- : Fetches all referral data for the admin panel.
-- : Allows admin to add/remove referral credits.
-- : Fetches referral statistics for the logged-in business owner.
-- : Handles Stripe events, including  to process referral credits.
-- : Manually triggers the credit deduction logic.
+- : **New** endpoint for business owners to cancel a booking.
+- : **New** endpoint to mark an appointment as 'show' or 'no-show'.
+-  & : Modified to trigger WhatsApp welcome messages.
+-  (invoice.created) & : Modified to prevent credit consumption for free-access users.
+- : This endpoint logic was significantly changed to handle cancellation notifications to the customer, initiated by the business owner.
 
 **Critical Info for New Agent**
-- **Your immediate task is to modify the signup flow.** The user wants to make credit card entry **optional** and instead show a **dashboard warning** for trial users without a payment method.
-- The referral credit system is complex. It hooks into Stripe's  webhook to void an upcoming charge and deduct a credit. A daily cron job also runs to ensure credits are processed.
-- The WhatsApp notification issue is a known external blocker dependent on the user's Twilio account configuration. Do not spend time debugging the code for this.
+- Your immediate task is to address the user's latest request: combine the separate Email and WhatsApp toggles into a single Notification Settings card on both the  and  profile pages.
+- The WhatsApp integration is coded but **BLOCKED**. Do not attempt to debug the code. Your role is to remind the user of the two actions they must complete: 1) Add the  variable to their Railway environment. 2) Wait for WhatsApp to approve the  templates. Once they confirm both are done, you can proceed with E2E testing.
 
 **documents and test reports created in this job**
+-  (updated)
 - 
 
 **Last 10 User Messages and any pending HUMAN messages**
-10. **User**: Requests a change: make card details optional at signup and add a dashboard warning for users on trial to add card details before the trial ends. (PENDING)
-9. **User**: Asks to implement automatic credit deduction. (COMPLETED)
-8. **Agent**: Explains what a monthly billing cron job is and asks for confirmation to implement it. (COMPLETED)
-7. **User**: Asks what a monthly billing contract job is. (COMPLETED)
-6. **Agent**: Provides a plan for billing integration, admin UI, and referral analytics. (COMPLETED)
-5. **User**: OKs the plan, wants referral analytics for the business owner. (COMPLETED)
-4. **User**: Asks to continue with billing integration, admin UI, and referral analytics. (COMPLETED)
-3. **User**: Expands on the referral program: non-Centurions get 1 credit, use CBO prefix for their codes, and admin should be able to manage credits. (COMPLETED)
-2. **User**: Defines the referral scheme: Centurion card on dashboard, Centurion code, credit system (2 credits per referral, 1 credit = 1 free month). (COMPLETED)
-1. **User**: Request to make the Centurion logo slightly larger on the landing page. (COMPLETED)
+- **10. User:** In the user and business profiles the E-mal and WhatsApp toggles are on two different cards. Can you put them on the same card please. (NOT STARTED)
+- **9. User:** Provides new Template SIDs for  and  and asks to implement them. (COMPLETED)
+- **8. User:** Asks to create two new WhatsApp templates for User and Business signups. (COMPLETED)
+- **7. User:** Provides  template SIDs and confirms to update the code with . (COMPLETED)
+- **6. User:** Asks how to edit a locked Twilio template. (COMPLETED)
+- **5. User:** Asks about adding business name to templates and where to put the Twilio phone number variable in Railway. (COMPLETED)
+- **4. User:** Provides SIDs for reminder and cancellation templates and asks about the approval process. (COMPLETED)
+- **3. User:** Asks to create a  template. (COMPLETED)
+- **2. User:** Asks about the Content Type for a Twilio template. (COMPLETED)
+- **1. User:** Maybe we should do the Booking Reminder now. (COMPLETED)
 
 **Project Health Check:**
-- **Broken**: None
-- **Mocked**: None
+- **Broken**: The WhatsApp notification feature is not yet functional in the live environment. It is blocked pending user configuration and third-party approval.
+- **Mocked**: None.
 
 **3rd Party Integrations**
-- **Stripe**: Connect for payouts and Elements for card capture. Advanced usage now includes Webhooks () and Subscription management APIs (pause/resume).
-- **Twilio (WhatsApp)**: Configured but **BLOCKED** in production pending user's Business Profile verification.
+- **Stripe**: For payments and subscriptions.
+- **Twilio (WhatsApp)**: Integration is coded with approved templates but is **BLOCKED** in production. It requires the user to add the  environment variable on Railway and await final template approval from WhatsApp.
 - **SendGrid (Email)**: For transactional emails.
 - **MongoDB Atlas**: Primary database.
 
 **Testing status**
-- **Testing agent used after significant changes**: NO
-- **Troubleshoot agent used after agent stuck in loop**: NO
-- **Test files created**: []
+- **Testing agent used after significant changes**: YES (for the Frozen Account feature).
+- **Troubleshoot agent used after agent stuck in loop**: NO.
+- **Test files created**: None.
 - **Known regressions**: None.
 
 **Credentials to test flow:**
-- Create a new test account via the UI.
-- Valid referral codes exist for testing:  through .
+- Credentials remain the same as the previous fork. Use  for admin access or create new test users as needed.
 
 **What agent forgot to execute**
-The agent has not yet started the implementation of making card details optional on signup, which was the user's last and highest-priority request.</analysis>
+The agent has not forgotten any tasks and was actively working on the user's latest request before the session ended. All tasks from the previous handoff and user requests during the session have been addressed or are noted as blocked.</analysis>
