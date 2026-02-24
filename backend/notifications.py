@@ -179,7 +179,7 @@ def send_whatsapp(to_number: str, message: str) -> bool:
         
         wa_message = client.messages.create(
             body=message,
-            from_=f"whatsapp:{TWILIO_WHATSAPP_NUMBER}" if not TWILIO_WHATSAPP_NUMBER.startswith("whatsapp:") else TWILIO_WHATSAPP_NUMBER,
+            from_=f"whatsapp:{TWILIO_WHATSAPP_NUMBER}",
             to=whatsapp_to
         )
         
