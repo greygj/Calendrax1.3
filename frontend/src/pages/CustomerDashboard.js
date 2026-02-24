@@ -158,17 +158,6 @@ const CustomerDashboard = () => {
   const handleBusinessClick = (businessId) => {
     navigate(`/business/${businessId}`);
   };
-
-  const handleCancelBooking = async (appointmentId) => {
-    if (window.confirm('Are you sure you want to cancel this booking?')) {
-      try {
-        await appointmentAPI.cancel(appointmentId);
-        loadData();
-      } catch (error) {
-        console.error('Failed to cancel booking:', error);
-      }
-    }
-  };
   
   // Change password handler
   const handleChangePassword = async (e) => {
