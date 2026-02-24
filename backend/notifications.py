@@ -693,6 +693,58 @@ async def notify_booking_cancelled(
     return results
 
 
+async def notify_customer_booking_cancelled(
+    customer_email: str,
+    customer_phone: Optional[str],
+    customer_name: str,
+    business_name: str,
+    service_name: str,
+    date: str,
+    time: str,
+    email_enabled: bool = True,
+    whatsapp_enabled: bool = True
+):
+    """Send cancellation notification to customer when business owner cancels"""
+    results = {"email": False, "whatsapp": False}
+    
+    # Send email to customer
+    if email_enabled:
+        subject = f"Booking Cancelled - {business_name}"
+        html_content = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; background-color: #1a1a1a; color: #ffffff; padding: 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #2a2a2a; border-radius: 10px; padding: 30px;">
+                <h1 style="color: #ef4444; margin-bottom: 20px;">Booking Cancelled</h1>
+                <p>Hello {customer_name},</p>
+                <p>We're sorry, but your appointment has been cancelled:</p>
+                <div style="background-color: #333; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <p><strong>Service:</strong> {service_name}</p>
+                    <p><strong>Date:</strong> {date}</p>
+                    <p><strong>Time:</strong> {time}</p>
+                    <p><strong>Business:</strong> {business_name}</p>
+                </div>
+                <p>Please contact {business_name} to reschedule your appointment.</p>
+                <p style="color: #888; margin-top: 30px;">Best regards,<br>The Calendrax Team</p>
+            </div>
+        </body>
+        </html>
+        """
+        results["email"] = send_email(customer_email, subject, html_content)
+    
+    # Send WhatsApp to customer using approved template
+    if customer_phone and whatsapp_enabled:
+        results["whatsapp"] = send_booking_cancelled_whatsapp(
+            to_number=customer_phone,
+            customer_name=customer_name,
+            service_name=service_name,
+            date=date,
+            time=time
+        )
+    
+    logger.info(f"Customer booking cancelled notifications sent: {results}")
+    return results
+
+
 async def send_appointment_reminder(
     customer_email: str,
     customer_phone: Optional[str],
