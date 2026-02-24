@@ -796,6 +796,7 @@ async def send_appointment_reminder(
         results["whatsapp"] = send_booking_reminder_whatsapp(
             to_number=customer_phone,
             customer_name=customer_name,
+            business_name=business_name,
             service_name=service_name,
             date=date,
             time=time
