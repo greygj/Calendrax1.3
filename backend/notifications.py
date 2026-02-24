@@ -354,6 +354,50 @@ def send_booking_cancelled_whatsapp(to_number: str, customer_name: str, business
     )
 
 
+def send_user_welcome_whatsapp(to_number: str, customer_name: str) -> bool:
+    """
+    Send welcome message to new customer via WhatsApp
+    
+    Args:
+        to_number: Customer's phone number
+        customer_name: Customer's name
+    
+    Returns:
+        bool: True if sent successfully
+    """
+    template_variables = {
+        "customer_name": customer_name
+    }
+    
+    return send_whatsapp_template(
+        to_number=to_number,
+        template_sid=WHATSAPP_TEMPLATE_USER_WELCOME,
+        template_variables=template_variables
+    )
+
+
+def send_business_welcome_whatsapp(to_number: str, business_name: str) -> bool:
+    """
+    Send welcome message to new business owner via WhatsApp
+    
+    Args:
+        to_number: Business owner's phone number
+        business_name: Name of the business
+    
+    Returns:
+        bool: True if sent successfully
+    """
+    template_variables = {
+        "business_name": business_name
+    }
+    
+    return send_whatsapp_template(
+        to_number=to_number,
+        template_sid=WHATSAPP_TEMPLATE_BUSINESS_WELCOME,
+        template_variables=template_variables
+    )
+
+
 # ==================== EMAIL TEMPLATES ====================
 
 def get_booking_created_email(
