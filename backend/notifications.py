@@ -290,6 +290,62 @@ def send_business_new_booking_whatsapp(to_number: str, customer_name: str, servi
     )
 
 
+def send_booking_reminder_whatsapp(to_number: str, customer_name: str, service_name: str, date: str, time: str) -> bool:
+    """
+    Send booking reminder to customer via WhatsApp using the approved template
+    
+    Args:
+        to_number: Customer's phone number
+        customer_name: Customer's name
+        service_name: Name of the service booked
+        date: Appointment date (e.g., "26th February 2025")
+        time: Appointment time (e.g., "10:00 AM")
+    
+    Returns:
+        bool: True if sent successfully
+    """
+    template_variables = {
+        "customer_name": customer_name,
+        "service_name": service_name,
+        "date": date,
+        "time": time
+    }
+    
+    return send_whatsapp_template(
+        to_number=to_number,
+        template_sid=WHATSAPP_TEMPLATE_BOOKING_REMINDER,
+        template_variables=template_variables
+    )
+
+
+def send_booking_cancelled_whatsapp(to_number: str, customer_name: str, service_name: str, date: str, time: str) -> bool:
+    """
+    Send booking cancellation notice to customer via WhatsApp using the approved template
+    
+    Args:
+        to_number: Customer's phone number
+        customer_name: Customer's name
+        service_name: Name of the service that was cancelled
+        date: Original appointment date
+        time: Original appointment time
+    
+    Returns:
+        bool: True if sent successfully
+    """
+    template_variables = {
+        "customer_name": customer_name,
+        "service_name": service_name,
+        "date": date,
+        "time": time
+    }
+    
+    return send_whatsapp_template(
+        to_number=to_number,
+        template_sid=WHATSAPP_TEMPLATE_BOOKING_CANCELLED,
+        template_variables=template_variables
+    )
+
+
 # ==================== EMAIL TEMPLATES ====================
 
 def get_booking_created_email(
