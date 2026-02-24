@@ -4073,20 +4073,40 @@ const BusinessOwnerDashboard = () => {
               </div>
             </form>
 
-            {/* Notification Settings */}
+            {/* Notification Settings - Combined Email & WhatsApp */}
             <div className="bg-cardBg border border-zinc-800 rounded-xl p-6">
               <h3 className="text-white font-medium flex items-center gap-2 mb-4">
-                <MessageCircle className="w-5 h-5 text-brand-400" />
+                <Bell className="w-5 h-5 text-brand-400" />
                 Notification Settings
               </h3>
               
               <div className="space-y-4">
+                {/* Email Toggle */}
+                <div className="flex items-center justify-between p-4 bg-zinc-800 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Mail className="w-5 h-5 text-gray-400" />
+                    <div>
+                      <p className="text-white font-medium">Email Notifications</p>
+                      <p className="text-gray-500 text-sm">Receive booking notifications via email</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleNotificationPref('emailReminders')}
+                    className={`w-12 h-6 rounded-full transition-colors relative ${
+                      notificationPrefs.emailReminders ? 'bg-brand-500' : 'bg-zinc-600'
+                    }`}
+                  >
+                    <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
+                      notificationPrefs.emailReminders ? 'left-7' : 'left-1'
+                    }`} />
+                  </button>
+                </div>
+                
                 {/* WhatsApp Toggle */}
                 <div className="flex items-center justify-between p-4 bg-zinc-800 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
-                      <MessageCircle className="w-5 h-5 text-green-400" />
-                    </div>
+                    <MessageCircle className="w-5 h-5 text-green-400" />
                     <div>
                       <p className="text-white font-medium">WhatsApp Notifications</p>
                       <p className="text-gray-500 text-sm">Receive booking alerts via WhatsApp</p>
@@ -4095,25 +4115,20 @@ const BusinessOwnerDashboard = () => {
                   <button
                     type="button"
                     onClick={() => handleToggleNotificationPref('whatsappReminders')}
-                    className={`relative w-14 h-7 rounded-full transition-colors ${
+                    className={`w-12 h-6 rounded-full transition-colors relative ${
                       notificationPrefs.whatsappReminders ? 'bg-green-500' : 'bg-zinc-600'
                     }`}
                   >
-                    <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform ${
-                      notificationPrefs.whatsappReminders ? 'translate-x-8' : 'translate-x-1'
-                    }`}></div>
+                    <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
+                      notificationPrefs.whatsappReminders ? 'left-7' : 'left-1'
+                    }`} />
                   </button>
                 </div>
-                
-                {notificationPrefs.whatsappReminders && !profileForm.mobile && (
-                  <p className="text-yellow-400 text-xs mt-2">
+                {notificationPrefs.whatsappReminders && !profileForm.phone && (
+                  <p className="text-yellow-400 text-xs px-4">
                     ⚠️ Please add your phone number in the business details above to receive WhatsApp notifications
                   </p>
                 )}
-                
-                <p className="text-gray-500 text-xs mt-2">
-                  When enabled, you'll receive WhatsApp messages for new bookings, cancellations, and reminders.
-                </p>
               </div>
             </div>
 
