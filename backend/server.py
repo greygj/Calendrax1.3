@@ -3469,46 +3469,50 @@ async def update_appointment_status(appointment_id: str, status: str, background
 
 @api_router.put("/appointments/{appointment_id}/cancel")
 async def cancel_appointment(appointment_id: str, background_tasks: BackgroundTasks, user: dict = Depends(get_current_user)):
-    appointment = await db.appointments.find_one({"id": appointment_id, "userId": user["id"]})
+    """Cancel an appointment - only business owner can cancel"""
+    # Get the appointment
+    appointment = await db.appointments.find_one({"id": appointment_id})
     if not appointment:
         raise HTTPException(status_code=404, detail="Appointment not found")
     
+    # Verify the user is the business owner
+    business = await db.businesses.find_one({"id": appointment["businessId"]})
+    if not business or business["ownerId"] != user["id"]:
+        raise HTTPException(status_code=403, detail="Not authorized to cancel this appointment")
+    
     await db.appointments.update_one({"id": appointment_id}, {"$set": {"status": "cancelled"}})
     
-    # Get business and business owner for notification
-    business = await db.businesses.find_one({"id": appointment["businessId"]})
-    if business:
-        business_owner = await db.users.find_one({"id": business["ownerId"]})
-        
-        # Create in-app notification for business owner
-        notification_doc = {
-            "id": str(uuid.uuid4()),
-            "userId": business["ownerId"],
-            "type": "booking_cancelled",
-            "title": "Booking Cancelled",
-            "message": f"{user['fullName']} cancelled their booking for {appointment['serviceName']} on {appointment['date']} at {appointment['time']}",
-            "read": False,
-            "createdAt": datetime.now(timezone.utc).isoformat()
-        }
-        await db.notifications.insert_one(notification_doc)
-        
-        # Send email/SMS notification to business owner (in background)
-        if business_owner:
-            # Get business owner's notification preferences
-            bo_email_enabled = business_owner.get("emailReminders", True)
-            bo_whatsapp_enabled = business_owner.get("whatsappReminders", True)
-            background_tasks.add_task(
-                notify_booking_cancelled,
-                business_owner_email=business_owner["email"],
-                business_owner_phone=business_owner.get("mobile"),
-                business_name=business["businessName"],
-                customer_name=user["fullName"],
-                service_name=appointment["serviceName"],
-                date=appointment["date"],
-                time=appointment["time"],
-                email_enabled=bo_email_enabled,
-                whatsapp_enabled=bo_whatsapp_enabled
-            )
+    # Get customer for notification
+    customer = await db.users.find_one({"id": appointment["userId"]})
+    
+    # Create in-app notification for customer
+    notification_doc = {
+        "id": str(uuid.uuid4()),
+        "userId": appointment["userId"],
+        "type": "booking_cancelled",
+        "title": "Booking Cancelled",
+        "message": f"Your booking for {appointment['serviceName']} on {appointment['date']} at {appointment['time']} at {business['businessName']} has been cancelled.",
+        "read": False,
+        "createdAt": datetime.now(timezone.utc).isoformat()
+    }
+    await db.notifications.insert_one(notification_doc)
+    
+    # Send email/WhatsApp notification to customer (in background)
+    if customer:
+        customer_email_enabled = customer.get("emailReminders", True)
+        customer_whatsapp_enabled = customer.get("whatsappReminders", True)
+        background_tasks.add_task(
+            notify_customer_booking_cancelled,
+            customer_email=customer["email"],
+            customer_phone=customer.get("mobile"),
+            customer_name=customer["fullName"],
+            business_name=business["businessName"],
+            service_name=appointment["serviceName"],
+            date=appointment["date"],
+            time=appointment["time"],
+            email_enabled=customer_email_enabled,
+            whatsapp_enabled=customer_whatsapp_enabled
+        )
     
     return {"success": True}
 
