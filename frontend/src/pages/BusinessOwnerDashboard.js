@@ -3955,21 +3955,13 @@ const BusinessOwnerDashboard = () => {
                   </div>
                   <button
                     type="button"
-                    onClick={async () => {
-                      try {
-                        const newValue = !profileForm.whatsappReminders;
-                        setProfileForm({...profileForm, whatsappReminders: newValue});
-                        await api.put('/api/users/me/preferences', { whatsappReminders: newValue });
-                      } catch (error) {
-                        console.error('Failed to update WhatsApp preference:', error);
-                      }
-                    }}
+                    onClick={() => handleToggleNotificationPref('whatsappReminders')}
                     className={`relative w-14 h-7 rounded-full transition-colors ${
-                      profileForm.whatsappReminders ? 'bg-green-500' : 'bg-zinc-600'
+                      notificationPrefs.whatsappReminders ? 'bg-green-500' : 'bg-zinc-600'
                     }`}
                   >
                     <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform ${
-                      profileForm.whatsappReminders ? 'translate-x-8' : 'translate-x-1'
+                      notificationPrefs.whatsappReminders ? 'translate-x-8' : 'translate-x-1'
                     }`}></div>
                   </button>
                 </div>
