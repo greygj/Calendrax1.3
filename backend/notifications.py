@@ -236,13 +236,14 @@ def send_whatsapp_template(to_number: str, template_sid: str, template_variables
         return False
 
 
-def send_appointment_confirmation_whatsapp(to_number: str, first_name: str, date: str, time: str) -> bool:
+def send_appointment_confirmation_whatsapp(to_number: str, first_name: str, business_name: str, date: str, time: str) -> bool:
     """
     Send appointment confirmation via WhatsApp using the approved template
     
     Args:
         to_number: Customer's phone number
         first_name: Customer's first name
+        business_name: Name of the business
         date: Appointment date (e.g., "15th January 2025")
         time: Appointment time (e.g., "3:00 PM")
     
@@ -251,6 +252,7 @@ def send_appointment_confirmation_whatsapp(to_number: str, first_name: str, date
     """
     template_variables = {
         "first_name": first_name,
+        "business_name": business_name,
         "date": date,
         "time": time
     }
