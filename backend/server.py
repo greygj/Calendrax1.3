@@ -23,7 +23,9 @@ from notifications import (
     notify_customer_booking_cancelled,
     get_notification_status,
     send_trial_reminder,
-    send_whatsapp
+    send_whatsapp,
+    send_user_welcome_whatsapp,
+    send_business_welcome_whatsapp
 )
 
 # Stripe SDK - using native stripe for Connect support
