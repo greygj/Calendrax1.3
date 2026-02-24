@@ -3934,6 +3934,53 @@ const BusinessOwnerDashboard = () => {
               </div>
             </form>
 
+            {/* Notification Settings */}
+            <div className="bg-cardBg border border-zinc-800 rounded-xl p-6">
+              <h3 className="text-white font-medium flex items-center gap-2 mb-4">
+                <MessageCircle className="w-5 h-5 text-brand-400" />
+                Notification Settings
+              </h3>
+              
+              <div className="space-y-4">
+                {/* WhatsApp Toggle */}
+                <div className="flex items-center justify-between p-4 bg-zinc-800 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
+                      <MessageCircle className="w-5 h-5 text-green-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-medium">WhatsApp Notifications</p>
+                      <p className="text-gray-500 text-sm">Receive booking alerts via WhatsApp</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const newValue = !profileForm.whatsappReminders;
+                        setProfileForm({...profileForm, whatsappReminders: newValue});
+                        await api.put('/api/users/me/preferences', { whatsappReminders: newValue });
+                      } catch (error) {
+                        console.error('Failed to update WhatsApp preference:', error);
+                      }
+                    }}
+                    className={`relative w-14 h-7 rounded-full transition-colors ${
+                      profileForm.whatsappReminders ? 'bg-green-500' : 'bg-zinc-600'
+                    }`}
+                  >
+                    <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform ${
+                      profileForm.whatsappReminders ? 'translate-x-8' : 'translate-x-1'
+                    }`}></div>
+                  </button>
+                </div>
+                
+                <p className="text-gray-500 text-xs">
+                  When enabled, you'll receive WhatsApp messages for new bookings, cancellations, and reminders.
+                  Make sure your phone number is correct in your business details above.
+                </p>
+              </div>
+            </div>
+
             {/* Change Password */}
             <div className="bg-cardBg border border-zinc-800 rounded-xl p-6 mt-6">
               <h3 className="text-white font-medium flex items-center gap-2 mb-3">
