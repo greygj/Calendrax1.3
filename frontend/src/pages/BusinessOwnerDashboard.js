@@ -2162,7 +2162,7 @@ const BusinessOwnerDashboard = () => {
                       {pendingAppointments.map(apt => (
                         <div key={apt.id} className="bg-cardBg border border-yellow-500/30 rounded-xl p-4">
                           <div className="flex items-start justify-between">
-                            <div>
+                            <div className="flex-1">
                               <h4 className="text-white font-medium">{apt.customerName}</h4>
                               <p className="text-gray-400 text-sm">{apt.customerEmail}</p>
                               <p className="text-brand-400 mt-2">{apt.serviceName}</p>
@@ -2170,6 +2170,15 @@ const BusinessOwnerDashboard = () => {
                               <p className="text-gray-500 text-sm mt-1">
                                 {formatDate(apt.date)} at {apt.time}
                               </p>
+                              {/* Payment Details */}
+                              <div className="flex items-center gap-4 mt-2 text-sm">
+                                <span className={apt.depositPaid ? 'text-green-400' : 'text-gray-500'}>
+                                  Deposit: £{(apt.depositAmount || 0).toFixed(2)} {apt.depositPaid ? '✓ Paid' : ''}
+                                </span>
+                                <span className="text-yellow-400">
+                                  Outstanding: £{((apt.paymentAmount || 0) - (apt.depositPaid ? (apt.depositAmount || 0) : 0)).toFixed(2)}
+                                </span>
+                              </div>
                             </div>
                             <div className="flex gap-2">
                               <button
