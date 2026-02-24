@@ -150,6 +150,8 @@ def send_sms(to_number: str, message: str) -> bool:
 # Twilio Content Template SIDs
 WHATSAPP_TEMPLATE_APPOINTMENT_CONFIRMATION = "HXfd8de220f8c35ad016d0a898da95423a"  # For customer confirmations
 WHATSAPP_TEMPLATE_BUSINESS_NEW_BOOKING = "HXea9576ea084797bca426aa1d91670c90"  # For business owner alerts
+WHATSAPP_TEMPLATE_BOOKING_REMINDER = "HX94bf98715eeac9937f1c70c7ffd105c"  # For appointment reminders
+WHATSAPP_TEMPLATE_BOOKING_CANCELLED = "HXf4d476a5903e78c0aafe00813a23ab32"  # For cancellation notices
 
 def send_whatsapp(to_number: str, message: str) -> bool:
     """
