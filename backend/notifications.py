@@ -260,6 +260,34 @@ def send_appointment_confirmation_whatsapp(to_number: str, first_name: str, date
     )
 
 
+def send_business_new_booking_whatsapp(to_number: str, customer_name: str, service_name: str, date: str, time: str) -> bool:
+    """
+    Send new booking alert to business owner via WhatsApp using the approved template
+    
+    Args:
+        to_number: Business owner's phone number
+        customer_name: Customer's name
+        service_name: Name of the service booked
+        date: Appointment date (e.g., "25th February 2025")
+        time: Appointment time (e.g., "2:00 PM")
+    
+    Returns:
+        bool: True if sent successfully
+    """
+    template_variables = {
+        "customer_name": customer_name,
+        "service_name": service_name,
+        "date": date,
+        "time": time
+    }
+    
+    return send_whatsapp_template(
+        to_number=to_number,
+        template_sid=WHATSAPP_TEMPLATE_BUSINESS_NEW_BOOKING,
+        template_variables=template_variables
+    )
+
+
 # ==================== EMAIL TEMPLATES ====================
 
 def get_booking_created_email(
