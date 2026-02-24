@@ -743,6 +743,7 @@ async def notify_customer_booking_cancelled(
         results["whatsapp"] = send_booking_cancelled_whatsapp(
             to_number=customer_phone,
             customer_name=customer_name,
+            business_name=business_name,
             service_name=service_name,
             date=date,
             time=time
