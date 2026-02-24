@@ -516,6 +516,26 @@ async def register(user_data: UserCreate):
         await db.subscriptions.insert_one(subscription_doc)
         # Remove MongoDB _id before returning
         business = remove_mongo_id(business_doc)
+        
+        # Send WhatsApp welcome message to business owner
+        if user_data.mobile:
+            try:
+                send_business_welcome_whatsapp(
+                    to_number=user_data.mobile,
+                    business_name=business_doc["businessName"]
+                )
+            except Exception as e:
+                logger.error(f"Failed to send business welcome WhatsApp: {e}")
+    else:
+        # Customer registration - send welcome WhatsApp
+        if user_data.mobile:
+            try:
+                send_user_welcome_whatsapp(
+                    to_number=user_data.mobile,
+                    customer_name=user_data.fullName
+                )
+            except Exception as e:
+                logger.error(f"Failed to send user welcome WhatsApp: {e}")
     
     token = create_token(user_id, user_data.role)
     
