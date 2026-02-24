@@ -2203,13 +2203,22 @@ const BusinessOwnerDashboard = () => {
                       {confirmedAppointments.map(apt => (
                         <div key={apt.id} className="bg-cardBg border border-zinc-800 rounded-xl p-4">
                           <div className="flex items-start justify-between">
-                            <div>
+                            <div className="flex-1">
                               <h4 className="text-white font-medium">{apt.customerName}</h4>
                               <p className="text-brand-400">{apt.serviceName}</p>
                               {apt.staffName && <p className="text-gray-500 text-sm">with {apt.staffName}</p>}
                               <p className="text-gray-500 text-sm mt-1">
                                 {formatDate(apt.date)} at {apt.time}
                               </p>
+                              {/* Payment Details */}
+                              <div className="flex items-center gap-4 mt-2 text-sm">
+                                <span className={apt.depositPaid ? 'text-green-400' : 'text-gray-500'}>
+                                  Deposit: £{(apt.depositAmount || 0).toFixed(2)} {apt.depositPaid ? '✓ Paid' : ''}
+                                </span>
+                                <span className="text-yellow-400">
+                                  Outstanding: £{((apt.paymentAmount || 0) - (apt.depositPaid ? (apt.depositAmount || 0) : 0)).toFixed(2)}
+                                </span>
+                              </div>
                             </div>
                             <div className="flex items-center gap-2">
                               <span className="px-3 py-1 bg-brand-500/20 text-brand-400 text-sm rounded-full">
