@@ -215,7 +215,7 @@ def send_whatsapp_template(to_number: str, template_sid: str, template_variables
         
         # Format the 'to' number for WhatsApp
         whatsapp_to = f"whatsapp:{formatted_number}" if not formatted_number.startswith("whatsapp:") else formatted_number
-        whatsapp_from = f"whatsapp:{TWILIO_WHATSAPP_NUMBER}" if not TWILIO_WHATSAPP_NUMBER.startswith("whatsapp:") else TWILIO_WHATSAPP_NUMBER
+        whatsapp_from = f"whatsapp:{TWILIO_WHATSAPP_NUMBER}"
         
         import json
         wa_message = client.messages.create(
