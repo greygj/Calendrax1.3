@@ -527,10 +527,16 @@ async def notify_booking_approved(
         )
         results["email"] = send_email(customer_email, subject, html_content)
     
-    # Send WhatsApp to customer if phone number is available
+    # Send WhatsApp to customer using approved template
     if customer_phone and whatsapp_enabled:
-        whatsapp_message = get_booking_approved_whatsapp(business_name, service_name, date, time)
-        results["whatsapp"] = send_whatsapp(customer_phone, whatsapp_message)
+        # Extract first name from full name
+        first_name = customer_name.split()[0] if customer_name else "Customer"
+        results["whatsapp"] = send_appointment_confirmation_whatsapp(
+            to_number=customer_phone,
+            first_name=first_name,
+            date=date,
+            time=time
+        )
     
     logger.info(f"Booking approved notifications sent: {results}")
     return results
