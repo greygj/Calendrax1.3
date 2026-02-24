@@ -4228,36 +4228,6 @@ const BusinessOwnerDashboard = () => {
               )}
             </div>
 
-            {/* Notification Preferences */}
-            <div className="bg-cardBg border border-zinc-800 rounded-xl p-6 mt-6">
-              <h3 className="text-white font-medium flex items-center gap-2 mb-4">
-                <Bell className="w-5 h-5 text-brand-400" />
-                Notification Preferences
-              </h3>
-              
-              <div className="space-y-4">
-                {/* Email Reminders Toggle */}
-                <div className="flex items-center justify-between p-4 bg-zinc-800 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-5 h-5 text-gray-400" />
-                    <div>
-                      <p className="text-white font-medium">Email Reminders</p>
-                      <p className="text-gray-500 text-sm">Receive booking notifications via email</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleToggleNotificationPref('emailReminders')}
-                    className={`w-12 h-6 rounded-full transition-colors relative ${
-                      notificationPrefs.emailReminders ? 'bg-brand-500' : 'bg-zinc-600'
-                    }`}
-                  >
-                    <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
-                      notificationPrefs.emailReminders ? 'left-7' : 'left-1'
-                    }`} />
-                  </button>
-                </div>
-              </div>
-            </div>
 
             {/* Add to Home Screen */}
             <div className="bg-cardBg border border-zinc-800 rounded-xl p-6 mt-6">
