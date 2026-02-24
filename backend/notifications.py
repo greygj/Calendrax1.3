@@ -292,13 +292,14 @@ def send_business_new_booking_whatsapp(to_number: str, customer_name: str, servi
     )
 
 
-def send_booking_reminder_whatsapp(to_number: str, customer_name: str, service_name: str, date: str, time: str) -> bool:
+def send_booking_reminder_whatsapp(to_number: str, customer_name: str, business_name: str, service_name: str, date: str, time: str) -> bool:
     """
     Send booking reminder to customer via WhatsApp using the approved template
     
     Args:
         to_number: Customer's phone number
         customer_name: Customer's name
+        business_name: Name of the business
         service_name: Name of the service booked
         date: Appointment date (e.g., "26th February 2025")
         time: Appointment time (e.g., "10:00 AM")
@@ -308,6 +309,7 @@ def send_booking_reminder_whatsapp(to_number: str, customer_name: str, service_n
     """
     template_variables = {
         "customer_name": customer_name,
+        "business_name": business_name,
         "service_name": service_name,
         "date": date,
         "time": time
