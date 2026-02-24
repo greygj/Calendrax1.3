@@ -155,7 +155,8 @@ export const appointmentAPI = {
   getBusinessCustomers: () => apiClient.get('/business-customers'),
   deleteCustomer: (customerId) => apiClient.delete(`/business-customers/${customerId}`),
   updateStatus: (id, status) => apiClient.put(`/appointments/${id}/status?status=${status}`),
-  cancel: (id) => apiClient.put(`/appointments/${id}/cancel`)
+  cancel: (id) => apiClient.put(`/appointments/${id}/cancel`),
+  markAttendance: (id, attendance) => apiClient.put(`/appointments/${id}/attendance?attendance=${attendance}`)
 };
 
 // Reviews
