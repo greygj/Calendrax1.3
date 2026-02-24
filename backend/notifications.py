@@ -322,13 +322,14 @@ def send_booking_reminder_whatsapp(to_number: str, customer_name: str, business_
     )
 
 
-def send_booking_cancelled_whatsapp(to_number: str, customer_name: str, service_name: str, date: str, time: str) -> bool:
+def send_booking_cancelled_whatsapp(to_number: str, customer_name: str, business_name: str, service_name: str, date: str, time: str) -> bool:
     """
     Send booking cancellation notice to customer via WhatsApp using the approved template
     
     Args:
         to_number: Customer's phone number
         customer_name: Customer's name
+        business_name: Name of the business
         service_name: Name of the service that was cancelled
         date: Original appointment date
         time: Original appointment time
@@ -338,6 +339,7 @@ def send_booking_cancelled_whatsapp(to_number: str, customer_name: str, service_
     """
     template_variables = {
         "customer_name": customer_name,
+        "business_name": business_name,
         "service_name": service_name,
         "date": date,
         "time": time
