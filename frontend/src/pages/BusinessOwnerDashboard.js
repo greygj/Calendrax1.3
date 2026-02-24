@@ -2211,9 +2211,18 @@ const BusinessOwnerDashboard = () => {
                                 {formatDate(apt.date)} at {apt.time}
                               </p>
                             </div>
-                            <span className="px-3 py-1 bg-brand-500/20 text-brand-400 text-sm rounded-full">
-                              Confirmed
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="px-3 py-1 bg-brand-500/20 text-brand-400 text-sm rounded-full">
+                                Confirmed
+                              </span>
+                              <button
+                                onClick={() => handleCancelBooking(apt)}
+                                className="p-2 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 transition-colors"
+                                title="Cancel booking"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       ))}
