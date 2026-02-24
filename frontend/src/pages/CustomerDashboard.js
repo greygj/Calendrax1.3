@@ -598,12 +598,6 @@ const CustomerDashboard = () => {
                             }`}>
                               {booking.status === 'confirmed' ? 'Confirmed' : 'Pending'}
                             </span>
-                            <button
-                              onClick={() => handleCancelBooking(booking.id)}
-                              className="text-red-400 text-sm hover:text-red-300 transition-colors"
-                            >
-                              Cancel
-                            </button>
                           </div>
                         </div>
                       </div>
