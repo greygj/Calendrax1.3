@@ -107,6 +107,14 @@ First 100 business signups get special "Centurion" status with lifetime benefits
 
 ## Changelog
 
+### 2026-02-24 (Session 4 - UI Consolidation)
+- **Consolidated Notification Settings Card - BusinessOwnerDashboard**:
+  - Combined separate "Notification Settings" (WhatsApp only) and "Notification Preferences" (Email only) cards
+  - Now single "Notification Settings" card with both Email and WhatsApp toggles
+  - Consistent styling with CustomerDashboard which already had unified card
+  - Email toggle uses brand color, WhatsApp toggle uses green accent
+  - Warning message shown when WhatsApp enabled but no phone number added
+
 ### 2026-02-16 (Session 3 - Frozen Account Feature)
 - **Frozen Account Feature - TESTED & VERIFIED**:
   - Users whose trial has expired without a payment method see a "Frozen Account" overlay
