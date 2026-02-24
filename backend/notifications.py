@@ -631,6 +631,7 @@ async def notify_booking_approved(
         results["whatsapp"] = send_appointment_confirmation_whatsapp(
             to_number=customer_phone,
             first_name=first_name,
+            business_name=business_name,
             date=date,
             time=time
         )
