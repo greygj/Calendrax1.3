@@ -578,6 +578,15 @@ const CustomerDashboard = () => {
                                 {booking.time}
                               </span>
                             </div>
+                            {/* Payment Details */}
+                            <div className="flex items-center gap-4 mt-2 text-sm">
+                              <span className={booking.depositPaid ? 'text-green-400' : 'text-gray-500'}>
+                                Deposit: £{(booking.depositAmount || 0).toFixed(2)} {booking.depositPaid ? '✓ Paid' : ''}
+                              </span>
+                              <span className="text-yellow-400">
+                                Outstanding: £{((booking.paymentAmount || 0) - (booking.depositPaid ? (booking.depositAmount || 0) : 0)).toFixed(2)}
+                              </span>
+                            </div>
                           </div>
                           <div className="flex flex-col items-end gap-2">
                             <span className={`px-3 py-1 rounded-full text-xs font-medium ${
