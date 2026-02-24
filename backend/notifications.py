@@ -783,10 +783,15 @@ async def send_appointment_reminder(
         """
         results["email"] = send_email(customer_email, subject, html_content)
     
-    # Send WhatsApp reminder
+    # Send WhatsApp reminder using approved template
     if customer_phone and whatsapp_enabled:
-        whatsapp_message = get_booking_reminder_whatsapp(business_name, service_name, date, time)
-        results["whatsapp"] = send_whatsapp(customer_phone, whatsapp_message)
+        results["whatsapp"] = send_booking_reminder_whatsapp(
+            to_number=customer_phone,
+            customer_name=customer_name,
+            service_name=service_name,
+            date=date,
+            time=time
+        )
     
     logger.info(f"Appointment reminder sent: {results}")
     return results
