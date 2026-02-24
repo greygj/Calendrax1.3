@@ -3512,6 +3512,34 @@ async def cancel_appointment(appointment_id: str, background_tasks: BackgroundTa
     
     return {"success": True}
 
+@api_router.put("/appointments/{appointment_id}/attendance")
+async def mark_appointment_attendance(
+    appointment_id: str, 
+    attendance: str,  # 'show' or 'no_show'
+    user: dict = Depends(get_current_user)
+):
+    """Mark customer attendance for a past appointment"""
+    if attendance not in ['show', 'no_show']:
+        raise HTTPException(status_code=400, detail="Attendance must be 'show' or 'no_show'")
+    
+    # Get the appointment and verify ownership
+    appointment = await db.appointments.find_one({"id": appointment_id})
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    # Verify user owns the business
+    business = await db.businesses.find_one({"id": appointment["businessId"], "ownerId": user["id"]})
+    if not business:
+        raise HTTPException(status_code=403, detail="Not authorized to update this appointment")
+    
+    # Update the appointment with attendance
+    await db.appointments.update_one(
+        {"id": appointment_id}, 
+        {"$set": {"attendance": attendance}}
+    )
+    
+    return {"success": True, "attendance": attendance}
+
 # ==================== NOTIFICATION ROUTES ====================
 
 @api_router.get("/notifications")
