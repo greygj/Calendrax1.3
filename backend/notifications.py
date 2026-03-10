@@ -108,6 +108,33 @@ def format_phone_number(phone: str) -> str:
     return '+44' + phone
 
 
+# ==================== DATE FORMATTING UTILITIES ====================
+
+def format_date_for_display(date_str: str) -> str:
+    """
+    Format a date string from YYYY-MM-DD to DD/MM/YYYY
+    
+    Args:
+        date_str: Date string in YYYY-MM-DD format
+    
+    Returns:
+        str: Date string in DD/MM/YYYY format
+    """
+    if not date_str:
+        return date_str
+    
+    try:
+        # Handle ISO date strings (e.g., "2026-02-08T00:00:00.000Z")
+        date_part = date_str.split('T')[0]
+        parts = date_part.split('-')
+        if len(parts) == 3:
+            return f"{parts[2]}/{parts[1]}/{parts[0]}"
+    except Exception:
+        pass
+    
+    return date_str
+
+
 # ==================== SMS SERVICE ====================
 
 def send_sms(to_number: str, message: str) -> bool:
@@ -628,10 +655,13 @@ async def notify_booking_created(
     """Send notifications when a new booking is created"""
     results = {"email": False, "whatsapp": False}
     
+    # Format date for display (DD/MM/YYYY)
+    formatted_date = format_date_for_display(date)
+    
     # Send email to business owner
     if email_enabled:
         subject, html_content = get_booking_created_email(
-            business_name, customer_name, service_name, date, time
+            business_name, customer_name, service_name, formatted_date, time
         )
         results["email"] = send_email(business_owner_email, subject, html_content)
     
@@ -641,7 +671,7 @@ async def notify_booking_created(
             to_number=business_owner_phone,
             customer_name=customer_name,
             service_name=service_name,
-            date=date,
+            date=formatted_date,
             time=time
         )
     
@@ -663,10 +693,13 @@ async def notify_booking_approved(
     """Send notifications when a booking is approved"""
     results = {"email": False, "whatsapp": False}
     
+    # Format date for display (DD/MM/YYYY)
+    formatted_date = format_date_for_display(date)
+    
     # Send email to customer
     if email_enabled:
         subject, html_content = get_booking_approved_email(
-            customer_name, business_name, service_name, date, time
+            customer_name, business_name, service_name, formatted_date, time
         )
         results["email"] = send_email(customer_email, subject, html_content)
     
@@ -678,7 +711,7 @@ async def notify_booking_approved(
             to_number=customer_phone,
             first_name=first_name,
             business_name=business_name,
-            date=date,
+            date=formatted_date,
             time=time
         )
     
@@ -700,16 +733,19 @@ async def notify_booking_declined(
     """Send notifications when a booking is declined"""
     results = {"email": False, "whatsapp": False}
     
+    # Format date for display (DD/MM/YYYY)
+    formatted_date = format_date_for_display(date)
+    
     # Send email to customer
     if email_enabled:
         subject, html_content = get_booking_declined_email(
-            customer_name, business_name, service_name, date, time
+            customer_name, business_name, service_name, formatted_date, time
         )
         results["email"] = send_email(customer_email, subject, html_content)
     
     # Send WhatsApp to customer if phone number is available
     if customer_phone and whatsapp_enabled:
-        whatsapp_message = get_booking_declined_whatsapp(business_name, service_name, date, time)
+        whatsapp_message = get_booking_declined_whatsapp(business_name, service_name, formatted_date, time)
         results["whatsapp"] = send_whatsapp(customer_phone, whatsapp_message)
     
     logger.info(f"Booking declined notifications sent: {results}")
@@ -730,16 +766,19 @@ async def notify_booking_cancelled(
     """Send notifications when a booking is cancelled"""
     results = {"email": False, "whatsapp": False}
     
+    # Format date for display (DD/MM/YYYY)
+    formatted_date = format_date_for_display(date)
+    
     # Send email to business owner
     if email_enabled:
         subject, html_content = get_booking_cancelled_email(
-            business_name, customer_name, service_name, date, time
+            business_name, customer_name, service_name, formatted_date, time
         )
         results["email"] = send_email(business_owner_email, subject, html_content)
     
     # Send WhatsApp to business owner if phone number is available
     if business_owner_phone and whatsapp_enabled:
-        whatsapp_message = get_booking_cancelled_whatsapp(customer_name, service_name, date, time)
+        whatsapp_message = get_booking_cancelled_whatsapp(customer_name, service_name, formatted_date, time)
         results["whatsapp"] = send_whatsapp(business_owner_phone, whatsapp_message)
     
     logger.info(f"Booking cancelled notifications sent: {results}")
@@ -760,6 +799,9 @@ async def notify_customer_booking_cancelled(
     """Send cancellation notification to customer when business owner cancels"""
     results = {"email": False, "whatsapp": False}
     
+    # Format date for display (DD/MM/YYYY)
+    formatted_date = format_date_for_display(date)
+    
     # Send email to customer
     if email_enabled:
         subject = f"Booking Cancelled - {business_name}"
@@ -772,7 +814,7 @@ async def notify_customer_booking_cancelled(
                 <p>We're sorry, but your appointment has been cancelled:</p>
                 <div style="background-color: #333; padding: 20px; border-radius: 8px; margin: 20px 0;">
                     <p><strong>Service:</strong> {service_name}</p>
-                    <p><strong>Date:</strong> {date}</p>
+                    <p><strong>Date:</strong> {formatted_date}</p>
                     <p><strong>Time:</strong> {time}</p>
                     <p><strong>Business:</strong> {business_name}</p>
                 </div>
@@ -791,7 +833,7 @@ async def notify_customer_booking_cancelled(
             customer_name=customer_name,
             business_name=business_name,
             service_name=service_name,
-            date=date,
+            date=formatted_date,
             time=time
         )
     
@@ -813,6 +855,9 @@ async def send_appointment_reminder(
     """Send appointment reminder to customer"""
     results = {"email": False, "whatsapp": False}
     
+    # Format date for display (DD/MM/YYYY)
+    formatted_date = format_date_for_display(date)
+    
     # Send email reminder
     if email_enabled:
         subject = f"Reminder: Your appointment at {business_name} tomorrow"
@@ -826,7 +871,7 @@ async def send_appointment_reminder(
                 <div style="background-color: #333; padding: 20px; border-radius: 8px; margin: 20px 0;">
                     <p><strong style="color: #a3e635;">Business:</strong> {business_name}</p>
                     <p><strong style="color: #a3e635;">Service:</strong> {service_name}</p>
-                    <p><strong style="color: #a3e635;">Date:</strong> {date}</p>
+                    <p><strong style="color: #a3e635;">Date:</strong> {formatted_date}</p>
                     <p><strong style="color: #a3e635;">Time:</strong> {time}</p>
                 </div>
                 <p>We look forward to seeing you!</p>
@@ -844,7 +889,7 @@ async def send_appointment_reminder(
             customer_name=customer_name,
             business_name=business_name,
             service_name=service_name,
-            date=date,
+            date=formatted_date,
             time=time
         )
     

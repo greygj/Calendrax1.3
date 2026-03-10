@@ -1,7 +1,7 @@
 /**
- * Format a date string from YYYY-MM-DD to DD-MM-YYYY
+ * Format a date string from YYYY-MM-DD to DD/MM/YYYY
  * @param {string} dateStr - Date string in YYYY-MM-DD format
- * @returns {string} Date string in DD-MM-YYYY format
+ * @returns {string} Date string in DD/MM/YYYY format
  */
 export const formatDate = (dateStr) => {
   if (!dateStr) return '';
@@ -9,17 +9,17 @@ export const formatDate = (dateStr) => {
   // Handle ISO date strings (e.g., "2026-02-08T00:00:00.000Z")
   const datePart = dateStr.split('T')[0];
   
-  // Split and rearrange from YYYY-MM-DD to DD-MM-YYYY
+  // Split and rearrange from YYYY-MM-DD to DD/MM/YYYY
   const parts = datePart.split('-');
   if (parts.length !== 3) return dateStr;
   
-  return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
 };
 
 /**
- * Format a Date object to DD-MM-YYYY string
+ * Format a Date object to DD/MM/YYYY string
  * @param {Date} date - Date object
- * @returns {string} Date string in DD-MM-YYYY format
+ * @returns {string} Date string in DD/MM/YYYY format
  */
 export const formatDateObject = (date) => {
   if (!date || !(date instanceof Date)) return '';
@@ -28,7 +28,7 @@ export const formatDateObject = (date) => {
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
   
-  return `${day}-${month}-${year}`;
+  return `${day}/${month}/${year}`;
 };
 
 /**
@@ -56,8 +56,8 @@ export const formatDateDisplay = (date, options = {}) => {
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const dayName = dayNames[dateObj.getDay()];
   
-  let result = `${day}-${month}`;
-  if (includeYear) result += `-${year}`;
+  let result = `${day}/${month}`;
+  if (includeYear) result += `/${year}`;
   if (includeDay) result = `${dayName}, ${result}`;
   
   return result;
