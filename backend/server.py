@@ -1382,18 +1382,98 @@ async def get_business_staff(business_id: str):
 
 @api_router.get("/availability/{business_id}/{date}")
 async def get_availability(business_id: str, date: str, staff_id: Optional[str] = None):
-    """Get availability slots for a specific date and optionally a specific staff member"""
+    """Get availability slots for a specific date and optionally a specific staff member, filtering out booked slots"""
     query = {"businessId": business_id, "date": date}
     if staff_id:
         query["staffId"] = staff_id
     avail = await db.availability.find_one(query)
-    return {"slots": avail["slots"] if avail else [], "staffId": staff_id}
+    
+    if not avail or not avail.get("slots"):
+        return {"slots": [], "staffId": staff_id}
+    
+    available_slots = avail["slots"]
+    
+    # Get all active bookings for this date (pending, approved - not cancelled)
+    booking_query = {
+        "businessId": business_id,
+        "date": date,
+        "status": {"$in": ["pending", "approved"]}
+    }
+    if staff_id:
+        booking_query["staffId"] = staff_id
+    
+    bookings = await db.appointments.find(booking_query).to_list(100)
+    
+    # Calculate which time slots are blocked by existing bookings
+    blocked_slots = set()
+    for booking in bookings:
+        start_time = booking.get("time")
+        duration = booking.get("duration", 30)  # Default 30 min if not set
+        
+        if start_time:
+            # Parse the start time (format: "HH:MM")
+            try:
+                start_hour, start_min = map(int, start_time.split(":"))
+                start_minutes = start_hour * 60 + start_min
+                
+                # Block all 5-minute intervals covered by this booking
+                for offset in range(0, duration, 5):
+                    blocked_minutes = start_minutes + offset
+                    blocked_hour = blocked_minutes // 60
+                    blocked_min = blocked_minutes % 60
+                    blocked_slot = f"{blocked_hour:02d}:{blocked_min:02d}"
+                    blocked_slots.add(blocked_slot)
+            except (ValueError, AttributeError):
+                # If time format is invalid, just block the start time
+                blocked_slots.add(start_time)
+    
+    # Filter out blocked slots
+    filtered_slots = [slot for slot in available_slots if slot not in blocked_slots]
+    
+    return {"slots": filtered_slots, "staffId": staff_id}
 
 @api_router.get("/availability/{business_id}/{staff_id}/{date}")
 async def get_staff_availability(business_id: str, staff_id: str, date: str):
-    """Get availability for a specific staff member on a date"""
+    """Get availability for a specific staff member on a date, filtering out booked slots"""
     avail = await db.availability.find_one({"businessId": business_id, "staffId": staff_id, "date": date})
-    return {"slots": avail["slots"] if avail else [], "staffId": staff_id}
+    
+    if not avail or not avail.get("slots"):
+        return {"slots": [], "staffId": staff_id}
+    
+    available_slots = avail["slots"]
+    
+    # Get all active bookings for this staff member on this date
+    bookings = await db.appointments.find({
+        "businessId": business_id,
+        "staffId": staff_id,
+        "date": date,
+        "status": {"$in": ["pending", "approved"]}
+    }).to_list(100)
+    
+    # Calculate blocked slots
+    blocked_slots = set()
+    for booking in bookings:
+        start_time = booking.get("time")
+        duration = booking.get("duration", 30)
+        
+        if start_time:
+            try:
+                start_hour, start_min = map(int, start_time.split(":"))
+                start_minutes = start_hour * 60 + start_min
+                
+                for offset in range(0, duration, 5):
+                    blocked_minutes = start_minutes + offset
+                    blocked_hour = blocked_minutes // 60
+                    blocked_min = blocked_minutes % 60
+                    blocked_slot = f"{blocked_hour:02d}:{blocked_min:02d}"
+                    blocked_slots.add(blocked_slot)
+            except (ValueError, AttributeError):
+                blocked_slots.add(start_time)
+    
+    # Filter out blocked slots
+    filtered_slots = [slot for slot in available_slots if slot not in blocked_slots]
+    
+    return {"slots": filtered_slots, "staffId": staff_id}
 
 @api_router.post("/availability")
 async def set_availability(business_id: str, date: str, slots: List[str], staff_id: Optional[str] = None, user: dict = Depends(require_business_owner)):
