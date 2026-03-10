@@ -8,6 +8,14 @@ import InstallPrompt from '../components/InstallPrompt';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
+// Helper to format date as YYYY-MM-DD in local timezone (avoids UTC conversion issues)
+const formatLocalDate = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
@@ -1037,7 +1045,7 @@ const BusinessOwnerDashboard = () => {
 
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
-      const dateStr = date.toISOString().split('T')[0];
+      const dateStr = formatLocalDate(date);
       const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
       const isTooFar = date > maxDate;
       const key = getAvailabilityKey(dateStr, selectedStaff?.id);
@@ -1070,7 +1078,7 @@ const BusinessOwnerDashboard = () => {
     const datesToFetch = [];
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
-      const dateStr = date.toISOString().split('T')[0];
+      const dateStr = formatLocalDate(date);
       const key = getAvailabilityKey(dateStr, selectedStaff?.id);
       
       if (availabilityCache[key] === undefined) {
@@ -1240,13 +1248,13 @@ const BusinessOwnerDashboard = () => {
   // Calculate today's and tomorrow's bookings
   const getTodayDateStr = () => {
     const today = new Date();
-    return today.toISOString().split('T')[0];
+    return formatLocalDate(today);
   };
   
   const getTomorrowDateStr = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow.toISOString().split('T')[0];
+    return formatLocalDate(tomorrow);
   };
   
   const todayStr = getTodayDateStr();
@@ -4644,7 +4652,7 @@ const BusinessOwnerDashboard = () => {
                   type="date"
                   value={bookingForm.date}
                   onChange={(e) => handleBookingDateSelect(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
+                  min={formatLocalDate(new Date())}
                   className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-brand-500"
                   required
                 />

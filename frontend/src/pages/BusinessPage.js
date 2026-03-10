@@ -6,6 +6,14 @@ import { useAuth } from '../context/AuthContext';
 import { formatDate } from '../utils/dateFormat';
 import ExpandableText from '../components/ExpandableText';
 
+// Helper to format date as YYYY-MM-DD in local timezone (avoids UTC conversion issues)
+const formatLocalDate = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const BusinessPage = () => {
   const { businessId } = useParams();
   const navigate = useNavigate();
@@ -116,7 +124,7 @@ const BusinessPage = () => {
 
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
-      const dateStr = date.toISOString().split('T')[0];
+      const dateStr = formatLocalDate(date);
       const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
       const isTooFar = date > maxDate;
       const key = getAvailabilityKey(dateStr, selectedStaff?.id);
@@ -150,7 +158,7 @@ const BusinessPage = () => {
     
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
-      const dateStr = date.toISOString().split('T')[0];
+      const dateStr = formatLocalDate(date);
       const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
       const key = getAvailabilityKey(dateStr, staffId);
       
